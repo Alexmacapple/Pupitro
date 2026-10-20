@@ -4,26 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#27243b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Pupitro">
   <title>Pupitro</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
   <script defer src="assets/fluidsynth.js"></script>
   <script defer src="assets/synth.js"></script>
-  <script defer src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </head>
 <body>
   <header>
     <div><span class="eyebrow">PUPITRO</span><h1 id="title">Choisir une partition</h1></div>
-    <div class="header-actions"><span class="badge">Rendu MuseScore 2</span><button id="openFile">Ouvrir un fichier .mscz</button><input id="scoreFile" type="file" accept=".mscz" hidden><button id="mixerButton" aria-haspopup="dialog">Instruments</button></div>
+    <div class="header-actions"><span class="badge">Lecture autonome</span><button id="openFile">Ouvrir un fichier .mscz</button><input id="scoreFile" type="file" accept=".mscz" hidden><button id="libraryButton" aria-haspopup="dialog">Bibliothèque</button><button id="mixerButton" aria-haspopup="dialog">Instruments</button></div>
   </header>
   <main>
+    <aside class="offline-bar" aria-label="Installation et stockage">
+      <p id="offlineStatus" role="status">Vérification du mode hors ligne…</p>
+      <button id="installButton">Installer / aide</button>
+      <button id="updateButton" hidden>Mettre à jour</button>
+    </aside>
     <div class="score-tools">
       <p id="status" role="status">Chargement de la partition…</p>
       <label>Zoom <select id="zoom"><option value="100">Largeur de l’écran</option><option value="125">125 %</option><option value="150">150 %</option><option value="200">200 %</option></select></label>
       <a id="pdfLink" href="assets/partition.pdf" target="_blank" rel="noopener" hidden>Ouvrir le PDF</a>
+      <button id="cancelImport" hidden>Annuler l’import</button>
+      <button id="exportSource" hidden>Enregistrer le MSCZ dans Fichiers</button>
     </div>
     <div id="score" aria-label="Pages de la partition"></div>
-    <p class="source-note">Pages exportées depuis MuseScore 2.3.2. Les sons et le tempo se règlent sans changer leur mise en page.</p>
-    <p class="source-note">« Ouvrir un fichier .mscz » prépare ta partition sur ce Mac avec MuseScore 2. Aucun envoi vers un service externe.</p>
+    <p class="source-note" id="sourceNote">Import et lecture sur cet appareil. Tes partitions ne sont envoyées à aucun serveur.</p>
+    <p class="source-note"><a href="credits.html">Ressources et licences</a></p>
   </main>
   <footer id="readerDock" class="reader-dock" aria-label="Lecture et affichage">
     <div class="dock-handle"><button id="transportToggle" type="button" aria-controls="transport" aria-expanded="true">Masquer les commandes</button></div>
@@ -57,6 +68,20 @@
     <p>Choisis le son de chaque partie, son volume, ou les parties à écouter seules.</p>
     <div id="parts"></div>
     <p class="hint">Dans la banque de MuseScore 2, l’ukulélé et la mandoline utilisent le même son de guitare nylon. Flûte, accordéon et percussions ont leurs propres sons.</p>
+  </dialog>
+  <dialog id="library" aria-labelledby="libraryTitle">
+    <div class="dialog-title"><h2 id="libraryTitle">Sur cet appareil</h2><button id="closeLibrary">Fermer</button></div>
+    <p>Ces partitions sont conservées ici. L’iPhone et l’iPad ont chacun leur bibliothèque ; il n’y a pas de synchronisation automatique.</p>
+    <div id="libraryItems"></div>
+    <p class="hint">Garde une copie de tes MSCZ dans Fichiers. Effacer les données du site peut effacer cette bibliothèque.</p>
+  </dialog>
+  <dialog id="installation" aria-labelledby="installationTitle">
+    <div class="dialog-title"><h2 id="installationTitle">Installer Pupitro</h2><button id="closeInstallation">Fermer</button></div>
+    <p>Sur iPhone ou iPad, ouvre cette adresse dans Safari, touche Partager puis « Sur l’écran d’accueil ». Active « Ouvrir comme app web » si cette option apparaît.</p>
+    <p>Sur Android, utilise « Installer l’application » dans le menu de Chrome.</p>
+    <p>Ouvre ensuite Pupitro depuis son icône et attends « Application prête hors ligne » avant de couper le réseau. Importe les MSCZ depuis cette app pour les retrouver ici.</p>
+    <p id="storageStatus"></p>
+    <p>Pour vérifier l’autonomie : active le mode avion, ferme puis rouvre Pupitro et essaie aussi d’importer un nouveau MSCZ disponible dans Fichiers.</p>
   </dialog>
 </body>
 </html>

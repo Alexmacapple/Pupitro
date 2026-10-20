@@ -1,52 +1,63 @@
 ---
 type: Concept
 title: Décisions de conception de Pupitro
-description: Raisons des choix qui doivent être préservés lors des évolutions.
+description: Arbitrages de la version autonome et référence de retour.
 sources:
-  - resource: ../convert_score.py
-  - resource: ../prepare_reader.py
-  - resource: ../reader/app.js
-  - resource: ../reader/style.css
+  - resource: ../reader/import-worker.js
+  - resource: ../reader/library.js
+  - resource: ../reader/sw.js
+  - resource: ../scripts/build_web.py
 ---
 
-# Décisions de conception
+# Décisions
 
-## 1. MuseScore 2 reste le moteur de gravure
+## Autonomie et rendu web
 
-Les essais de lecteurs web ont montré des pertes de lignes ou des notes mal
-affichées. Le besoin est la fidélité à MuseScore 2, pas une migration vers un
-nouveau moteur. Le PDF natif exporté sur Mac est donc la référence visuelle.
-Coût accepté : le Mac reste nécessaire et le PDF devient une image à l’affichage.
+L’utilisateur veut maintenant importer les MSCZ sur l’appareil et utiliser Pupitro
+sans Mac. Après comparaison, il accepte une mise en page web différente sous réserve
+que tous les éléments s’affichent correctement. La version native reste au tag `v0.1.0`.
 
-## 2. Séparer la gravure et la lecture
+Le moteur webmscore 1.2.1 produit 12 pages et échoue à exporter les positions de
+segments sur le fichier d’essai. La version 0.22.0 produit 13 pages et 916 événements
+de curseur exploitables. Elle est retenue et épinglée, sans mise à jour implicite.
 
-Les images conservent la partition ; le MIDI fournit tempo, boucles et sons.
-Les SPOS natifs fournissent les positions du curseur. Cette séparation évite de
-regraver la partition lorsque le son ou la vitesse change.
+## Préserver la musique de MuseScore 2
 
-## 3. Servir sur le réseau local
+Le moteur plus récent ajoute par défaut une lecture automatique des symboles
+d’accords, absente de l’ancien export. Pour les fichiers de version inférieure à 3,
+une copie MSCX intermédiaire désactive cette nouvelle lecture des harmonies.
+Le fichier original reste intact. L’exemple conserve ainsi les 3 015 notes de la
+partie principale et les deux notes de la partie de percussions.
 
-L’utilisateur veut un navigateur, sans App Store. Le serveur Mac donne accès aux
-appareils du même Wi‑Fi. Un chemin imprévisible limite l’accès fortuit ; il ne
-remplace pas une authentification pour un service public. Aucun port du routeur
-n’est ouvert et aucune partition n’est envoyée à un service tiers.
+## Séparer gravure et lecture
 
-## 4. Six choix d’instruments, sans promettre six échantillonnages
+Les SVG conservent la gravure web ; MIDI, tempos et positions guident la lecture.
+Changer de vitesse ou d’instrument ne regrave pas la partition. Les glyphes de
+l’exemple sont des tracés, pour éviter une dépendance aux polices musicales iOS.
 
-La banque installée avec MuseScore 2 est réutilisée. Guitare, ukulélé et mandoline
-partagent son programme nylon. Flûte, accordéon et percussion ont leurs programmes
-propres. Ce comportement est indiqué dans l’interface.
+## Stockage local explicite
 
-## 5. Un seul propriétaire pour la hauteur des commandes
+IndexedDB conserve partitions et réglages. Cache Storage conserve l’application,
+son moteur et les sons. Chaque appareil possède sa bibliothèque. Aucune
+synchronisation ni conversion distante n’est introduite. Une copie du MSCZ peut
+être réenregistrée dans Fichiers ; le stockage du navigateur n’est pas une sauvegarde.
 
-Le bouton flottant initial recouvrait les notes. Il a été intégré dans un bandeau
-centré, au bord supérieur des commandes. `readerDock` mesure toute la zone, y
-compris lorsqu’elle est réduite. Le curseur ne réinterprète pas sa hauteur.
+## Installation et mises à jour
 
-## 6. Code public, données et ressources installées séparément
+Une adresse HTTPS permet la première installation et la mise en cache complète.
+Le Service Worker est lié à sa version, avec empreintes des ressources. Une mise
+à jour n’interrompt pas automatiquement un morceau. Aucun nettoyage de cache
+applicatif ne doit supprimer les données IndexedDB.
 
-Le dépôt accueille le code et les documents. MSCZ, exports, captures, lien local
-et banque de sons sont ignorés. L’archive de synthèse est téléchargée à sa version
-épinglée lors de l’installation ; la banque provient du MuseScore 2 de l’utilisateur.
-La politique de licence du code propre et une éventuelle distribution publique
-de ressources restent à décider avant une publication de paquets.
+## Six choix d’instruments
+
+Guitare, ukulélé et mandoline partagent le programme nylon. Les sons proviennent
+maintenant de la banque distribuable MuseScore General Lite épinglée, sans lecture
+de l’installation MuseScore du Mac. Leur rendu sonore peut différer de `v0.1.0`.
+
+## Distribution
+
+Le dépôt source exclut les ressources téléchargées et les partitions personnelles.
+L’artefact statique est construit depuis une liste explicite et inclut les notices
+tierces. Il ne publie ni les imports ni le lien privé de l’ancien serveur Mac.
+La licence du code propre reste à décider avant distribution de paquets.

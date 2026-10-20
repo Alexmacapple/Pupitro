@@ -1,28 +1,33 @@
 # Prochaines étapes
 
-## Priorité : terminer la recette réelle
+## Livrer la version autonome
 
-- [x] Confirmer le son de l’iPhone : retour utilisateur du 20 octobre 2026.
-- [ ] Recueillir les versions du système et du navigateur sur iPhone.
-- [ ] Vérifier lecture, curseur, clic, boucle et instruments sur l’iPad M4.
-- [ ] Vérifier Android avant de l’annoncer comme compatible.
-- [ ] Écouter les timbres et confirmer reprise après verrouillage/changement d’onglet.
-- [ ] Compléter `docs/VALIDATION.md` avec les résultats de chaque appareil.
+- [x] Vérifier le tag de retour `v0.1.0` sur GitHub.
+- [x] Tester les moteurs web : retenir 0.22.0, curseur fonctionnel.
+- [x] Obtenir l’accord sur le rendu web différent, sous réserve d’affichage correct.
+- [x] Préparer les MSCZ localement et conserver la bibliothèque dans IndexedDB.
+- [x] Mettre les ressources applicatives en cache pour les imports hors ligne.
+- [x] Vérifier import, lecture et redémarrage hors ligne sur Chrome et WebKit Mac.
+- [ ] Terminer la revue et les vérifications de la version finale.
+- [ ] Autoriser puis exécuter la publication statique HTTPS.
+- [ ] Installer depuis Safari et vérifier sur l’iPhone et l’iPad M4.
+- [ ] Recueillir les versions du système et du navigateur de ces appareils.
+- [ ] Vérifier Android avant de l’annoncer comme testé.
+
+## Recette physique
+
+- [ ] Comparer tous les éléments affichés d’une partition connue.
+- [ ] Écouter les instruments, le métronome et le décompte.
+- [ ] Tester vitesse, curseur, boucle, zoom et commandes masquées.
+- [ ] Mode avion : fermer, rouvrir puis importer un nouveau MSCZ local.
+- [ ] Vérifier les réglages et le retour après verrouillage/changement d’app.
 
 ## Fiabiliser à partir de cas réels
 
 - [ ] Tester d’autres partitions : reprises, changements de tempo/métrique,
-  plusieurs portées, percussions, silences et import sans notes.
-- [ ] Ajouter les régressions nécessaires autour des erreurs d’import et de
-  l’arrêt des processus, sans figer artificiellement les sorties natives.
-- [ ] Mesurer consommation mémoire et durée du premier chargement sur téléphone.
-- [ ] Vérifier la qualité du zoom et la lisibilité en paysage.
+  plusieurs portées, percussions, silences et erreurs d’import.
+- [ ] Mesurer mémoire, consommation et durée du premier chargement sur téléphone.
+- [ ] Valider une mise à jour de l’app avec une bibliothèque existante.
+- [ ] Choisir la licence du code propre avant distribution de paquets.
 
-## Décisions ultérieures
-
-- [ ] Choisir la licence du code propre avant toute distribution de paquets.
-- [ ] Définir la conservation et la suppression des imports, sans nettoyage implicite.
-- [ ] Évaluer le besoin d’un lancement simplifié ou d’un mode hors ligne.
-
-Ces éléments ne valent pas autorisation d’ouvrir le service sur Internet,
-d’acheter un service ou de modifier les partitions d’origine.
+Aucun achat ni envoi de partition vers un service externe n’est autorisé.

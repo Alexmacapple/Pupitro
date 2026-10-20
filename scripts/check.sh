@@ -7,13 +7,19 @@ if [[ -x .venv/bin/python ]]; then python_bin=.venv/bin/python; fi
 "$python_bin" - <<'PY'
 import ast
 from pathlib import Path
-import fitz
 for path in [*Path('.').glob('*.py'), *Path('scripts').glob('*.py')]:
     ast.parse(path.read_text(), filename=str(path))
-assert Path('/Applications/MuseScore 2.app/Contents/MacOS/mscore').is_file(), 'MuseScore 2 absent'
-for name in ('synth.js', 'fluidsynth.js', 'sounds.sf3'):
-    assert (Path('reader/assets') / name).is_file(), f'Ressource absente : {name}'
-print('Python : syntaxe, PyMuPDF et dépendances locales disponibles')
+print('Python : syntaxe correcte')
 PY
-node --check reader/app.js
+for source in reader/*.js; do node --check "$source"; done
+npm test
+"$python_bin" scripts/build_web.py
+if [[ "${1:-}" == "--native" ]]; then
+  "$python_bin" - <<'PY'
+from pathlib import Path
+import fitz
+assert Path('/Applications/MuseScore 2.app/Contents/MacOS/mscore').is_file(), 'MuseScore 2 absent'
+print('Ancienne conversion native : PyMuPDF et MuseScore 2 disponibles')
+PY
+fi
 printf '%s\n' 'JavaScript : syntaxe correcte'

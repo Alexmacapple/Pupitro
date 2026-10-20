@@ -1,60 +1,58 @@
 ---
 type: Concept
 title: Architecture de Pupitro
-description: Conversion native sur Mac et lecteur léger dans le navigateur.
+description: Application statique, conversion locale et données conservées sur l’appareil.
 sources:
-  - resource: ../serve_reader.py
-  - resource: ../convert_score.py
-  - resource: ../prepare_reader.py
-  - resource: ../reader/app.js
+  - resource: ../reader/import-worker.js
+  - resource: ../reader/playback.js
+  - resource: ../reader/library.js
+  - resource: ../reader/sw.js
+  - resource: ../scripts/build_web.py
 ---
 
 # Architecture
 
 ```mermaid
 flowchart LR
-  A[Navigateur mobile] -->|MSCZ sélectionné| B[Serveur Python sur Mac]
-  B --> C[MuseScore 2 installé]
-  C --> D[PDF, MIDI, MPOS, SPOS]
-  D --> E[Préparation des pages et positions]
-  E -->|Images, MIDI et manifeste| A
-  F[Banque de sons locale] --> A
+  A[Fichiers : MSCZ choisi] --> B[Worker WebAssembly sur l’appareil]
+  B --> C[Pages, PDF, MIDI et positions]
+  C --> D[IndexedDB : bibliothèque locale]
+  D --> E[Lecteur et synthèse locale]
+  F[Hébergement HTTPS : installation initiale] --> G[Cache applicatif versionné]
+  G --> B
+  G --> E
 ```
 
-## Répartition
+## Propriétaires
 
-- `serve_reader.py` sert uniquement `reader/`, contrôle le lien réseau local et
-  reçoit `POST api/import`. Un verrou limite les imports simultanés par instance.
-- `convert_score.py` valide l’archive, conserve une copie, lance MuseScore 2 avec
-  un profil isolé et conserve le journal. Il arrête son groupe de processus si
-  l’export natif dépasse le délai prévu.
-- `prepare_reader.py` rasterise le PDF en PNG à 2,5 pixels par point, ajoute une
-  piste de clic au MIDI et produit le manifeste du lecteur.
-- `scripts/setup_assets.py` met en place les ressources partagées, avec une archive
-  épinglée et vérifiée. Ces ressources ne sont pas recopiées par import.
-- `reader/app.js` charge les images et synthétise le MIDI avec FluidSynth/WASM.
-  Le tick du MIDI pilote le curseur ; le changement de vitesse ne déplace pas
-  la gravure.
+- `import-score.js` contrôle l’archive, le délai et l’annulation ; le fichier
+  d’origine est conservé sans modification. Le worker possède le moteur WASM.
+- `import-worker.js` produit la gravure, le MIDI et les positions. Pour une source
+  MuseScore 2, les harmonies de la copie intermédiaire ne deviennent pas un nouvel
+  accompagnement automatique. Le parseur XML du navigateur réalise cette adaptation.
+- `playback.js` possède la lecture du MIDI, le clic ajouté et la normalisation des
+  coordonnées. Les événements de reprise restent dans leur ordre temporel.
+- `library.js` possède les transactions IndexedDB et les URL temporaires d’affichage.
+- `app.js` possède le transport, les réglages et la présentation des pages.
+- `sw.js` sert uniquement le cache de sa version. L’installation vérifie chaque
+  ressource avant activation ; les mises à jour attendent la fermeture des anciennes
+  fenêtres ou l’action explicite de l’utilisateur.
+- `setup_assets.py` possède les versions et empreintes des dépendances.
+- `build_web.py` copie une liste explicite vers `web-dist/` et lie les ressources
+  à une version. Une ancienne sortie modifiée ou étrangère n’est pas supprimée.
 
-## Contrats utiles
+## Données et limites
 
-Le manifeste contient les pages, canaux, tempos, événements de mesures et
-`cursorEvents`. Les coordonnées sont des fractions de page. La conversion
-MPOS/SPOS utilise la même résolution 160 que la commande native.
+IndexedDB conserve MSCZ d’origine, pages SVG, PDF, MIDI préparé, manifeste et
+réglages. Le cache applicatif contient le lecteur, le moteur, les sons et les
+notices ; son renouvellement laisse la bibliothèque intacte.
 
-Les URL du manifeste restent relatives au lecteur, y compris sous le chemin
-privé du serveur Wi‑Fi. Le nom de fichier n’est pas utilisé comme chemin disque.
+Les glyphes des pages d’essai sont des tracés SVG ; l’affichage ne dépend pas
+de polices musicales installées sur l’appareil. Le PDF est celui du moteur web.
+Les URL de pages sont des Blob locaux, révoqués lorsque la partition change.
 
-## Compromis
-
-- Images : rendu stable, mais pas de redistribution des systèmes selon la largeur
-  du téléphone et résolution de zoom finie.
-- Synthèse MIDI : instruments réglables, mais rendu sonore non garanti identique
-  à l’écoute de MuseScore sur tous les navigateurs.
-- Serveur HTTP standard : installation simple, mais pas de comptes ni de
-  protection adaptée à une exposition Internet.
-- ScriptProcessor : fonctionnement sur HTTP local, coût et comportement mobile
-  à mesurer avant toute évolution AudioWorklet/HTTPS.
-
-Le parent `readerDock` mesure sa hauteur réelle, boutons compris. Cette mesure
-sert au défilement du curseur et à l’espace réservé en bas de la partition.
+La synthèse utilise FluidSynth et ScriptProcessor. Le tick MIDI pilote le curseur.
+La hauteur de `readerDock` inclut le bouton de masquage et la zone de sécurité iOS.
+Le téléchargement initial nécessite HTTPS ; aucune API de conversion distante
+n’est utilisée pendant l’import. Les outils de conversion native restent historiques
+et ne font pas partie de `web-dist/`.

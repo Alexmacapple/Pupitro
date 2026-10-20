@@ -1,67 +1,61 @@
 # Pupitro
 
-**Vos partitions MuseScore 2, sur un pupitre de poche.**
+**Vos partitions MuseScore, à lire et à écouter sur votre appareil, même hors ligne.**
 
-Pupitro permet de consulter et d’écouter ses fichiers `.mscz` dans un navigateur,
-avec un curseur de lecture, un métronome et le choix des instruments.
-Sans passer par l’App Store ni souscrire un abonnement à l’application.
-
-<!-- CAUSAL:BEGIN -->
+<!-- CAUSAL:START -->
 ## Pourquoi Pupitro ?
 
-<!-- [FA] Besoin exprimé et essais rapportés par l’auteur. -->
-Une partition préparée dans MuseScore 2 doit rester lisible sur un téléphone ou
-une tablette. Les lecteurs essayés modifiaient son affichage : des lignes de
-portée disparaissaient ou les notes se superposaient.
+<!-- [FA] Besoin utilisateur et accord sur le rendu web dans docs/PRD.md. -->
+Travailler une partition sur iPhone ou iPad ne devrait pas imposer un ordinateur
+allumé, un abonnement ou une installation par l’App Store. Pupitro prépare les
+fichiers `.mscz` dans le navigateur et les conserve sur l’appareil.
 
-Le besoin est simple : **retrouver la partition telle qu’on l’a préparée et
-pouvoir la travailler en l’écoutant**, sans l’éditer sur son téléphone.
+<!-- [IC] reader/import-worker.js, reader/library.js et reader/sw.js. -->
+Une fois l’application installée et ses ressources téléchargées, vous pouvez
+ouvrir un MSCZ depuis Fichiers, lire et écouter la partition sans réseau ni Mac.
+Les fichiers ne sont envoyés à aucun serveur. Chaque appareil possède sa propre
+bibliothèque ; il n’y a pas de synchronisation automatique.
 
-## Garder le rendu d’origine
+## Pour travailler la musique
 
-<!-- [IC] convert_score.py, prepare_reader.py, reader/app.js. -->
-Pupitro fait préparer la partition par **MuseScore 2 installé sur le Mac**.
-Le navigateur affiche les pages de son PDF ; il ne recalcule pas la gravure.
-Le MIDI fournit la lecture, et les positions exportées par MuseScore 2 guident
-le curseur. Le tempo et les sons peuvent ainsi changer sans déplacer les notes.
+- Lecture, pause, vitesse, déplacement et boucle par mesures.
+- Métronome, décompte et curseur qui suit la partition.
+- Volume, coupure et solo par partie.
+- Percussion, guitare, ukulélé, mandoline, flûte et accordéon.
+- Zoom et commandes escamotables pour libérer l’affichage.
+- Bibliothèque locale, réglages conservés et export du MSCZ d’origine.
 
-Le Mac prépare et sert les fichiers. Le téléphone ou la tablette ouvre le
-lecteur sur le même Wi‑Fi. Les partitions restent sur ce Mac ; elles ne sont pas
-envoyées vers un service de conversion externe.
+L’ukulélé et la mandoline partagent ici le timbre de guitare nylon.
 
-## Ce que l’on peut faire
+## Le rendu et les limites
 
-<!-- [IC] reader/index.html et reader/app.js. -->
-- Ouvrir un fichier `.mscz` compatible avec MuseScore 2.
-- Lire la partition, zoomer et suivre le curseur.
-- Écouter, ralentir, avancer et répéter un passage par mesures.
-- Activer le métronome et le décompte.
-- Régler le volume, couper ou isoler une partie.
-- Choisir percussion, guitare, ukulélé, mandoline, flûte ou accordéon.
-- Masquer les commandes pour laisser davantage de place à la partition.
+<!-- [FA] Accord explicite sur un rendu web différent, sous réserve d’affichage correct. -->
+Le moteur web peut changer l’espacement et la pagination de MuseScore 2.
+La partition d’essai compte ainsi **13 pages au lieu de 7**. Ce compromis permet
+l’import autonome ; le rendu strictement identique n’est plus promis.
 
-L’ukulélé et la mandoline utilisent le son de guitare nylon de cette banque.
+<!-- [IC] Preuves et portée dans docs/VALIDATION.md. -->
+La version autonome est en cours de validation. Les essais Chrome et WebKit sur
+Mac ne remplacent pas l’installation et l’écoute sur les appareils physiques.
+Le son iPhone confirmé auparavant concerne la version `v0.1.0`.
 
-## Ce qui reste à confirmer
-
-<!-- [FA] Retour iPhone ; [IC] vérifications décrites dans docs/VALIDATION.md. -->
-Pupitro est un **prototype local**. La lecture et l’import ont été vérifiés sur
-Mac. L’ouverture et le son sur iPhone sont confirmés par un essai utilisateur
-du 20 octobre 2026. Les essais sur iPad et Android restent à réaliser.
-
-Le Mac doit rester allumé. Les fichiers MuseScore 3/4, l’édition de partitions,
-le mode hors ligne et un hébergement public ne sont pas pris en charge.
+Gardez vos MSCZ d’origine dans Fichiers : effacer les données du site peut
+effacer la bibliothèque. Une adresse HTTPS et une première connexion sont
+nécessaires à l’installation. Pas d’édition, d’annotation Pencil ni d’abonnement.
 <!-- CAUSAL:END -->
 
-## Démarrer et poursuivre
+## Installer ou développer
 
-- [Installer et lancer Pupitro](docs/INSTALLATION.md)
-- [Comprendre les besoins et les limites](docs/PRD.md)
+- [Installation sur iPhone et iPad](docs/INSTALLATION.md)
+- [Vérifications et limites](docs/VALIDATION.md)
+- [Besoin et critères de réussite](docs/PRD.md)
 - [Architecture](docs/ARCHITECTURE.md) et [décisions](docs/DECISIONS.md)
-- [Vérifications et essais sur appareils](docs/VALIDATION.md)
-- [Prochaines étapes](todo.md)
-- [Reprendre le développement](AGENTS.md) · [Carte du code](CODEBASE_MAP.md)
+- [Dépendances et notices](docs/DEPENDANCES.md)
+- [Prochaines étapes](todo.md), [consignes](AGENTS.md) et [carte du code](CODEBASE_MAP.md)
 
-Les partitions, exports, banques de sons et liens d’accès locaux sont exclus du
-dépôt. Les ressources audio sont installées séparément depuis leur source
-épinglée : voir [les dépendances](docs/DEPENDANCES.md).
+Le code est versionné ici ; les partitions et ressources installées restent
+exclues du dépôt source. La publication statique utilise une liste explicite
+de fichiers applicatifs et ne contient aucune partition.
+
+La version avec conversion sur Mac reste disponible au tag
+[v0.1.0](https://github.com/Alexmacapple/Pupitro/tree/v0.1.0).

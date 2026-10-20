@@ -12,3 +12,9 @@
 #transportToggle::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-4px}
 #transportToggle[aria-expanded="false"]::before{transform:rotate(225deg);margin-top:4px}
 main{padding-bottom:calc(var(--dock-height,260px) + 18px)}
+.offline-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}
+.offline-bar p{margin:0;flex:1;min-width:200px}
+.offline-bar button,.score-tools button{font-size:12px}
+#libraryItems{display:grid;gap:10px;margin:16px 0}
+#libraryItems button{text-align:left;width:100%}
+@media(max-width:640px){.offline-bar{padding:10px 6px}.header-actions{gap:12px}.header-actions button{flex-grow:1}.header-actions{width:100%}.offline-bar p{flex-basis:100%}}

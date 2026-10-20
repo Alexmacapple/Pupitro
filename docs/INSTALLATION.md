@@ -1,71 +1,75 @@
 ---
 type: Concept
-title: Installer et lancer Pupitro
-description: Démarrage sur Mac et accès depuis un navigateur mobile.
+title: Installer Pupitro autonome
+description: Installation depuis Safari et construction de l’application statique.
 sources:
-  - resource: ../requirements.txt
+  - resource: ../reader/manifest.webmanifest
+  - resource: ../reader/offline.js
   - resource: ../scripts/setup_assets.py
-  - resource: ../scripts/serve-local.sh
-  - resource: ../serve_reader.py
+  - resource: ../scripts/build_web.py
 ---
 
-# Installer et lancer
+# Installer Pupitro
 
-## Prérequis
+## Sur iPhone et iPad
 
-- Un Mac avec MuseScore **2.3.2** installé dans `/Applications/MuseScore 2.app`.
-- Python 3 ; l’environnement initial utilise Python 3.14 et PyMuPDF 1.28.0.
-- Un navigateur et des fichiers compatibles avec MuseScore 2.
-- Node.js uniquement pour le contrôle de syntaxe JavaScript de `scripts/check.sh`.
+L’adresse HTTPS publique sera fournie après autorisation et vérification de la
+publication. L’ancienne adresse HTTP du Mac ne permet pas de préparer ce mode hors ligne.
 
-MuseScore 2 n’est ni téléchargé ni remplacé par Pupitro.
+1. Ouvrir l’adresse HTTPS dans Safari, avec une connexion Internet.
+2. Partager → **Sur l’écran d’accueil**. Activer **Ouvrir comme app web** si proposé.
+3. Ouvrir Pupitro depuis sa nouvelle icône et attendre **Application prête hors ligne**.
+4. Toucher **Ouvrir un fichier .mscz**, puis choisir un fichier disponible dans Fichiers.
+5. Attendre **partition enregistrée sur cet appareil**, puis toucher **Écouter**.
+6. Activer le mode avion, fermer puis rouvrir l’app, et essayer aussi un nouvel import.
 
-## Depuis un nouveau clone
+Les ressources applicatives représentent environ 58 Mo, hors partitions. Un fichier
+uniquement présent dans iCloud doit avoir été téléchargé dans Fichiers avant de
+couper le réseau. Les bibliothèques des deux appareils sont indépendantes.
+Importer les fichiers depuis l’app installée pour les retrouver dans cette app.
+
+Le bouton **Enregistrer le MSCZ dans Fichiers** conserve une copie de l’original.
+L’effacement des données du site ou de l’app peut effacer sa bibliothèque.
+
+## Android
+
+Installation proposée par le menu Chrome. Le fonctionnement sur un appareil Android
+physique reste à vérifier ; les essais desktop ne constituent pas cette validation.
+
+## Construire et vérifier depuis les sources
+
+Prérequis de développement : Python 3.12 recommandé, Node.js 22 ou supérieur.
+Aucune installation de MuseScore ni dépendance Python tierce n’est requise pour
+construire l’application autonome. Aucun de ces outils n’est requis sur le téléphone.
 
 ```sh
-git clone git@github.com:Alexmacapple/Pupitro.git
-cd Pupitro
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python scripts/setup_assets.py
+npm ci --ignore-scripts
+python3 scripts/setup_assets.py --standalone
 bash scripts/check.sh
-bash scripts/serve-local.sh
+bash scripts/serve-web.sh
 ```
 
-Ouvrir <http://127.0.0.1:8765/> sur le Mac, puis **Ouvrir un fichier .mscz**.
-L’installation audio télécharge une archive npm épinglée et copie la banque de
-sons de MuseScore 2 déjà installée. Elle n’envoie aucune partition.
+Ouvrir <http://127.0.0.1:8770/> sur le poste de développement. `localhost` permet
+de tester les Service Workers. `scripts/build_web.py` produit seulement `web-dist/`.
+La première commande d’installation des ressources les télécharge à leurs versions
+épinglées et vérifie leurs empreintes ; aucun fichier utilisateur n’est transmis.
 
-## Sur le réseau Wi‑Fi
-
-Les appareils doivent pouvoir communiquer sur le même réseau local.
+Recette avec une partition privée :
 
 ```sh
-ipconfig getifaddr en0
-bash scripts/serve-local.sh --host ADRESSE_IPV4_DU_MAC --port 8766
+npx playwright install chromium webkit
+npm run test:browser -- /chemin/exemple.mscz
+PUPITRO_ENGINE=webkit npm run test:browser -- /chemin/exemple.mscz
 ```
 
-Remplacer l’adresse par celle affichée par la première commande. Le serveur
-imprime un lien à ouvrir dans Safari ou Chrome sur les appareils. Ce lien donne
-accès aux partitions préparées à toute personne du réseau qui le possède.
-Le garder privé. Le serveur est HTTP local et n’est pas conçu pour Internet.
+## Publication
 
-Le Mac et ce terminal doivent rester actifs. Arrêter avec **Ctrl+C**.
-L’adresse peut changer avec le réseau ; `.access-token` conserve le chemin privé.
+Le workflow `Publier Pupitro` est manuel. Il construit et déploie uniquement
+`web-dist/` sur GitHub Pages. L’activation et le premier déploiement restent à
+autoriser ; aucun serveur Mac n’est exposé sur Internet.
 
-## Utilisation
+## Si le son manque
 
-1. Choisir un `.mscz` avec le bouton du haut ; sur mobile, utiliser Fichiers.
-2. Attendre sa préparation par le Mac, puis toucher **Écouter**.
-3. Régler vitesse, boucle, métronome et instruments selon le besoin.
-4. Masquer les commandes pour agrandir la zone de lecture.
-
-Le fichier original n’est pas réenregistré. Une copie et les exports sont
-conservés dans `imports/` et `reader/scores/` ; aucun nettoyage automatique.
-
-## Si le son manque sur iPhone
-
-Recharger la page et toucher **Écouter**. Vérifier le volume et la destination
-Bluetooth. Tester le mode sonnerie avec l’interrupteur latéral sans orange.
-Le mode audio `playback` est demandé quand le navigateur le permet ; l’essai
-physique reste nécessaire. Voir [la validation](VALIDATION.md).
+Toucher **Écouter**, vérifier le volume et la destination Bluetooth. Le mode audio
+`playback` est demandé quand Safari le permet. L’écoute physique est encore à valider
+pour cette nouvelle version. L’ancienne version Mac reste accessible au tag `v0.1.0`.

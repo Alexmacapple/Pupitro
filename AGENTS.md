@@ -2,59 +2,53 @@
 
 ## Mission et invariants
 
-Lire et écouter des partitions MuseScore 2 dans un navigateur mobile, avec leur
-mise en page native. Pas d’édition, d’App Store ni d’achat sans accord explicite.
-Conserver les six choix d’instruments et le fonctionnement de la lecture pendant
-le masquage des commandes.
+Lire et écouter des MSCZ sur iPhone et iPad avec import local et usage hors ligne.
+L’utilisateur accepte désormais un rendu web différent de MuseScore 2, à condition
+que les éléments s’affichent correctement. Préserver lecture, six instruments,
+curseur, métronome, décompte, boucle et commandes escamotables.
+Pas d’édition, d’App Store ni d’achat sans accord explicite.
 
-## Sources de vérité
+Lire `README.md`, `todo.md`, `CODEBASE_MAP.md`, puis le document utile dans `docs/`.
+Les preuves sont dans `docs/VALIDATION.md` et les arbitrages dans `docs/DECISIONS.md`.
+Un retour utilisateur reste distinct d’un essai direct ou d’un navigateur simulé.
 
-Lire [README.md](README.md), [todo.md](todo.md) et
-[CODEBASE_MAP.md](CODEBASE_MAP.md), puis uniquement le document utile dans `docs/`.
-Les décisions sont dans `docs/DECISIONS.md`, les preuves et limites dans
-`docs/VALIDATION.md`. Le relais de session est `.claude/session-context.md`.
-Les retours utilisateur sont des observations rapportées, distinctes des tests
-directs sur appareils.
+## Commandes
 
-## Entrées et commandes
+- `python3 scripts/setup_assets.py --standalone` : ressources épinglées et notices.
+- `bash scripts/check.sh` : syntaxe, tests ciblés et construction statique.
+- `bash scripts/serve-web.sh` : aperçu local sur le port 8770.
+- `npm ci --ignore-scripts` puis `npm test` : dépendances de test et tests ciblés.
+- `npm run test:browser -- /chemin/exemple.mscz` : recette avec une partition privée.
 
-- `bash scripts/serve-local.sh` : serveur limité au Mac, port 8765.
-- `bash scripts/serve-local.sh --host ADRESSE_IPV4 --port 8766` : réseau local.
-- `python3 scripts/setup_assets.py` : dépendances audio partagées.
-- `bash scripts/check.sh` : syntaxe et dépendances disponibles.
-- Après une modification d’interface, recharger et vérifier dans le navigateur.
+Le navigateur reçoit uniquement `web-dist/`, construit depuis une liste explicite.
+Ne pas servir ou publier la racine du dépôt.
+
+## Propriété des données et contrats
+
+- Bibliothèque et réglages : `reader/library.js`, IndexedDB ; jamais effacés par
+  le nettoyage des caches applicatifs.
+- Gravure : worker dédié, libéré ou interrompu après chaque import.
+- Temps MIDI, clic et coordonnées : normalisés une fois dans `reader/playback.js`.
+- Anciens accords MuseScore 2 : désactiver la nouvelle synthèse automatique des
+  harmonies dans la copie de travail, sans modifier le fichier source.
+- Cache : un Service Worker appartient à une version complète ; aucune bascule
+  automatique pendant une lecture. Les mises à jour attendent l’action utilisateur.
+- Ressources : l’installateur possède les versions, noms attendus et empreintes.
+- La hauteur réelle de `readerDock` possède l’espace des commandes et du curseur.
 
 ## Zones à préserver
 
-- `.access-token`, `imports/`, `reader/scores/`, `reader/assets/` : données locales
-  et ressources générées, ignorées par Git. Ne pas les publier ou les effacer.
-- Fichiers originaux : conversion sur une copie, sans réenregistrement.
-- `MuseScore 2.app` : dépendance déjà installée, pas de remplacement automatique.
-- Le dossier possède son propre dépôt Git ; ne pas commiter dans son parent.
-- Aucun envoi de partition vers un service externe ; pas d’ouverture Internet
-  ou de démarrage automatique du service sans demande adaptée.
+`.access-token`, `imports/`, `reader/scores/`, `reader/assets/`, caches et preuves
+locales ne doivent pas être ajoutés au dépôt source ni effacés implicitement.
+Les anciens outils Python de conversion et MuseScore 2 restent disponibles ;
+le tag `v0.1.0` protège la version Mac. Aucun remplacement de MuseScore installé.
+Ce projet possède son propre dépôt : ne pas commiter dans son parent.
+Pas de démarrage automatique ni d’exposition du serveur Mac sur Internet.
 
-## Points techniques déterminants
+## Vérification
 
-- `convert_score.py` exporte PDF, MIDI, MPOS et SPOS avec `-r 160`.
-- `prepare_reader.py` normalise les positions une seule fois. L’unité est liée
-  au facteur `converterDpi * 12` de MuseScore 2 ; modifier les deux côtés ensemble.
-- `scripts/setup_assets.py` possède les ressources audio communes ; la conversion
-  ne doit pas les recopier pour chaque partition.
-- `readerDock` possède la hauteur des commandes, y compris le bouton centré et
-  la zone de sécurité iOS. Le curseur utilise cette hauteur mesurée.
-- La banque de MuseScore 2 partage le même timbre pour guitare, ukulélé et mandoline.
-- Le réglage `navigator.audioSession` traite une cause possible de silence iOS ;
-  il ne prouve pas que le son fonctionne sur l’iPhone de l’utilisateur.
-
-## Vérification proportionnée
-
-Un changement visuel demande un contrôle desktop et mobile. Un changement de
-conversion demande un import réel et une comparaison avec le PDF natif.
-Un changement audio demande un signal produit et, pour valider un appareil,
-une écoute humaine sur cet appareil. Ne pas remplacer un essai physique par un
-simple changement de largeur dans Chrome.
-
-Le projet ne possède pas encore de suite automatique complète. Préserver les
-preuves locales et dire précisément les cas exécutés. Mettre à jour le document
-concerné, pas une seconde source de vérité parallèle.
+Un changement de rendu demande une inspection des notes et portées sur Chrome
+et WebKit. Un changement audio demande un signal produit ; seule une écoute
+humaine valide le son sur un appareil physique. Tester un import neuf hors ligne,
+la réouverture après fermeture, et les échecs sans perte de bibliothèque.
+Dire précisément ce qui reste non vérifié, notamment les appareils physiques.

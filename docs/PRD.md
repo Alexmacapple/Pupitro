@@ -1,51 +1,54 @@
 ---
 type: Concept
 title: Besoin et périmètre de Pupitro
-description: Contraintes retenues pour le lecteur et critères de réussite.
+description: Import autonome des MSCZ et lecture hors ligne sur iPhone et iPad.
 sources:
   - resource: ../reader/index.html
   - resource: ../reader/app.js
-  - resource: ../convert_score.py
+  - resource: ../reader/import-score.js
 ---
 
 # Besoin et périmètre
 
-## Pourquoi
+## Intention
 
-Consulter et écouter des partitions déjà préparées dans MuseScore 2 sur un
-iPhone et un iPad, sans changer leur mise en page. Le prototype répond au besoin
-de lecture et de travail instrumental, sans édition de notation.
+Lire et écouter ses fichiers MuseScore sur iPhone et iPad sans App Store,
+sans abonnement et sans dépendre d’un Mac allumé.
 
-## Contraintes exprimées
+## Contraintes acquises
 
-- Navigateur Safari ou Chrome ; pas d’installation par l’App Store.
-- Fichiers `.mscz` issus de MuseScore 2 ; priorité au rendu de cette version.
-- Lecture, tempo, métronome, décompte, boucle et choix des instruments.
-- Percussion, guitare, ukulélé, mandoline, flûte et accordéon suffisent.
-- Commandes escamotables pour laisser davantage de place à la partition.
-- Aucun achat ou abonnement sans accord préalable.
-- Appareils visés : iPhone 12 Pro Max présumé et iPad M4. Versions système inconnues.
+- Importer directement des `.mscz` natifs depuis Fichiers, même hors ligne.
+- Conserver les fichiers et la bibliothèque sur l’appareil ; aucun envoi externe.
+- Garder tempo, métronome, décompte, boucle, curseur, zoom et commandes escamotables.
+- Six instruments : percussion, guitare, ukulélé, mandoline, flûte et accordéon.
+- Installer l’app depuis Safari ; pas d’achat sans accord explicite.
+- iPhone 12 Pro Max présumé et iPad M4 ; versions système encore inconnues.
+- Accord utilisateur : un rendu web différent est accepté si tout s’affiche bien.
+
+Cette dernière contrainte remplace l’exigence initiale de rendu strictement identique
+à MuseScore 2. L’exemple compte 13 pages dans le moteur retenu, contre 7 auparavant.
 
 ## Critères d’acceptation
 
 | Critère | Preuve attendue |
 |---|---|
-| Rendu natif | Comparaison des pages avec le PDF exporté par MuseScore 2 |
-| Import | MSCZ sélectionné depuis l’interface, sans toucher à l’original |
-| Lecture | Audio entendu et curseur aligné sur chaque appareil visé |
-| Travail | Tempo, clic et boucle vérifiés avec cette partition |
-| Confort | Zoom et commandes ouvertes/masquées utilisables au tactile |
-| Confidentialité | Pas de partition ni de lien local dans le dépôt public |
+| Import autonome | Nouveau MSCZ préparé avec réseau coupé et Mac éteint |
+| Affichage | Notes, portées, tablatures et textes présents sur chaque appareil |
+| Lecture | Son entendu, instruments, clic, décompte et boucle utilisables |
+| Curseur | Alignement et suivi des pages pendant la lecture |
+| Persistance | Bibliothèque et réglages retrouvés après fermeture et redémarrage |
+| Installation | Icône ouvrant l’app hors ligne sur iPhone et iPad |
+| Confidentialité | Aucun envoi des partitions ; aucune partition dans l’artefact public |
 
-Le premier exemple a passé les comparaisons sur Mac ; la validation complète des
-appareils reste ouverte dans [VALIDATION.md](VALIDATION.md).
+Les vérifications de navigateur et les essais physiques restent distincts dans
+[VALIDATION.md](VALIDATION.md).
 
-## Limites actuelles
+## Limites
 
-Le Mac prépare et sert la partition. Pas de conversion autonome sur le téléphone,
-de mode hors ligne, d’annotation Pencil ou d’édition. Les MSCZ de versions 3/4 sont
-refusés. Android est une compatibilité probable à tester, pas une promesse validée.
+Pas d’édition, d’annotation Pencil ni de synchronisation entre appareils.
+Le moteur est épinglé : aucun engagement général sur les fichiers MuseScore 4.
+Les fichiers trop lourds ou certains éléments de notation peuvent rester incompatibles.
 
-Limites du prototype : transfert 50 Mo, archive décompressée 200 Mo, 300 pages,
-un import à la fois par instance de serveur, délais de conversion de deux minutes.
-Un canal MIDI libre est nécessaire au clic ajouté.
+Capacités contrôlées : fichier 50 Mo, archive décompressée 200 Mo, 300 pages,
+SVG cumulés 100 Mo, import limité à deux minutes. Un canal MIDI libre est nécessaire
+au métronome ; la piste ajoutée est bornée à 500 000 événements sur mobile.

@@ -1,43 +1,34 @@
 # Carte du code — Pupitro
 
-Carte factuelle du prototype, rédigée depuis les sources le 20 octobre 2026.
-
-| Entrée | Rôle |
+| Entrée | Propriétaire et rôle |
 |---|---|
-| `serve_reader.py` | Serveur HTTP, lien local, import et réponses d’erreur |
-| `convert_score.py` | Validation MSCZ, copie locale, processus MuseScore 2 |
-| `prepare_reader.py` | Pages PNG, MIDI avec clic, positions et manifeste |
-| `reader/index.html` | Structure du lecteur et boutons |
-| `reader/style.css` | Présentation, affichage mobile et bandeau inférieur |
-| `reader/app.js` | Synthèse, transport, curseur, parties et import |
-| `scripts/setup_assets.py` | Archive audio épinglée et banque locale |
-| `scripts/serve-local.sh` | Lancement depuis n’importe quel répertoire |
-| `scripts/check.sh` | Contrôle de syntaxe et disponibilité des dépendances |
+| `reader/index.html`, `style.css` | Interface mobile et commandes |
+| `reader/app.js` | Transport, présentation, bibliothèque et réglages |
+| `reader/import-score.js` | Validation ZIP, annulation, délai et adaptation XML v2 |
+| `reader/import-worker.js` | Moteur WASM, gravure et exports |
+| `reader/playback.js` | MIDI, clic, tempos et normalisation des positions |
+| `reader/library.js` | Transactions IndexedDB et URL de Blob temporaires |
+| `reader/sw.js` | Cache immuable par version et activation des mises à jour |
+| `reader/offline.js` | État hors ligne et demande de mise à jour |
+| `reader/manifest.webmanifest`, `icons/` | Installation et identité de l’app |
+| `scripts/setup_assets.py` | Ressources et notices épinglées |
+| `scripts/build_web.py` | Liste publique explicite et empreintes de version |
+| `scripts/serve-web.sh` | Aperçu statique sur localhost |
+| `scripts/check.sh`, `tests/` | Contrôles et recettes de navigateur |
+| `.github/workflows/pages.yml` | Publication statique manuelle |
 
-## Flux principal
+## Flux autonome
 
-`Ouvrir un fichier .mscz` → `POST api/import` → `convert()` → MuseScore 2 →
-`prepare_reader.py` → `reader/scores/<id>/score.json` → navigateur.
+MSCZ choisi → contrôle ZIP → worker webmscore → SVG/PDF/MIDI/positions →
+transaction IndexedDB → affichage et synthèse locale.
 
-L’audio utilise le MIDI préparé et `reader/assets/sounds.sf3`. Le curseur utilise
-`cursorEvents`, normalisés par le préparateur, et le tick du lecteur MIDI.
+Le Service Worker sert les fichiers applicatifs de sa version ; les partitions
+ne traversent aucun serveur. La bibliothèque de chaque appareil est indépendante.
 
-## Données locales
+## Données et historique
 
-- `imports/<id>/` : copie du MSCZ, tâche d’export, journaux et exports natifs.
-- `reader/scores/<id>/` : pages, PDF, MIDI et manifeste servis au navigateur.
-- `reader/assets/` : synthèse partagée et éventuelle partition de démarrage.
-- `.access-token` : chemin d’accès réseau local, à garder privé.
-- `.pdd/` : inventaire documentaire local, non publié.
-- `reference*`, `apercu-*` : preuves de l’essai initial, non publiées.
-
-## Pour intervenir
-
-- Mise en page : `index.html` et `style.css`, puis contrôle navigateur.
-- Lecture ou curseur : `app.js`, puis scénario de `docs/VALIDATION.md`.
-- Import ou export : `convert_score.py`, `prepare_reader.py`, puis import réel.
-- Installation : `requirements.txt` et `scripts/setup_assets.py`.
-- Reprise : `.claude/session-context.md`, `todo.md`, puis sources concernées.
-
-`bash scripts/check.sh` ne prouve pas l’écoute sur un téléphone ni la fidélité
-de tous les MSCZ. Aucun moteur de rendu MuseScore n’est embarqué dans le navigateur.
+`reader/assets/`, `.cache/`, `web-dist/` et les sorties de test sont ignorés par Git.
+Le constructeur ne copie jamais les fichiers privés présents dans `reader/assets/`.
+Les anciens `imports/`, `reader/scores/`, `.access-token` et références sont préservés.
+`serve_reader.py`, `convert_score.py` et `prepare_reader.py` conservent l’ancien
+chemin Mac ; la version complète correspondante reste au tag `v0.1.0`.
