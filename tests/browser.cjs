@@ -13,7 +13,7 @@ const output = fs.mkdtempSync(path.join(os.tmpdir(), 'pupitro-browser-'));
 const profile = path.join(output, 'profile');
 const options = {headless:true,viewport:{width:428,height:926},isMobile:true,hasTouch:true};
 let context;
-async function selectNote(page,method,offset){
+async function pressNote(page,method,offset){
   const target=await page.evaluate(async offset=>{
     const library=await import('./library.js');
     const record=await library.getScore(new URL(location.href).searchParams.get('score'));
@@ -24,6 +24,10 @@ async function selectNote(page,method,offset){
   const image=page.locator('.paper img').nth(target.page);
   const size=await image.evaluate(img=>({width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height}));
   await image[method]({position:{x:(target.x+(target.width||0)/2)*size.width,y:(target.y+target.height*.5)*size.height}});
+  return target;
+}
+async function selectNote(page,method,offset){
+  const target=await pressNote(page,method,offset);
   await expect.poll(async()=>{
     const tick=Number(await page.locator('#seek').inputValue());
     return tick>=target.tick-2&&tick<target.tick+target.ppq*8;
@@ -31,6 +35,15 @@ async function selectNote(page,method,offset){
   await expect(page.locator('#play')).toHaveText('Pause',{timeout:15000});
   await expect(page.locator('#audioSignal')).toHaveClass(/active/,{timeout:15000});
   return target.tick;
+}
+async function pauseOnNote(page,method,offset){
+  await pressNote(page,method,offset);
+  await expect(page.locator('#play')).toHaveText('Écouter');
+  const tick=await page.locator('#seek').inputValue();
+  await expect(page.locator('#audioSignal')).not.toHaveClass(/active/);
+  await page.waitForTimeout(200);
+  await expect(page.locator('#seek')).toHaveValue(tick);
+  return Number(tick);
 }
 (async()=>{
   context = await browserType.launchPersistentContext(profile, options);
@@ -55,6 +68,7 @@ async function selectNote(page,method,offset){
   assert.ok(pages>0);
   await page.locator('.paper img').first().evaluate(img=>img.decode());
   await page.screenshot({path:path.join(output,'mobile.png'),fullPage:false});
+  await page.setViewportSize({width:1440,height:1000});
   const clickedTick=await selectNote(page,'click',0);
   for(const img of await page.locator('.paper img').all()){
     await img.scrollIntoViewIfNeeded();
@@ -64,6 +78,10 @@ async function selectNote(page,method,offset){
   await page.locator('#openFile').scrollIntoViewIfNeeded();
   await expect(page.locator('#clock')).not.toHaveText(/^0:00 /,{timeout:20000});
   await expect(page.locator('#audioSignal')).toHaveClass(/active/,{timeout:15000});
+  const mousePauseTick=await pauseOnNote(page,'click',0);
+  const resumedTick=await selectNote(page,'click',4);
+  await page.setViewportSize({width:428,height:926});
+  const touchPauseTick=await pauseOnNote(page,'tap',8);
   const tappedTick=await selectNote(page,'tap',8);
   await page.locator('#transportToggle').click();
   await expect(page.locator('#transport')).toBeHidden();
@@ -173,5 +191,5 @@ async function selectNote(page,method,offset){
   await page.evaluate(()=>window.restoreStorageTest());
   await page.setViewportSize({width:1440,height:1000});
   await page.screenshot({path:path.join(output,'desktop.png'),fullPage:false});
-  console.log(JSON.stringify({pages,parts:partCount,id,posts:posts.length,externalRequests:outside.length,errors,consoleCounts:[...consoleCounts],legacy,noteSelection:{clickedTick,tappedTick},offlineImport:true,restartOffline:true,concurrentOpen:true,output}));
+  console.log(JSON.stringify({pages,parts:partCount,id,posts:posts.length,externalRequests:outside.length,errors,consoleCounts:[...consoleCounts],legacy,noteSelection:{clickedTick,mousePauseTick,resumedTick,touchPauseTick,tappedTick},offlineImport:true,restartOffline:true,concurrentOpen:true,output}));
 })().catch(async error=>{console.error(error);if(context){const page=context.pages().at(-1);if(page){console.error(await page.locator('body').innerText().catch(()=>''));await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});console.error('Artifacts:',output);}}process.exitCode=1;}).finally(async()=>{if(context)await context.close();});

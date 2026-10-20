@@ -19,7 +19,7 @@ bibliothèque ; il n’y a pas de synchronisation automatique.
 ## Pour travailler la musique
 
 - Lecture, pause, vitesse, déplacement et boucle par mesures.
-- Démarrage à partir d’une note cliquée à la souris ou touchée sur l’écran.
+- Lecture et pause par clic ou toucher sur une note ; reprise depuis la note visée.
 - Métronome, décompte et curseur qui suit la partition.
 - Volume, coupure et solo par partie.
 - Percussion, guitare, ukulélé, mandoline, flûte et accordéon.

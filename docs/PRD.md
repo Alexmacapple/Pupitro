@@ -37,7 +37,7 @@ Cette dernière contrainte remplace l’exigence initiale de rendu strictement i
 | Affichage | Notes, portées, tablatures et textes présents sur chaque appareil |
 | Lecture | Son entendu, instruments, clic, décompte et boucle utilisables |
 | Curseur | Alignement et suivi des pages pendant la lecture |
-| Départ sur une note | Clic ou toucher placé dans une portée, sans démarrage dans les espaces vides |
+| Lecture/pause au pointeur | Clic ou toucher sur une note pour lire, clic suivant pour mettre en pause ; espaces vides sans effet |
 | Persistance | Bibliothèque et réglages retrouvés après fermeture et redémarrage |
 | Installation | Icône ouvrant l’app hors ligne sur iPhone et iPad |
 | Confidentialité | Aucun envoi des partitions ; aucune partition dans l’artefact public |

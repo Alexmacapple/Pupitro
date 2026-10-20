@@ -165,7 +165,7 @@ async function load(next){
       const rect=img.getBoundingClientRect();
       const target=positionAtPoint(score.cursorEvents,index,(event.clientX-rect.left)/rect.width,(event.clientY-rect.top)/rect.height,currentTick);
       if(!target)return;
-      if(starting)stop();
+      if(playing||starting){stop();return;}
       const bounds=$("loop").checked?boundary():null;
       if($("loop").checked&&(!bounds||target.tick<bounds.start||target.tick>=bounds.end)){
         $("loop").checked=false;persistPreferences();
@@ -258,7 +258,7 @@ async function restoreRecord(record){
     }
     $("zoom").dispatchEvent(new Event("change"));
     $("exportSource").hidden=false;
-    $("sourceNote").textContent="Clique ou touche une note pour écouter à partir de là. Rendu web : la mise en page peut différer de MuseScore 2. Partition et lecture conservées sur cet appareil.";
+    $("sourceNote").textContent="Clique ou touche une note pour écouter à partir de là ; pendant la lecture, un clic met en pause. Rendu web : la mise en page peut différer de MuseScore 2. Partition et lecture conservées sur cet appareil.";
     history.replaceState(null,"",`?score=${record.id}`);
     await saveSettings("last-score",record.id);
   }catch(error){if(activeUrls!==nextUrls)nextUrls.release();throw error;}

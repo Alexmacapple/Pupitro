@@ -36,6 +36,7 @@ Ne pas servir ou publier la racine du dépôt.
   le fichier source ni remplacer le numéro du barré par une heuristique sur les points.
 - Clic et toucher : sélectionner un événement depuis les coordonnées normalisées
   du moteur, avec les reprises ; une zone hors portée ne démarre pas la lecture.
+  Pendant la lecture ou le décompte, le clic met en pause sans déplacer le curseur.
 - Cache : un Service Worker appartient à une version complète ; aucune bascule
   automatique pendant une lecture. Les mises à jour attendent l’action utilisateur.
 - Ressources : l’installateur possède les versions, noms attendus et empreintes.

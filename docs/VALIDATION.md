@@ -47,17 +47,21 @@ les symboles et de toutes les partitions n’a pas été réalisée.
 | Partition de silences | Moteur réel puis import WebKit hors ligne : 1 page, durée de 2 secondes, signal du métronome |
 | Barrés v2 | Reproduction rouge avec l’ancienne migration, verte avec la correction ; 65 barrés contrôlés parmi 209 diagrammes après rechargement par le moteur |
 | Images de notation | Archive conservée ; 4 images sur la page 5, comme dans le premier export, avec inspection visuelle Chrome et WebKit |
-| Départ sur une note | Clic au tick 1 200 et toucher au tick 3 119, curseur déplacé et signal audio ; espace vide sans démarrage |
+| Lecture/pause sur une note | Souris en 1440 × 1000 puis toucher en 428 × 926 : démarrage, pause avec tick stable et signal coupé, reprise depuis la note visée |
 | Réseau | Aucune requête POST et aucune requête HTTP vers un autre serveur pendant la recette |
 | Construction | Liste explicite de ressources applicatives ; aucune partition copiée |
 
 Les recettes complètes Chromium et WebKit ont passé sur la construction
-`4569f498f84de8a51da7` : 13 pages, les 2 parties d’origine, clic et toucher,
-import hors ligne et redémarrage. Après ajout des contrôles de compte ZIP et
-de taille de la copie intermédiaire, les huit tests et la migration réelle ont
-repassé sur la construction `b8ab11dc702e9af7a4fc`. Aucun changement audio ajouté.
+`ef89840b97399c25f4b2` : 13 pages, les 2 parties d’origine, lecture/pause et
+reprise par clic et toucher, import hors ligne et redémarrage. Les huit tests
+Node et la construction passent aussi. Le test de pause échoue sur la version
+précédente : le bouton reste « Pause » et la lecture continue après le clic.
 La construction contient 30 ressources et environ 58 Mo, sans partition personnelle.
 La publication HTTPS reste à autoriser et vérifier.
+
+L’onglet Chrome de l’utilisateur affichait encore une version antérieure. La
+mise à jour y a été activée ; démarrage et pause par le bouton ont été contrôlés.
+Ce contrôle reste distinct du test automatisé du clic sur les notes.
 
 Le test de navigateur consomme `tests/browser.cjs`, avec un MSCZ donné en argument.
 Le second fichier est une copie avec commentaire ZIP différent ; la musique est

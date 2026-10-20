@@ -32,8 +32,9 @@ Le bouton **Enregistrer le MSCZ dans Fichiers** conserve une copie de l’origin
 L’effacement des données du site ou de l’app peut effacer sa bibliothèque.
 
 Cliquer ou toucher une note démarre la lecture à cet endroit. En cours de lecture,
-cela déplace le curseur et poursuit le morceau. Une sélection hors de la boucle
-active la désactive. Les espaces hors portée restent sans effet.
+le clic met en pause ; un nouveau clic reprend depuis la note visée. Une sélection
+hors de la boucle active la désactive au redémarrage. Les espaces hors portée
+restent sans effet.
 
 Après une correction du rendu, recharger l’app puis utiliser **Mettre à jour**
 si le bouton apparaît. Réimporter ensuite le MSCZ pour recalculer ses pages ;

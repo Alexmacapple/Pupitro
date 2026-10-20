@@ -25,7 +25,7 @@ Les parcours Chrome et WebKit Mac ont passé import, signal audio et redémarrag
 hors ligne. La revue a conduit à corriger l’annulation pendant le calcul SHA-256,
 les ouvertures concurrentes et l’import des partitions de silences. Huit tests
 Node passent ; un cas réel de silences affiche une page et produit le métronome
-dans WebKit hors ligne. La construction finale porte `b8ab11dc702e9af7a4fc`.
+dans WebKit hors ligne. La construction finale porte `ef89840b97399c25f4b2`.
 L’installation réelle, l’écoute et le mode avion sur
 l’iPhone et l’iPad restent à vérifier pour cette nouvelle version. La confirmation
 antérieure du son iPhone concernait la version Mac `v0.1.0`.
@@ -34,7 +34,10 @@ L’utilisateur consulte l’aperçu local sur `http://127.0.0.1:8770/`. Le barr
 de la page 5 est corrigé depuis son numéro et ses cordes d’origine ; 65 barrés
 ont été contrôlés dans le moteur. La copie intermédiaire reste une archive MSCZ
 complète pour conserver les images. Le clic ou le toucher d’une note démarre
-la lecture à cet endroit, ou la déplace si elle était en cours. Tests Chrome et
+la lecture à cet endroit, ou la met en pause si elle était en cours. Le clic suivant
+reprend depuis la note visée. Le défaut de pause a été reproduit avant correction ;
+tests souris et toucher Chrome/WebKit passés. L’onglet Chrome de l’utilisateur a
+été mis à jour ; démarrage et pause par le bouton y ont été contrôlés. Tests Chrome et
 WebKit passés, retour utilisateur encore attendu. Après mise à jour de l’app,
 réimporter le MSCZ pour remplacer les anciennes pages déjà stockées.
 

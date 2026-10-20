@@ -10,7 +10,7 @@
 - [x] Vérifier import, lecture et redémarrage hors ligne sur Chrome et WebKit Mac.
 - [x] Terminer la revue ; corriger annulation, ouvertures concurrentes et silences.
 - [x] Corriger le barré B♭ de la page 5 et préserver les images de notation.
-- [x] Démarrer ou déplacer la lecture par clic ou toucher sur une note.
+- [x] Démarrer, mettre en pause et relancer par clic ou toucher sur une note.
 - [ ] Faire confirmer ces deux changements par l’utilisateur dans l’aperçu.
 - [ ] Autoriser puis exécuter la publication statique HTTPS.
 - [ ] Installer depuis Safari et vérifier sur l’iPhone et l’iPad M4.

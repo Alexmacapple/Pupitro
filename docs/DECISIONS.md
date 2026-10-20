@@ -46,7 +46,9 @@ l’exemple sont des tracés, pour éviter une dépendance aux polices musicales
 
 Un clic ou un toucher dans la portée démarre au segment musical le plus proche.
 Les coordonnées viennent du moteur ; aucun élément SVG n’est interprété comme une
-note. Hors de la portée, le clic reste sans effet. Une sélection extérieure à la
+note. Pendant la lecture ou le décompte, le clic met en pause sans déplacer le
+curseur ; le clic suivant reprend depuis la note visée. Hors de la portée, le clic
+reste sans effet. Une sélection extérieure à la
 boucle active la désactive pour permettre le départ à l’endroit choisi.
 
 ## Stockage local explicite

@@ -13,7 +13,7 @@
 - Annulation contrôlée après le calcul d’empreinte ; ouvertures de partitions sérialisées.
 - Partitions de silences consultables, avec durée du métronome issue du moteur.
 - Barrés MuseScore 2 : numéro de case et cordes conservés ; images incluses dans la copie MSCZ.
-- Départ et déplacement de la lecture par clic ou toucher sur une note.
+- Lecture/pause par clic ou toucher sur une note ; reprise depuis la note visée.
 
 ## v0.1.0 — 2026-10-20 — premier prototype
 
