@@ -46,7 +46,8 @@ Cette dernière contrainte remplace l’exigence initiale de rendu strictement i
 Les vérifications de navigateur et les essais physiques restent distincts dans
 [VALIDATION.md](VALIDATION.md). La procédure et les conditions de publication sont
 dans [INSTALLATION.md](INSTALLATION.md). La publication HTTPS a été réalisée le
-20 octobre 2026 ; la recette sur les deux appareils reste à mener.
+20 octobre 2026. L’utilisateur confirme le fonctionnement sur iPhone ; la recette
+détaillée et la vérification iPad restent à mener.
 
 ## Limites
 

@@ -17,7 +17,8 @@
   réimporter le MSCZ pour remplacer les anciennes pages conservées.
 - [x] Obtenir l’accord pour activer GitHub Pages et publier l’application statique.
 - [x] Déployer puis contrôler HTTPS, le chemin `/Pupitro/`, les ressources et le hors ligne sur Chrome Mac.
-- [ ] Installer depuis Safari et vérifier sur l’iPhone et l’iPad M4.
+- [x] Recueillir la confirmation du fonctionnement général sur iPhone.
+- [ ] Compléter la recette détaillée iPhone et installer puis vérifier sur l’iPad M4.
 - [ ] Recueillir les versions du système et du navigateur de ces appareils.
 - [ ] Vérifier Android avant de l’annoncer comme testé.
 
@@ -25,7 +26,8 @@
 
 À exécuter séparément sur l’iPhone et l’iPad, selon
 [le guide d’installation](docs/INSTALLATION.md). Consigner les résultats dans
-[VALIDATION.md](docs/VALIDATION.md) ; aucun de ces essais n’est encore confirmé.
+[VALIDATION.md](docs/VALIDATION.md). Le fonctionnement général iPhone est confirmé
+par l’utilisateur ; les scénarios ci-dessous ne sont pas encore détaillés.
 
 - [ ] Comparer tous les éléments affichés d’une partition connue.
 - [ ] Écouter les instruments, le métronome et le décompte.

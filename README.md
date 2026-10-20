@@ -36,9 +36,9 @@ La partition d’essai compte ainsi **13 pages au lieu de 7**. Ce compromis perm
 l’import autonome ; le rendu strictement identique n’est plus promis.
 
 <!-- [IC] Preuves et portée dans docs/VALIDATION.md. -->
-La version autonome est en cours de validation. Les essais Chrome et WebKit sur
-Mac ne remplacent pas l’installation et l’écoute sur les appareils physiques.
-Le son iPhone confirmé auparavant concerne la version `v0.1.0`.
+Le fonctionnement de la version autonome sur iPhone est confirmé par l’utilisateur.
+La recette détaillée, notamment le mode avion, et la vérification sur iPad restent
+ouvertes. Les essais Chrome et WebKit sur Mac ont leur propre portée de preuve.
 
 Gardez vos MSCZ d’origine dans Fichiers : effacer les données du site peut
 effacer la bibliothèque. Une adresse HTTPS et une première connexion sont
@@ -50,8 +50,9 @@ nécessaires à l’installation. Pas d’édition, d’annotation Pencil ni d�
 **Ouvrir Pupitro : [alexmacapple.github.io/Pupitro](https://alexmacapple.github.io/Pupitro/).**
 La version autonome est publiée en HTTPS depuis le 20 octobre 2026. Installation
 depuis Safari, puis import des MSCZ dans l’app : aucun clonage du dépôt n’est requis.
-Les contrôles sur le site publié ont passé sur Chrome Mac ; installation et écoute
-sur iPhone et iPad restent à confirmer.
+Les contrôles sur le site publié ont passé sur Chrome Mac. La version autonome est
+repérée par le tag [v0.2.0](https://github.com/Alexmacapple/Pupitro/tree/v0.2.0) ;
+le fonctionnement iPhone est confirmé, celui de l’iPad reste à confirmer.
 
 - [Installation sur iPhone et iPad](docs/INSTALLATION.md)
 - [Vérifications et limites](docs/VALIDATION.md)

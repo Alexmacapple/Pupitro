@@ -109,20 +109,25 @@ Le contexte de test hors ligne a été fermé après contrôle. Le second fichie
 contient la même musique avec une empreinte distincte ; ce n’est pas une seconde
 partition musicalement indépendante. La lecture du nouvel import a été contrôlée
 après réouverture d’un onglet normal ; aucune nouvelle écoute humaine n’est revendiquée.
-L’installation Safari et l’écoute sur les appareils physiques restent non vérifiées.
+Le retour utilisateur iPhone figure ci-dessous ; la recette détaillée et l’iPad
+restent à vérifier.
 La procédure est dans [INSTALLATION.md](INSTALLATION.md).
 
 ## Appareils physiques
 
 | Appareil | Version autonome |
 |---|---|
-| iPhone 12 Pro Max présumé | Installation, affichage, son et mode avion non encore confirmés |
+| iPhone 12 Pro Max présumé | Fonctionnement de la version autonome confirmé par l’utilisateur ; scénarios détaillés non précisés |
 | iPad M4 | Installation, affichage, son et mode avion non encore confirmés |
 | Android | Non testé physiquement |
 
-Les versions iOS/iPadOS et du navigateur restent inconnues. Le retour utilisateur
-confirmant le son iPhone concernait `v0.1.0`, avec serveur Mac ; il ne valide pas
-cette nouvelle version. WebKit de test sur Mac ne remplace pas Safari sur iPhone.
+Le 20 octobre 2026, après publication et explication de l’installation, l’utilisateur
+confirme que Pupitro fonctionne sur iPhone. Ce retour concerne la version autonome
+repérée par `v0.2.0`, distincte du précédent retour sur le son de `v0.1.0`.
+Il ne détaille pas chaque scénario : installation depuis l’icône, instruments,
+mode avion, nouvel import hors ligne et persistance restent à renseigner séparément.
+Les versions iOS/iPadOS et du navigateur restent inconnues. WebKit de test sur Mac
+ne remplace pas Safari sur iPhone ; aucun résultat iPad n’a encore été rapporté.
 
 ## Recette à mener sur chaque appareil
 
@@ -136,12 +141,13 @@ cette nouvelle version. WebKit de test sur Mac ne remplace pas Safari sur iPhone
 | Résultat à consigner | iPhone | iPad M4 |
 |---|---|---|
 | Version système, navigateur et date | À relever | À relever |
-| Installation et indicateur prêt hors ligne | À tester | À tester |
-| Partition connue, pages et barrés | À tester | À tester |
-| Son entendu, instruments, métronome et décompte | À tester | À tester |
-| Lecture/pause au toucher, curseur, tempo et boucle | À tester | À tester |
-| Réouverture et nouvel import sans réseau ni Mac | À tester | À tester |
-| Réglages conservés et retour après verrouillage | À tester | À tester |
+| Fonctionnement général rapporté | Confirmé par l’utilisateur | À tester |
+| Installation et indicateur prêt hors ligne | Non détaillé | À tester |
+| Partition connue, pages et barrés | Non détaillé | À tester |
+| Son entendu, instruments, métronome et décompte | Non détaillé | À tester |
+| Lecture/pause au toucher, curseur, tempo et boucle | Non détaillé | À tester |
+| Réouverture et nouvel import sans réseau ni Mac | Non détaillé | À tester |
+| Réglages conservés et retour après verrouillage | Non détaillé | À tester |
 
 Restent aussi non validés : stockage saturé réel, interruption système pendant une
 transaction, mise à jour avec plusieurs fenêtres ouvertes et partitions complexes

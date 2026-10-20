@@ -7,6 +7,7 @@ lecture hors ligne sans Mac. Rendu web différent accepté si tout s’affiche b
 Six instruments, métronome, décompte, curseur, boucle et commandes escamotables.
 Pas d’édition, d’annotation, de synchronisation ni d’achat autorisé.
 Le tag `v0.1.0`, vérifié sur GitHub au commit `a6ef304`, protège la version Mac.
+Le tag `v0.2.0` repère le lecteur autonome avec confirmation utilisateur iPhone.
 
 Lire [AGENTS.md](../AGENTS.md), [todo.md](../todo.md), puis
 [VALIDATION.md](../docs/VALIDATION.md). Examiner Git avant toute reprise.
@@ -38,7 +39,7 @@ contrôlés, sans essai direct du clic sur note dans cet onglet. D’autres ongl
 peuvent encore garder l’ancienne version. Réimporter le MSCZ après mise à jour
 pour recalculer les pages et bénéficier de la correction du barré.
 
-## Publication réalisée ; installation sur les appareils à confirmer
+## Publication réalisée ; fonctionnement iPhone confirmé
 
 L’utilisateur a explicitement autorisé l’activation et la publication GitHub Pages.
 Le [workflow 39497476043](https://github.com/Alexmacapple/Pupitro/actions/runs/39497476043)
@@ -56,8 +57,10 @@ nouveau déploiement, ouvrir l’app avec Internet puis utiliser **Mettre à jou
 [INSTALLATION.md](../docs/INSTALLATION.md) possède la procédure Safari et explique
 la différence entre installation de l’app et import d’une partition, sans clonage.
 
-L’installation, l’écoute et le mode avion sur l’iPhone 12 Pro Max présumé et l’iPad
-M4 restent à vérifier ; versions système inconnues. Le son iPhone confirmé auparavant
-concernait `v0.1.0`. Android et les mises à jour avec plusieurs fenêtres restent non testés.
+L’utilisateur confirme que la version autonome fonctionne sur iPhone. Ce retour
+général ne détaille pas les scénarios, notamment le mode avion et le nouvel import
+hors ligne ; les versions système restent inconnues. La vérification iPad M4 reste
+ouverte. Le précédent retour sur le son concernait `v0.1.0`. Android et les mises
+à jour avec plusieurs fenêtres restent non testés.
 Préserver partitions, preuves, anciens imports, lien privé et outils natifs du Mac.
 Ne pas exposer le serveur Mac sur Internet ni publier de partition personnelle.

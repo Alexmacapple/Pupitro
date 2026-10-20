@@ -16,7 +16,8 @@ sources:
 **Adresse d’installation : [https://alexmacapple.github.io/Pupitro/](https://alexmacapple.github.io/Pupitro/).**
 GitHub Pages est activé avec HTTPS. Le premier déploiement a été explicitement
 autorisé et a réussi ; les ressources, l’import et la réouverture sans réseau ont
-été contrôlés sur Chrome Mac. Les essais physiques iPhone/iPad restent à réaliser.
+été contrôlés sur Chrome Mac. L’utilisateur confirme que la version autonome
+fonctionne sur iPhone ; la recette détaillée et la vérification iPad restent ouvertes.
 
 Installer consiste à ouvrir cette adresse dans Safari et à ajouter Pupitro à
 l’écran d’accueil. L’application télécharge ses ressources et les conserve localement.
@@ -30,9 +31,9 @@ plus nécessaires pour importer, consulter ou écouter.
 
 ## Installer depuis Safari sur chaque appareil
 
-L’iPhone 12 Pro Max présumé et l’iPad M4 n’ont pas encore été testés avec la version
-autonome ; relever leurs versions iOS/iPadOS dans Réglages → Général → Informations
-avant la recette.
+Le fonctionnement sur iPhone est confirmé par l’utilisateur, sans détail des
+scénarios ni version système. L’iPad M4 reste à vérifier. Relever les versions
+iOS/iPadOS dans Réglages → Général → Informations pour compléter la recette.
 
 1. Avec Internet, ouvrir l’adresse HTTPS vérifiée dans **Safari**.
 2. Sur iPhone, ouvrir **Partager**, directement ou via le menu **Plus** selon
@@ -141,5 +142,6 @@ Aucun achat ni abonnement n’est nécessaire dans cette configuration.
 ## Si le son manque
 
 Toucher **Écouter**, vérifier le volume et la destination Bluetooth. Le mode audio
-`playback` est demandé quand Safari le permet. L’écoute physique est encore à valider
-pour cette nouvelle version. L’ancienne version Mac reste accessible au tag `v0.1.0`.
+`playback` est demandé quand Safari le permet. La confirmation générale iPhone ne
+détaille pas les essais audio ; les résultats précis sont dans [VALIDATION.md](VALIDATION.md).
+L’ancienne version Mac reste accessible au tag `v0.1.0`.
