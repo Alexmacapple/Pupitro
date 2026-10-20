@@ -87,6 +87,15 @@ interrompu garde les ajouts terminés, avec un bilan explicite. La vérification
 du fichier entier précède toute écriture. Les fichiers `.pupitro` peuvent être
 transférés manuellement ; aucun compte ni synchronisation n’est introduit.
 
+Le correctif conserve l’arrêt de restauration au premier échec de préparation,
+avec fichier et bilan explicites. L’ajout multiple continue après une erreur
+ordinaire de fichier. Harmoniser ces politiques reste une option à décider ;
+la question posée n’autorise pas un changement sans réponse.
+
+Titres et budget de sauvegarde ont un propriétaire commun : un titre blanc
+reçoit un nom de repli ; le nom, le fichier et les réglages réellement conservés
+doivent tenir ensemble dans le cadre de 1 Mio avant validation de l’écriture.
+
 La version 2 de la base n’est pas rétrogradée par un retour Git au code d’un ancien
 tag. Les tags historiques restent inchangés ; une sauvegarde externe est le moyen
 de retrouver les originaux et leurs réglages après effacement des données du site.
@@ -113,6 +122,9 @@ de l’installation MuseScore du Mac. Leur rendu sonore peut différer de `v0.1.
 Le dépôt source exclut les ressources téléchargées et les partitions personnelles.
 L’artefact statique est construit depuis une liste explicite et inclut les notices
 tierces. Il ne publie ni les imports ni le lien privé de l’ancien serveur Mac.
+La liste autorisée ne prouve pas à elle seule la propriété d’un fichier existant.
+Le constructeur vérifie donc aussi les sorties générées via un reçu d’empreintes
+et conserve une sortie modifiée ou non vérifiable en refusant sa réutilisation.
 GitHub Pages est la cible HTTPS préparée, avec un workflow déclenché manuellement.
 L’activation et le premier déploiement ont été explicitement autorisés, puis réalisés
 le 20 octobre 2026. Le code poussé ne déclenche pas automatiquement un déploiement

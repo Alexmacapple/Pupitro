@@ -3,9 +3,9 @@ const playwright=process.env.PUPITRO_PLAYWRIGHT||'playwright';
 const {expect}=require(playwright+'/test');
 const browserType=require(playwright)[process.env.PUPITRO_ENGINE||'chromium'];
 const assert=require('node:assert/strict');
-const {launchObservedContext,assertObservations}=require('./browser.cjs');
+const {launchObservedContext,assertObservations,normalizeBase,restoreTestPatches,closeObservedContext}=require('./browser.cjs');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-const base=process.env.PUPITRO_TEST_URL||'http://127.0.0.1:8789/';
+const base=normalizeBase(process.env.PUPITRO_TEST_URL||'http://127.0.0.1:8770/');
 const output=fs.mkdtempSync(path.join(os.tmpdir(),'pupitro-library-'));
 let context;
 const observations={errors:[],posts:[],outside:[],consoleCounts:new Map()};
@@ -81,6 +81,7 @@ async function records(page){
   await expect(page.locator('#title')).toHaveText('Mon étude renommée');
   await page.getByRole('button',{name:'Supprimer Mon étude renommée',exact:true}).click({timeout:5000});
   await expect(page.locator('#libraryActionDescription')).toContainText('Fichiers');
+  await expect(page.getByLabel('Nom dans Pupitro',{exact:true})).toBeHidden();
   await page.getByRole('button',{name:'Annuler',exact:true}).click();
   assert.equal((await records(page)).length,1);
   // Fail at the actual storage boundary, after the first delete was enqueued.
@@ -88,14 +89,19 @@ async function records(page){
     const original=IDBObjectStore.prototype.delete;
     window.restoreDelete=()=>{IDBObjectStore.prototype.delete=original;};
     IDBObjectStore.prototype.delete=function(key){
-      if(this.name==='catalog')throw new DOMException('Suppression de test interrompue','AbortError');
-      return original.call(this,key);
+      const request=original.call(this,key);
+      if(this.name==='settings'&&key!=='last-score')throw new DOMException('Suppression de test interrompue','AbortError');
+      return request;
     };
   });
   await page.getByRole('button',{name:'Supprimer Mon étude renommée',exact:true}).click();
   await page.getByRole('button',{name:'Supprimer cette partition',exact:true}).click();
   await expect(page.locator('#libraryActionError')).toContainText('interrompue');
   assert.equal((await records(page)).length,1);
+  const rollbackState=await page.evaluate(async id=>{
+    const api=await import('./library.js');return [await api.getSettings(id),await api.getSettings('last-score')];
+  },legacy.id);
+  assert.equal(rollbackState[0].controls.speed,'0.75');assert.equal(rollbackState[1],legacy.id);
   await expect(page.locator('#title')).toHaveText('Mon étude renommée');
   await page.evaluate(()=>window.restoreDelete());
   await page.getByRole('button',{name:'Annuler',exact:true}).click();
@@ -146,12 +152,12 @@ async function records(page){
   await page.locator('#scoreFile').setInputFiles(files[0]);
   await expect(page.locator('#duplicate')).toBeVisible();
   await page.getByRole('button',{name:'Repréparer le MSCZ',exact:true}).click();
-  await expect(page.locator('#status')).toContainText('partition enregistrée',{timeout:90000});
+  await expect(page.locator('#status')).toContainText('repréparée',{timeout:90000});
   await expect(page.locator('#title')).toHaveText('Mes exercices');
   assert.equal((await records(page)).length,2);
   await page.locator('#scoreFile').setInputFiles(files[1]);
   await expect(page.locator('#duplicate')).toBeVisible();
-  await page.getByRole('button',{name:'Annuler cet ajout',exact:true}).click();
+  await page.getByRole('button',{name:'Annuler le lot',exact:true}).click();
   await expect(page.locator('#status')).toContainText('annulé');
   await expect(page.locator('#title')).toHaveText('Mes exercices');
   await page.locator('#speed').selectOption('1.25');
@@ -171,16 +177,31 @@ async function records(page){
   const download=await downloading,backupPath=path.join(output,'bibliotheque.pupitro');
   await download.saveAs(backupPath);
   assert.ok(fs.statSync(backupPath).size>files[0].buffer.length);
+  // Decode the public format independently from the production encoder/inspector.
+  const bytes=fs.readFileSync(backupPath),magic=Buffer.from('PUPITRO-LIBRARY\n1\n');
+  assert.deepEqual(bytes.subarray(0,magic.length),magic);let offset=magic.length;
+  const frame=()=>{const size=bytes.readUInt32BE(offset);offset+=4;if(!size)return null;const value=JSON.parse(bytes.subarray(offset,offset+size));offset+=size;return value;};
+  const header=frame(),decoded=[];assert.equal(header.count,2);
+  for(let n=0;n<header.count;n++){
+    const entry=frame();const original=bytes.subarray(offset,offset+entry.sourceBytes);offset+=entry.sourceBytes;
+    assert.equal(require('node:crypto').createHash('sha256').update(original).digest('hex'),entry.id);
+    decoded.push({id:entry.id,title:entry.title,filename:entry.filename,source:Array.from(original),settings:entry.settings});
+  }
+  assert.equal(frame(),null);assert.equal(offset,bytes.length);
+  assert.deepEqual(decoded.map(({settings,...row})=>row).sort((a,b)=>a.id.localeCompare(b.id)),
+    beforeBackup.map(({manifestTitle,...row})=>row).sort((a,b)=>a.id.localeCompare(b.id)));
+  assert.deepEqual(decoded.map(row=>[row.id,row.settings]).sort(),[...beforePreferences].sort());
   // Delay the actual catalog transaction completion after backup inspection.
   await page.evaluate(()=>{
-    const original=IDBDatabase.prototype.transaction;
+    const original=IDBDatabase.prototype.transaction;let delayed=false;
     window.catalogWaiting=false;
-    window.restoreTransaction=()=>{IDBDatabase.prototype.transaction=original;};
+    window.restoreTransaction=()=>{IDBDatabase.prototype.transaction=original;window.completeCatalog?.();};
     IDBDatabase.prototype.transaction=function(stores,mode,...args){
       const tx=original.call(this,stores,mode,...args);
-      if(Array.isArray(stores)&&stores.length===1&&stores[0]==='catalog'&&mode==='readonly'){
+      if(!delayed&&Array.isArray(stores)&&stores.length===1&&stores[0]==='catalog'&&mode==='readonly'){
+        delayed=true;
         Object.defineProperty(tx,'oncomplete',{set(handle){tx.addEventListener('complete',event=>{
-          window.catalogWaiting=true;window.completeCatalog=()=>handle(event);
+          window.catalogWaiting=true;window.completeCatalog=()=>{window.completeCatalog=null;handle(event);};
         },{once:true});}});
       }
       return tx;
@@ -189,13 +210,18 @@ async function records(page){
   await page.locator('#backupFile').setInputFiles(backupPath);
   await expect.poll(()=>page.evaluate(()=>window.catalogWaiting)).toBe(true);
   await page.locator('#cancelLibraryOperation').click();
-  await page.evaluate(()=>{window.completeCatalog();window.restoreTransaction();});
+  await page.evaluate(()=>window.restoreTransaction());
   await expect(page.locator('#libraryStatus')).toContainText('Vérification annulée');
   await expect(page.locator('#restorePreview')).toBeHidden();
   assert.deepEqual(await records(page),beforeBackup);
   await page.getByRole('button',{name:'Renommer Mes exercices',exact:true}).click();
   await page.getByLabel('Nom dans Pupitro',{exact:true}).fill('Nom local prioritaire');
   await page.getByRole('button',{name:'Enregistrer le nom',exact:true}).click();
+  await page.locator('#closeLibrary').click();await page.locator('#speed').selectOption('0.5');
+  await expect.poll(()=>page.evaluate(async()=>{
+    const api=await import('./library.js');return (await api.getSettings(new URL(location.href).searchParams.get('score')))?.controls?.speed;
+  })).toBe('0.5');
+  await page.locator('#libraryButton').click();
   await page.locator('#backupFile').setInputFiles(backupPath);
   await expect(page.locator('#restorePreview')).toBeVisible();
   await page.getByRole('button',{name:'Annuler la restauration',exact:true}).click();
@@ -206,6 +232,10 @@ async function records(page){
   await expect(page.locator('#status')).toContainText('2 déjà présentes',{timeout:10000});
   assert.ok((await records(page)).some(r=>r.title==='Nom local prioritaire'));
   await page.locator('#libraryButton').click();
+  await expect(page.locator('#speed')).toHaveValue('0.5');
+  assert.equal(await page.evaluate(async()=>{
+    const api=await import('./library.js');return (await api.getSettings(new URL(location.href).searchParams.get('score'))).controls.speed;
+  }),'0.5');
   for(const row of await records(page)){
     await page.getByRole('button',{name:'Supprimer '+row.title,exact:true}).click();
     await page.getByRole('button',{name:'Supprimer cette partition',exact:true}).click();
@@ -257,7 +287,6 @@ async function records(page){
     return {id,bytes:Array.from(new Uint8Array(await encodeBackup(snapshot).arrayBuffer()))};
   },Array.from(third.buffer));
   const extraFile={name:'trois.pupitro',mimeType:'application/octet-stream',buffer:Buffer.from(extra.bytes)};
-  fs.writeFileSync(path.join(output,'trois.pupitro'),extraFile.buffer);
   await page.locator('#backupFile').setInputFiles(extraFile);
   await expect(page.locator('#restorePreview')).toBeVisible();
   await page.evaluate(id=>{
@@ -276,12 +305,13 @@ async function records(page){
   await page.locator('#backupFile').setInputFiles(extraFile);
   await expect(page.locator('#restorePreview')).toBeVisible();
   await page.evaluate(()=>{
-    const original=crypto.subtle.digest;
+    const original=crypto.subtle.digest;let delayed=false;
     window.digestWaiting=false;
-    window.restoreDigest=()=>{crypto.subtle.digest=original;};
+    window.restoreDigest=()=>{crypto.subtle.digest=original;window.completeDigest?.();};
     crypto.subtle.digest=function(...args){
+      if(delayed)return original.apply(this,args);delayed=true;
       window.digestWaiting=true;
-      return new Promise((resolve,reject)=>{window.completeDigest=()=>original.apply(this,args).then(resolve,reject);});
+      return new Promise((resolve,reject)=>{window.completeDigest=()=>{window.completeDigest=null;original.apply(this,args).then(resolve,reject);};});
     };
   });
   await page.getByRole('button',{name:'Restaurer les partitions absentes',exact:true}).click();
@@ -290,26 +320,42 @@ async function records(page){
   await expect(page.locator('#status')).toContainText('Restauration annulée');
   await page.evaluate(()=>window.restoreDigest());
   assert.deepEqual(await records(page),preserved);
+  // Complete the same mixed restore: absent source added, local sources/settings kept.
+  await page.locator('#libraryButton').click();await page.locator('#backupFile').setInputFiles(extraFile);
+  await expect(page.locator('#restorePreview')).toBeVisible();
+  await page.getByRole('button',{name:'Restaurer les partitions absentes',exact:true}).click();
+  await expect(page.locator('#status')).toContainText('1 restaurées, 2 déjà présentes',{timeout:90000});
+  const mixed=await records(page);
+  assert.deepEqual(mixed.filter(row=>row.id!==extra.id),preserved);
+  assert.deepEqual(mixed.find(row=>row.id===extra.id).source,Array.from(third.buffer));
+  assert.equal(await page.evaluate(async id=>{
+    const api=await import('./library.js');return (await api.getSettings(id)).controls.speed;
+  },extra.id),'0.5');
   const large=await page.evaluate(async()=>{
     const api=await import('./library.js'),rows=await api.listScores(),record=await api.getScore(rows[0].id);
     const source=new Uint8Array(await record.source.arrayBuffer());
-    for(let n=3;n<=75;n++){
+    for(let n=4;n<=75;n++){
       const comment=new TextEncoder().encode('library capacity '+n),bytes=new Uint8Array(source.length+comment.length);
       bytes.set(source);bytes.set(comment,source.length);new DataView(bytes.buffer).setUint16(source.length-2,comment.length,true);
       const id=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),x=>x.toString(16).padStart(2,'0')).join('');
       await api.saveScore({...record,id,title:'Étude '+n,filename:'etude-'+n+'.mscz',source:new File([bytes],'etude-'+n+'.mscz'),importedAt:Date.now()+n});
     }
     const reads=[],original={};
-    for(const name of ['get','getAll','openCursor']){
-      original[name]=IDBObjectStore.prototype[name];
-      IDBObjectStore.prototype[name]=function(...args){if(this.name==='scores')reads.push(name);return original[name].apply(this,args);};
+    for(const prototype of [IDBObjectStore.prototype,IDBIndex.prototype]){
+      for(const name of ['get','getAll','getKey','getAllKeys','count','openCursor','openKeyCursor']){
+        const method=prototype[name];if(typeof method!=='function')continue;
+        original[Object.keys(original).length]=()=>{prototype[name]=method;};
+        prototype[name]=function(...args){if((this.objectStore?.name||this.name)==='scores')reads.push(name);return method.apply(this,args);};
+      }
     }
-    try{return {count:(await api.listScores()).length,rawScoreReads:reads};}
-    finally{for(const [name,fn]of Object.entries(original))IDBObjectStore.prototype[name]=fn;}
+    window.rawScoreReads=reads;window.restoreReads=()=>{for(const restore of Object.values(original))restore();};
+    return {count:(await api.listScores()).length,rawScoreReads:reads};
   });
   assert.deepEqual(large,{count:75,rawScoreReads:[]});
   await page.locator('#libraryButton').click();
   await expect(page.locator('#libraryItems [data-action="open"]')).toHaveCount(75);
+  assert.deepEqual(await page.evaluate(()=>window.rawScoreReads),[]);
+  await page.evaluate(()=>window.restoreReads());
   assert.ok(await page.locator('#library').evaluate(el=>el.scrollWidth<=el.clientWidth));
   await page.screenshot({path:path.join(output,'library-mobile.png')});
   await page.setViewportSize({width:1440,height:1000});
@@ -324,4 +370,4 @@ async function records(page){
   await expect(page.locator('#libraryItems [data-action="open"]')).toHaveCount(75);
   assertObservations(observations);
   console.log(JSON.stringify({legacyMigration:true,rename:true,sourcePreserved:true,cancel:true,deleteActive:true,deleteRollback:true,lateSettingsIgnored:true,multiImportOffline:true,duplicateChoices:true,backupRoundTripOffline:true,restoreKeepsExisting:true,settingsRestored:true,quotaRollback:true,restoreQuotaRollback:true,restoreCancelled:true,lateInspectionCancelled:true,invalidBackupPreservesLibrary:true,catalogRecords:large.count,rawScoreReadsForListing:large.rawScoreReads.length,restartOffline:true,errors:observations.errors,posts:observations.posts.length,externalRequests:observations.outside.length,output}));
-})().catch(async e=>{console.error(e);const page=context?.pages().at(-1);if(page)await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});console.error('Artifacts:',output);process.exitCode=1;}).finally(async()=>{if(context)await context.close();});
+})().catch(async e=>{console.error(e);const page=context?.pages().at(-1);await restoreTestPatches(page).catch(()=>{});if(page)await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});console.error('Artifacts:',output);process.exitCode=1;}).finally(async()=>{await closeObservedContext(context,path.join(output,'profile'));}).catch(error=>{console.error('Cleanup failed:',error);process.exitCode=1;});

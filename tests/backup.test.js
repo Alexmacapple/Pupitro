@@ -4,8 +4,8 @@ import {zipSync} from "../reader/assets/fflate.js";
 import {encodeBackup,inspectBackup} from "../reader/backup.js";
 import {normalizePreferences} from "../reader/library.js";
 
-async function snapshot(){
-  const bytes=zipSync({"score.mscx":new TextEncoder().encode('<museScore version="3.02"><Score/></museScore>')},{level:0});
+async function snapshot(marker=""){
+  const bytes=zipSync({"score.mscx":new TextEncoder().encode(`<museScore version="3.02"><!--${marker}--><Score/></museScore>`)},{level:0});
   const id=Buffer.from(await crypto.subtle.digest("SHA-256",bytes)).toString("hex");
   return {lastScore:id,records:[{id,title:"Nom personnalisé",filename:"original.mscz",importedAt:123,
     source:new Blob([bytes]),settings:{controls:{speed:"0.75",loop:true},parts:[{channel:0,sound:"flute",volume:.5,muted:false,solo:true}]}}]};
@@ -16,6 +16,17 @@ test("a backup retains original bytes, display names and settings without Base64
   const [record]=after.entries;assert.equal(record.title,"Nom personnalisé");assert.equal(record.filename,"original.mscz");
   assert.deepEqual(record.settings,before.records[0].settings);
   assert.deepEqual(await record.source.arrayBuffer(),await before.records[0].source.arrayBuffer());
+});
+test("blank legacy titles remain exportable with a name derived from the MSCZ filename",async()=>{
+  const before=await snapshot();before.records[0].title="   ";
+  const after=await inspectBackup(encodeBackup(before));
+  assert.equal(after.entries[0].title,"original");
+  assert.deepEqual(await after.entries[0].source.arrayBuffer(),await before.records[0].source.arrayBuffer());
+});
+test("an orphaned last-score never makes an otherwise valid backup unrestorable",async()=>{
+  const before=await snapshot();before.lastScore='b'.repeat(64);
+  const after=await inspectBackup(encodeBackup(before));
+  assert.equal(after.lastScore,null);assert.equal(after.entries.length,1);
 });
 test("legacy empty and fractional loop inputs survive a complete backup",async()=>{
   for(const value of ["","1.5","-1","1e2"]){
@@ -33,8 +44,14 @@ test("truncation, trailing bytes and damaged MSCZ content reject the whole backu
   await assert.rejects(inspectBackup(new Blob([corrupted])));
 });
 test("cancellation during inspection does not return a partial restore plan",async()=>{
-  const controller=new AbortController(),file=encodeBackup(await snapshot());
-  await assert.rejects(inspectBackup(file,()=>controller.abort(),controller.signal),{name:"AbortError"});
+  const controller=new AbortController(),value=await snapshot();value.records.push(...(await snapshot("second")).records);
+  const file=encodeBackup(value);let progress=0;
+  await assert.rejects(inspectBackup(file,()=>{if(++progress===2)controller.abort();},controller.signal),{name:"AbortError"});
+  assert.equal(progress,2);
+});
+test("valid original bytes with a mismatched metadata identity are refused",async()=>{
+  const value=await snapshot();value.records[0].id='b'.repeat(64);
+  await assert.rejects(inspectBackup(encodeBackup(value)),/endommagé/);
 });
 test("duplicate identifiers in a backup are rejected before restoration",async()=>{
   const value=await snapshot();value.records.push(value.records[0]);

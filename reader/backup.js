@@ -1,31 +1,31 @@
 import {readScoreSource} from "./import-score.js";
 import {normalizePreferences} from "./library.js";
+import {scoreMetadata,metadataBytes,MAX_METADATA} from "./score-metadata.js";
 
 const encoder = new TextEncoder(), decoder = new TextDecoder("utf-8",{fatal:true});
 const MAGIC = encoder.encode("PUPITRO-LIBRARY\n1\n");
 // Frame metadata is decoded as JSON; originals remain separate Blob slices.
-const MAX_METADATA = 1024 * 1024, MAX_SOURCE = 50 * 1024 * 1024;
+const MAX_SOURCE = 50 * 1024 * 1024;
 const invalid = () => { throw new Error("La sauvegarde Pupitro est invalide ou incomplète."); };
 const cancelled = signal => { if (signal?.aborted) throw new DOMException("Restauration annulée.","AbortError"); };
 function sizeBytes(size) { const bytes=new Uint8Array(4);new DataView(bytes.buffer).setUint32(0,size);return bytes; }
 function frame(value) {
-  const bytes=encoder.encode(JSON.stringify(value));
-  if (bytes.length>MAX_METADATA) throw new Error("Les métadonnées dépassent la capacité de sauvegarde locale (1 Mo par partition).");
+  const bytes=metadataBytes(value);
   return [sizeBytes(bytes.length),bytes];
 }
 function metadata(value) {
   if (!value || typeof value!=="object" || Array.isArray(value) ||
       typeof value.id!=="string" || !/^[a-f0-9]{64}$/.test(value.id) ||
-      typeof value.title!=="string" || !value.title.trim() ||
+      typeof value.title!=="string" ||
       typeof value.filename!=="string" || !/\.mscz$/i.test(value.filename) ||
       !Number.isSafeInteger(value.sourceBytes) || value.sourceBytes<22 || value.sourceBytes>MAX_SOURCE ||
       !Number.isFinite(value.importedAt) || value.importedAt<0) invalid();
-  return {id:value.id,title:value.title,filename:value.filename,sourceBytes:value.sourceBytes,
-    importedAt:value.importedAt,settings:normalizePreferences(value.settings)};
+  return scoreMetadata(value,normalizePreferences(value.settings));
 }
 
 export function encodeBackup(snapshot) {
-  const parts=[MAGIC,...frame({count:snapshot.records.length,lastScore:snapshot.lastScore||null})];
+  const lastScore=snapshot.records.some(record=>record.id===snapshot.lastScore)?snapshot.lastScore:null;
+  const parts=[MAGIC,...frame({count:snapshot.records.length,lastScore})];
   for (const record of snapshot.records) {
     if (!(record.source instanceof Blob)) invalid();
     const entry=metadata({...record,sourceBytes:record.source.size});
@@ -63,8 +63,10 @@ export async function inspectBackup(file, onProgress=()=>{}, signal) {
     const source=new File([file.slice(position,position+entry.sourceBytes)],entry.filename,{type:"application/octet-stream"});
     position+=entry.sourceBytes;
     onProgress(`Vérification de la sauvegarde : ${index+1}/${header.count}…`);
-    const checked=await readScoreSource(source,signal);
-    if (checked.id!==entry.id) throw new Error("Un MSCZ de la sauvegarde est endommagé. Aucune partition n’a été restaurée.");
+    let checked;
+    try{checked=await readScoreSource(source,signal);}
+    catch(error){if(error.name==="AbortError")throw error;throw new Error(`${entry.filename} : ${error.message}`);}
+    if (checked.id!==entry.id) throw new Error(`${entry.filename} : un MSCZ de la sauvegarde est endommagé. Aucune partition n’a été restaurée.`);
     entries.push({...entry,source});
   }
   if (await nextFrame()!==undefined || position!==file.size) invalid();

@@ -30,6 +30,13 @@ La confirmation physique iPhone concerne la première version `v0.2.0` ;
 ce gestionnaire reste à vérifier physiquement sur iPhone et iPad.
 Les preuves détaillées restent dans [VALIDATION.md](VALIDATION.md).
 
+Une construction corrective locale est prête : `7385c59dd8c93f227bbd`,
+32 ressources et 58 164 444 octets. À cette rédaction, elle n’est pas encore
+déployée : l’adresse ci-dessus sert toujours la version publiée décrite ici.
+Un commit ou une construction locale ne met pas les appareils à jour. Attendre
+le déploiement manuel puis suivre **Mettre à jour** ; les preuves et réserves
+figurent dans [VALIDATION.md](VALIDATION.md).
+
 Installer consiste à ouvrir cette adresse dans Safari et à ajouter Pupitro à
 l’écran d’accueil. L’application télécharge ses ressources et les conserve localement.
 Il n’y a aucun dépôt à cloner. Importer consiste ensuite à choisir un fichier
@@ -91,12 +98,13 @@ par partition et la référence de la dernière partition ouverte. Les pages pr�
 ne sont pas incluses : elles seront recréées par le moteur local lors de la restauration.
 Conserver cette sauvegarde en dehors des données du site.
 
-**Limite connue, à corriger :** un MSCZ dont le titre ne contient que des espaces
+**Limite de la version publiée :** un MSCZ dont le titre ne contient que des espaces
 peut être importé avec un nom invisible, puis bloquer l’export avec
 « La sauvegarde Pupitro est invalide ou incomplète. » Dans **Bibliothèque**, choisir
 **Renommer** sur cette entrée et saisir un nom visible, puis relancer
 **Exporter la bibliothèque**. Ce contournement a été vérifié sur Chromium Mac ;
-les détails et la portée de la preuve sont dans [VALIDATION.md](VALIDATION.md).
+le correctif local n’est pas encore annoncé comme déployé. Les détails et la
+portée des preuves sont dans [VALIDATION.md](VALIDATION.md).
 
 **Restaurer une sauvegarde** permet de choisir ce fichier, vérifier son contenu
 puis confirmer les ajouts. Les partitions identiques déjà présentes gardent leurs

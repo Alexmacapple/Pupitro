@@ -12,6 +12,39 @@ Le tag `v0.2.0` repère le lecteur autonome avec confirmation utilisateur iPhone
 Lire [AGENTS.md](../AGENTS.md), [todo.md](../todo.md), puis
 [VALIDATION.md](../docs/VALIDATION.md). Examiner Git avant toute reprise.
 
+## État courant — correctifs locaux non publiés
+
+Chantier isolé dans `/private/tmp/pupitro-corrections-20261021.JvUWTT/repo`,
+depuis `8bb6a2f`. Construction locale `7385c59dd8c93f227bbd` :
+32 ressources, 58 164 444 octets. Aucun nouveau déploiement revendiqué ; la
+dernière version publique documentée reste `a211530ec3d09aedecdb`.
+
+Titres et budget de sauvegarde ont un propriétaire commun ; les réglages
+conservés sont inclus avant commit. Connexion IndexedDB, bilans d’opération,
+états occupés, téléchargements, focus après dialogues et contrôles en faible
+hauteur sont corrigés. Le constructeur préserve aussi ses sorties générées
+grâce au reçu `.pupitro-build.json`. Les deux P2 de la revue PDV ont reçu une
+correction ; ne pas réutiliser le verdict antérieur comme validation de celle-ci.
+
+La campagne AY11 complète porte sur `f26b29840edc0e48d215`. Les reprises ciblées
+sur `c9a92abf3377c4793737` vérifient les quatre corrections de dialogue/région et
+13 arrêts clavier en 320 × 256 sur chaque moteur. Les étiquettes, descriptions
+et états du signal audio ont été repris sur `7385c59dd8c93f227bbd`.
+Ce ne sont ni de nouvelles recettes complètes, ni des essais physiques.
+
+La restauration s’arrête toujours au premier échec de préparation ; le bilan
+précise le fichier, les ajouts terminés et le reste. L’éventuelle harmonisation
+avec l’ajout multiple attend une réponse utilisateur ; aucun choix nouveau.
+Le gate local passe : 23 tests Python, dont 12 builder, et 41 tests Node.
+Gestionnaire et récupération passent sur Chromium et WebKit sur la construction
+courante ; le lecteur complet WebKit passe aussi, celui de Chromium reste la
+preuve de `f26b29840edc0e48d215`. Le premier essai de récupération WebKit attendait
+un doublon dont la fixture ZIP avait changé d’octets ; le rejeu avec le buffer
+initial passe. Aucun défaut produit conclu de cet échec de fixture. Le bouton
+de lecture passe 11 états par moteur, avec pause/reprise au clavier et à la souris,
+signal mesuré. Restent Git, publication et mise à jour.
+[VALIDATION.md](../docs/VALIDATION.md) possède les reçus et les inconnues.
+
 ## Recettes indépendantes — 21 octobre 2026
 
 Diff examiné : `605d781..daa2529`, build public `a211530ec3d09aedecdb`.
@@ -21,12 +54,12 @@ distinct en premier plan : 32/32, code 0.
 ShipGuard 2.16.1 : toutes phases exécutées, recettes 14/14 sur chaque moteur,
 CLI 3/3 ; `run.json` indique des constats présents (`exit_code: 1`).
 
-Aucun correctif de l’application appliqué. Deux défauts mesurés restent ouverts :
+Ces recettes précèdent les correctifs locaux ci-dessus. Deux défauts mesurés étaient ouverts :
 un titre composé d’espaces bloque l’export (renommer l’entrée permet l’export),
 et le champ de nom reste visible dans la confirmation de suppression, qui fonctionne.
 Les 38 constats statiques ne sont pas 38 bugs reproduits ; les deux signalements
-sur les bilans après échec d’ouverture sont raisonnés. La politique d’erreur
-ajout/restauration reste à arbitrer. Les trois fermetures Chromium en arrière-plan
+sur les bilans après échec d’ouverture sont raisonnés. Un changement de politique
+ajout/restauration reste à décider. Les trois fermetures Chromium en arrière-plan
 restent inexpliquées ; les rejeux en premier plan passent.
 
 Le MSCZ 2 synthétique Fable est refusé : les preuves MuseScore 2 réelles restent

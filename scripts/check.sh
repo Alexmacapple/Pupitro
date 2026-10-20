@@ -13,6 +13,7 @@ print('Python : syntaxe correcte')
 PY
 "$python_bin" -m unittest discover -s tests -p 'test_*.py'
 for source in reader/*.js; do node --check "$source"; done
+for source in tests/*.cjs; do node --check "$source"; done
 npm test
 "$python_bin" scripts/build_web.py
 if [[ "${1:-}" == "--native" ]]; then

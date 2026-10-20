@@ -12,18 +12,24 @@
 
 ## Suites des recettes indépendantes — 21 octobre 2026
 
-Preuves et limites dans [VALIDATION.md](docs/VALIDATION.md) ; aucun correctif appliqué.
+Correctifs locaux, publication en attente. Preuves et limites par construction
+dans [VALIDATION.md](docs/VALIDATION.md).
 
-- [ ] Aligner les titres acceptés à l’import et à l’export : un titre composé
-  d’espaces bloque actuellement la sauvegarde ; le renommage permet de l’exporter.
-- [ ] Masquer le champ **Nom dans Pupitro** dans la confirmation de suppression
+- [x] Aligner titres et budget de métadonnées à l’import, au stockage et à l’export.
+- [x] Masquer le champ **Nom dans Pupitro** dans la confirmation de suppression
   en respectant `hidden` malgré la règle CSS `display: grid`.
-- [ ] Clarifier l’annulation du lot et le bilan de repréparation ; retirer l’ancien
+- [x] Clarifier l’annulation du lot et le bilan de repréparation ; retirer l’ancien
   message d’erreur après l’aperçu d’une sauvegarde vide valide.
-- [ ] Arbitrer la politique après erreur de préparation : l’ajout multiple continue,
-  la restauration s’arrête. Préciser le contrat avant de changer le comportement.
-- [ ] Reproduire les deux bilans raisonnés après échec d’ouverture, puis qualifier
-  les autres constats statiques avant correction.
+- [x] Séparer les bilans d’écriture et d’ouverture ; récupérer une connexion
+  IndexedDB perdue et préserver un commit achevé après une annulation tardive.
+- [x] Corriger retours de focus, messages du dialogue, rôles, étiquettes,
+  contraste du champ de nom et commandes dans les fenêtres de faible hauteur.
+- [x] Protéger aussi les fichiers générés lors d’une reconstruction locale.
+- [ ] Terminer les gates finaux puis publier les correctifs et vérifier HTTPS,
+  empreintes et mise à jour avec bibliothèque conservée.
+- [ ] Si l’utilisateur veut harmoniser les erreurs, décider explicitement la
+  nouvelle politique : aujourd’hui l’ajout continue et la restauration s’arrête
+  au premier échec. La question optionnelle reste sans réponse.
 - [ ] Élucider les trois fermetures Chromium en arrière-plan ; les rejeux en premier
   plan passent, sans cause établie pour les fermetures.
 

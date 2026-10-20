@@ -11,7 +11,13 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const scoreFile = process.argv[2];
 if (require.main===module&&!scoreFile) throw new Error('Usage: node tests/browser.cjs /path/to/example.mscz');
-const base = process.env.PUPITRO_TEST_URL || 'http://127.0.0.1:8770/';
+function normalizeBase(value){
+  const url=new URL(value);
+  if(!['http:','https:'].includes(url.protocol))throw new Error('Use an HTTP(S) test URL');
+  if(!url.pathname.endsWith('/'))url.pathname+='/';
+  url.search='';url.hash='';return url.href;
+}
+const base = normalizeBase(process.env.PUPITRO_TEST_URL || 'http://127.0.0.1:8770/');
 const output = require.main===module?fs.mkdtempSync(path.join(os.tmpdir(), 'pupitro-browser-')):null;
 const profile = output?path.join(output, 'profile'):null;
 const options = {headless:true,viewport:{width:428,height:926},isMobile:true,hasTouch:true};
@@ -33,18 +39,38 @@ async function launchObservedContext(browser,profile,options,base,observations){
   };
   context.on('page',attach);
   for(const page of context.pages())attach(page);
-  // Context requests include requests initiated by workers as well as pages.
+  // Chromium exposes service-worker requests here. WebKit does not guarantee
+  // that coverage: its totals describe the requests observed by Playwright.
   context.on('request',request=>{
     const url=request.url();
     if(request.method()==='POST')observations.posts.push(url);
-    if(/^https?:/.test(url)&&!url.startsWith(base))observations.outside.push(url);
+    if(/^https?:/.test(url)&&new URL(url).origin!==new URL(base).origin)observations.outside.push(url);
   });
   return context;
 }
-function assertObservations({posts,outside,errors}){
+function assertObservations({posts,outside,errors,consoleCounts=new Map()}){
   assert.deepEqual(posts,[]);assert.deepEqual(outside,[]);assert.deepEqual(errors,[]);
+  const known=/^fluidsynth: (error: function (fluid_file_test is a stub, always returning true|fluid_stat is a stub, always returning -1)|Ignoring unrecognized meta event type 0x21)$/;
+  assert.deepEqual([...consoleCounts.keys()].filter(message=>!known.test(message)),[],'Unexpected browser console errors');
 }
-module.exports={launchObservedContext,assertObservations};
+async function restoreTestPatches(page){
+  if(!page||page.isClosed())return;
+  await page.evaluate(()=>{
+    for(const name of ['restoreDelete','restoreTransaction','restorePut','restoreDigest','restoreReads','restoreLibraryRace','restoreStorageTest']){
+      if(typeof window[name]==='function'){window[name]();delete window[name];}
+    }
+  });
+}
+async function closeObservedContext(context,profile){
+  if(!context)return;
+  try{await restoreTestPatches(context.pages().at(-1));}
+  finally{
+    await context.close();
+    // Only the profile created by this recipe; evidence files remain available.
+    if(profile&&process.env.PUPITRO_KEEP_PROFILE!=='1')fs.rmSync(profile,{recursive:true});
+  }
+}
+module.exports={launchObservedContext,assertObservations,normalizeBase,restoreTestPatches,closeObservedContext};
 async function pressNote(page,method,offset){
   const target=await page.evaluate(async offset=>{
     const library=await import('./library.js');
@@ -230,4 +256,4 @@ if(require.main===module)(async()=>{
   await page.screenshot({path:path.join(output,'desktop.png'),fullPage:false});
   assertObservations(observations);
   console.log(JSON.stringify({pages,parts:partCount,id,posts:posts.length,externalRequests:outside.length,errors,consoleCounts:[...consoleCounts],legacy,noteSelection:{clickedTick,mousePauseTick,resumedTick,touchPauseTick,tappedTick},offlineImport:true,restartOffline:true,concurrentOpen:true,output}));
-})().catch(async error=>{console.error(error);if(context){const page=context.pages().at(-1);if(page){console.error(await page.locator('body').innerText().catch(()=>''));await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});console.error('Artifacts:',output);}}process.exitCode=1;}).finally(async()=>{if(context)await context.close();});
+})().catch(async error=>{console.error(error);if(context){const page=context.pages().at(-1);await restoreTestPatches(page).catch(()=>{});if(page){console.error(await page.locator('body').innerText().catch(()=>''));await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});console.error('Artifacts:',output);}}process.exitCode=1;}).finally(async()=>{await closeObservedContext(context,profile);}).catch(error=>{console.error('Cleanup failed:',error);process.exitCode=1;});

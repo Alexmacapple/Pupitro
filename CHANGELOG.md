@@ -1,5 +1,23 @@
 # Historique
 
+## Correctifs locaux après recettes — 2026-10-21 — publication en attente
+
+- Titres blancs remplacés par un nom de repli ; budget de sauvegarde vérifié
+  avant renommage, réglages et repréparation, sans changer les MSCZ d’origine.
+- Champ de nom masqué pendant une suppression ; bilans d’ajout, de repréparation
+  et d’échec d’ouverture distincts ; état occupé et récupération IndexedDB renforcés.
+- Retours de focus et messages accessibles corrigés après renommage, suppression
+  et annulation de doublon ; commandes défilantes en petite hauteur et bordure
+  du champ de nom contrastée. Étiquettes, rôles et description de page complétés.
+- Sauvegarde annulable, téléchargement sans expiration arbitraire de l’URL et
+  dernier identifiant exporté seulement s’il appartient au snapshot.
+- Constructeur protégé contre l’écrasement de sorties modifiées, avec reçu
+  d’empreintes des fichiers générés ; tests de sauvegarde et bibliothèque renforcés.
+
+Les preuves par construction, les limites AY11 et le triage ShipGuard figurent
+dans [VALIDATION.md](docs/VALIDATION.md). Ces correctifs ne sont pas encore
+annoncés comme déployés ; [INSTALLATION.md](docs/INSTALLATION.md) possède cet état.
+
 ## Gestionnaire de bibliothèque — 2026-10-21
 
 - Ajout multiple de MSCZ, choix explicite sur les doublons, renommage et suppression

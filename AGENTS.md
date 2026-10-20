@@ -24,6 +24,8 @@ Un retour utilisateur reste distinct d’un essai direct ou d’un navigateur si
 - `npm run test:browser -- /chemin/exemple.mscz` : recette avec une partition privée.
 - `PUPITRO_TEST_URL=http://127.0.0.1:8770/ npm run test:library` :
   recette du gestionnaire sur l’aperçu ; répéter avec `PUPITRO_ENGINE=webkit`.
+- `PUPITRO_TEST_URL=http://127.0.0.1:8770/ npm run test:recovery` : récupération
+  IndexedDB, budget de sauvegarde, états occupés et retours de focus.
 
 Le navigateur reçoit uniquement `web-dist/`, construit depuis une liste explicite.
 Ne pas servir ou publier la racine du dépôt.
@@ -38,6 +40,9 @@ Ne pas servir ou publier la racine du dépôt.
   possède son snapshot cohérent. Préserver noms, originaux et réglages ; restaurer
   seulement les absentes après vérification complète, sans quota de nombre.
   Les bornes de lecture incomplètes ne doivent pas bloquer la sauvegarde.
+- Métadonnées : `reader/score-metadata.js` possède le titre de repli et le budget
+  de 1 Mio. Chaque écriture vérifie les réglages réellement conservés, y compris
+  lors d’une repréparation ; le MSCZ d’origine reste intact.
 - Gravure : worker dédié, libéré ou interrompu après chaque import.
 - Temps MIDI, clic et coordonnées : normalisés une fois dans `reader/playback.js`.
 - Anciens accords MuseScore 2 : désactiver la nouvelle synthèse automatique des
@@ -53,6 +58,9 @@ Ne pas servir ou publier la racine du dépôt.
   Une mise à jour du lecteur ne regrave pas les partitions déjà enregistrées ;
   une correction de gravure nécessite leur réimport depuis le MSCZ d’origine.
 - Ressources : l’installateur possède les versions, noms attendus et empreintes.
+- Construction : `build_web.py` vérifie la propriété et l’intégrité de la sortie
+  avant écriture. Son reçu généré `.pupitro-build.json` contient les empreintes
+  du Service Worker, du manifeste et de `.nojekyll` ; ne pas le modifier à la main.
 - La hauteur réelle de `readerDock` possède l’espace des commandes et du curseur.
 
 ## Zones à préserver

@@ -1,10 +1,12 @@
 // User partitions belong to IndexedDB, separately from the replaceable app cache.
 import {readMidiTiming} from "./playback.js";
+import {scoreTitle,scoreMetadata,metadataBytes} from "./score-metadata.js";
 
 const DATABASE = "pupitro";
 let databasePromise;
-const catalogEntry = record => ({id:record.id,title:record.title,filename:record.filename,
-  importedAt:record.importedAt,pages:record.manifest.pages.length});
+const catalogEntry = record => ({id:record.id,title:scoreTitle(record.title,record.filename),filename:record.filename,
+  importedAt:record.importedAt,pages:record.manifest.pages.length,sourceBytes:record.source.size});
+const displayEntry = entry => entry?{...entry,title:scoreTitle(entry.title,entry.filename)}:entry;
 
 function database() {
   if (!databasePromise) {
@@ -32,6 +34,7 @@ function database() {
         const db = request.result;
         if (abandoned) { db.close(); return; }
         db.onversionchange = () => { db.close(); databasePromise = null; };
+        db.onclose = () => { databasePromise = null; };
         resolve(db);
       };
       request.onerror = () => reject(upgradeFailure || request.error);
@@ -47,7 +50,11 @@ async function transaction(storeNames, mode, action, signal) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(storeNames, mode);
     let result = () => undefined, failure;
-    const abort = error => { if (failure) return;failure = error;tx.abort(); };
+    const abort = error => {
+      if(failure)return;
+      try{tx.abort();failure=error;}
+      catch(abortError){if(abortError.name!=="InvalidStateError")throw abortError;}
+    };
     const success = (request, handle) => {
       request.onsuccess = () => { if (failure) return;try { handle(request.result); } catch (error) { abort(error); } };
     };
@@ -79,39 +86,48 @@ export async function saveScore(record, {ifAbsent=false,title,settings,signal} =
       const entry = catalogEntry(record);
       if (previous) entry.title = previous.title;
       else if (title !== undefined) entry.title = title;
-      tx.objectStore("scores").put(record);
-      catalog.put(entry);
-      if (!previous && preferences !== undefined) tx.objectStore("settings").put(preferences,record.id);
-      written = true;
+      entry.title=scoreTitle(entry.title,entry.filename);
+      const write = effectivePreferences => {
+        metadataBytes(scoreMetadata(entry,normalizePreferences(effectivePreferences)));
+        tx.objectStore("scores").put(record);
+        catalog.put(entry);
+        if (!previous && preferences !== undefined) tx.objectStore("settings").put(preferences,record.id);
+        written = true;
+      };
+      if(previous)success(tx.objectStore("settings").get(record.id),write);
+      else write(preferences);
     });
     return () => written;
   },signal);
 }
 
-export function getScoreInfo(id) { return operation("catalog","readonly",store=>store.get(id)); }
+export async function getScoreInfo(id) { return displayEntry(await operation("catalog","readonly",store=>store.get(id))); }
 
 export function getScore(id) {
   return transaction(["scores","catalog"], "readonly", tx => {
     const record = tx.objectStore("scores").get(id), entry = tx.objectStore("catalog").get(id);
-    return () => record.result ? {...record.result,title:entry.result?.title ?? record.result.title} : undefined;
+    return () => record.result ? {...record.result,title:scoreTitle(entry.result?.title ?? record.result.title,record.result.filename)} : undefined;
   });
 }
 
 export async function listScores() {
   // Only the separate lightweight catalog is read, whatever the library size.
   const records = await operation("catalog", "readonly", store => store.getAll());
-  return records.sort((a, b) => b.importedAt - a.importedAt || a.id.localeCompare(b.id));
+  return records.map(displayEntry).sort((a, b) => b.importedAt - a.importedAt || a.id.localeCompare(b.id));
 }
 
 export function renameScore(id, title) {
   if (typeof title !== "string" || !title.trim()) return Promise.reject(new Error("Saisis un nom pour cette partition."));
-  return transaction(["catalog"], "readwrite", (tx, abort, success) => {
+  return transaction(["catalog","settings"], "readwrite", (tx, abort, success) => {
     const store = tx.objectStore("catalog"), request = store.get(id);
     let entry;
     success(request, previous => {
       if (!previous) { abort(new Error("Cette partition n’est plus disponible.")); return; }
       entry = {...previous,title:title.trim()};
-      store.put(entry);
+      success(tx.objectStore("settings").get(id),preferences=>{
+        metadataBytes(scoreMetadata(entry,preferences));
+        store.put(entry);
+      });
     });
     return () => entry;
   });
@@ -132,7 +148,11 @@ export async function saveSettings(id, value) {
   return transaction(["settings","catalog"], "readwrite", (tx,abort,success) => {
     const record = tx.objectStore("catalog").get(id === "last-score" ? value : id);
     // In-flight writes from another window must not resurrect deleted settings.
-    success(record, entry => { if (entry) tx.objectStore("settings").put(value, id); });
+    success(record, entry => {
+      if(!entry)return;
+      if(id!=="last-score")metadataBytes(scoreMetadata(entry,value));
+      tx.objectStore("settings").put(value,id);
+    });
   });
 }
 
@@ -174,7 +194,7 @@ export function normalizePreferences(value) {
   return result;
 }
 
-export function snapshotLibrary() {
+export function snapshotLibrary({signal}={}) {
   // One consistent read transaction, retaining only originals and metadata.
   // Blob references are not decoded or converted to Base64 in JavaScript.
   return transaction(["scores","catalog","settings"],"readonly",(tx,abort,success)=>{
@@ -193,7 +213,7 @@ export function snapshotLibrary() {
       success(raw,ready);success(prefs,ready);
     });
     return () => ({records,lastScore:last.result});
-  });
+  },signal);
 }
 
 export function getSettings(id) {

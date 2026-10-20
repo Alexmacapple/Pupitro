@@ -6,6 +6,7 @@ sources:
   - resource: ../reader/import-worker.js
   - resource: ../reader/playback.js
   - resource: ../reader/library.js
+  - resource: ../reader/score-metadata.js
   - resource: ../reader/sw.js
   - resource: ../scripts/build_web.py
 ---
@@ -50,6 +51,10 @@ flowchart LR
   des réglages, le snapshot cohérent de sauvegarde et les URL temporaires d’affichage.
 - `backup.js` possède le format binaire `.pupitro` et sa vérification complète ;
   il réutilise la même validation ZIP et la même empreinte que l’import MSCZ.
+- `score-metadata.js` possède le titre de repli et le budget commun de métadonnées.
+  Un titre blanc reprend le nom du fichier, puis « Partition sans titre ».
+  Les transactions vérifient la métadonnée finale avec les réglages conservés,
+  afin qu’un renommage ou une repréparation ne rende pas la sauvegarde impossible.
 - `app.js` possède le transport, les réglages et la présentation des pages.
   Il démarre depuis le segment sélectionné à l’arrêt et met en pause sans déplacement
   pendant la lecture ou le décompte ; `playback.js` possède la sélection géométrique.
@@ -61,8 +66,12 @@ flowchart LR
   la mise à jour se recharge automatiquement ; les autres peuvent garder l’ancien code.
 - `setup_assets.py` possède les versions et empreintes des dépendances.
 - `build_web.py` copie une liste explicite vers `web-dist/` et lie les ressources
-  à une version. Il refuse les fichiers étrangers. Un ancien fichier devenu inutile
-  n’est supprimé que si son empreinte correspond à la précédente sortie connue.
+  à une version. Avant toute écriture, il refuse les fichiers étrangers, les liens
+  symboliques et les sorties modifiées. Le reçu généré `.pupitro-build.json`
+  protège séparément les empreintes du Service Worker, du manifeste et de
+  `.nojekyll`. Une ancienne sortie sans reçu n’est reprise que si elle reste
+  strictement vérifiable ; sinon, choisir une sortie vide sans effacer l’ancienne.
+  Un fichier devenu inutile n’est supprimé que si son empreinte correspond.
 
 ## Données et limites
 
@@ -89,6 +98,10 @@ avant d’afficher la confirmation. La restauration prépare les absentes
 séquentiellement par le worker, avec nom et réglages ; les présentes restent intactes.
 Un arrêt conserve le préfixe déjà enregistré. Les fichiers préparés ne sont pas
 dans la sauvegarde : le moteur épinglé les régénère.
+L’ajout multiple poursuit les autres fichiers après une erreur ordinaire ;
+la restauration s’arrête au premier échec de préparation et indique le fichier,
+les ajouts terminés et les entrées non ajoutées. Cette politique existante reste
+distincte d’un éventuel changement de comportement à décider avec l’utilisateur.
 
 Le cache applicatif contient le lecteur, le moteur, les sons et les
 notices ; son renouvellement laisse la bibliothèque intacte.

@@ -1,4 +1,5 @@
 import {preparePlayback, preparePositions} from "./playback.js";
+import {scoreTitle} from "./score-metadata.js";
 
 // Keep layout work off the UI thread; terminating this worker also frees WASM.
 self.MSCORE_SCRIPT_URL = new URL("./assets/webmscore/", import.meta.url).href;
@@ -47,7 +48,7 @@ self.onmessage = async ({data: {bytes, filename}}) => {
     const positions = preparePositions(measures, segments, playback, count);
     const pdf = new Blob([await score.savePdf()], {type: "application/pdf"});
     const {midi, secondsTick, ...timing} = playback;
-    const title = metadata.title || filename.replace(/\.mscz$/i, "");
+    const title = scoreTitle(metadata.title,filename);
     const manifest = {title, renderer: "webmscore-0.22.0", sourceVersion: metadata.mscoreVersion,
       pages: pages.map(() => ({width: segments.pageSize.width, height: segments.pageSize.height})),
       ...timing, ...positions};

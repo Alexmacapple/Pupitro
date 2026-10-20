@@ -66,7 +66,7 @@ for (const length of [22, 23]) test(`a valid EOCD signature inside a ${length}-b
 });
 
 test("an EOCD-like comment with plausible directory bounds falls back to the real directory", () => {
-  const buffer = archive(), {view, end, entries} = directory(buffer);
+  const buffer = archive(), {end, entries} = directory(buffer);
   const comment = new Uint8Array(22), fake = new DataView(comment.buffer);
   fake.setUint32(0, 0x06054b50, true);
   fake.setUint16(8, entries.length, true); fake.setUint16(10, entries.length, true);

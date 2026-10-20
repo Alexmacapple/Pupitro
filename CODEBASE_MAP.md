@@ -9,16 +9,19 @@
 | `reader/playback.js` | Parseur MIDI partagé, métriques, décompte, boucle, clic, tempos, positions et sélection au pointeur |
 | `reader/library.js` | Base v2, catalogue léger, CRUD atomique, réglages, snapshot et URL de Blob temporaires |
 | `reader/backup.js` | Sauvegarde binaire locale des originaux/noms/réglages et vérification avant restauration |
+| `reader/score-metadata.js` | Titre de repli et budget commun des métadonnées d’import, de stockage et de sauvegarde |
 | `reader/sw.js` | Cache immuable par version et activation des mises à jour |
 | `reader/offline.js` | État hors ligne et demande de mise à jour |
 | `reader/manifest.webmanifest`, `icons/` | Installation et identité de l’app |
 | `scripts/setup_assets.py` | Ressources et notices épinglées |
-| `scripts/build_web.py` | Liste publique explicite et empreintes de version |
+| `scripts/build_web.py` | Liste publique, empreintes de version et préservation des sorties vérifiables via `.pupitro-build.json` |
 | `scripts/serve-web.sh` | Aperçu statique sur localhost |
 | `scripts/check.sh`, `tests/*.test.js` | Syntaxe, tests Node de lecture, transport et archives, tests Python et construction |
 | `serve_reader.py`, `tests/test_legacy_server.py` | Serveur Mac historique : autorité HTTP, échéance d’envoi et erreurs ; tests avec convertisseur simulé |
 | `tests/legacy.cjs`, `tests/browser.cjs` | Migration v2 et recette Chromium/WebKit, dont souris et toucher |
 | `tests/library.cjs`, `tests/backup.test.js` | Gestionnaire réel IndexedDB, annulations, erreurs de quota, redémarrage hors ligne et aller-retour de sauvegarde |
+| `tests/library-recovery.cjs`, `tests/fixtures.cjs` | MSCZ synthétiques, récupération de connexion, budget de sauvegarde et états de focus |
+| `tests/test_build_web.py` | Propriété de la sortie, empreintes, liens symboliques et reconstruction sans écrasement local |
 | `.github/workflows/pages.yml` | Publication statique manuelle |
 
 ## Flux autonome

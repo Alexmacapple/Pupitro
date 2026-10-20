@@ -5,6 +5,8 @@ description: Preuves de la version autonome et essais physiques encore nécessai
 sources:
   - resource: ../tests/browser.cjs
   - resource: ../tests/library.cjs
+  - resource: ../tests/library-recovery.cjs
+  - resource: ../tests/test_build_web.py
   - resource: ../tests/backup.test.js
   - resource: ../tests/playback.test.js
   - resource: ../reader/import-worker.js
@@ -13,11 +15,106 @@ sources:
 
 # Vérifications — version autonome
 
-État documentaire au 21 octobre 2026 ; dernière référence du code testé : `8b617b2`.
+État documentaire au 21 octobre 2026. Le correctif courant est local, depuis
+`8bb6a2f` ; les références de chaque campagne sont distinguées ci-dessous.
 Cette page consigne des preuves passées, sans annoncer une validation générale.
 
 Une partition personnelle MuseScore 2 sert d’exemple. Ni elle ni ses captures
 ne sont publiées dans le dépôt ou l’artefact applicatif.
+
+## Correctifs locaux après recettes — publication en attente
+
+Construction locale courante : `7385c59dd8c93f227bbd`, 32 ressources,
+58 164 444 octets. Ce numéro ne prouve ni commit, ni déploiement, ni installation.
+La dernière publication documentée reste `a211530ec3d09aedecdb` ; les correctifs
+ne sont pas encore annoncés comme accessibles à l’adresse HTTPS.
+
+Titres et budget de sauvegarde sont partagés par l’import, le catalogue et le
+format `.pupitro`. Les réglages conservés sont vérifiés avant commit, y compris
+lors d’une repréparation. Les autres changements portent sur le champ masqué en
+suppression, les bilans, la récupération IndexedDB, les téléchargements, les
+états occupés et les sorties vérifiables du constructeur.
+
+| Campagne | Résultat observé et portée |
+|---|---|
+| Gestionnaire renforcé, `f26b29840edc0e48d215` | `tests/library.cjs` passe sur Chromium et WebKit : octets/noms/réglages, restauration mixte, rollback, 75 entrées et liste sans lecture des fichiers |
+| Lecteur complet, `f26b29840edc0e48d215` | Recette Chromium passée ; ne remplace pas les essais finaux de la source courante |
+| Récupération, `9d3d8af8d718bed53f4f` | Dix cas ciblés Chromium : connexion perdue simulée, commit/annulation, nom excessif, état occupé, faible hauteur, focus et vue corrompue |
+| PDV, `c9a92abf3377c4793737` | Deux P2 reproduits : budget sans réglages conservés et Service Worker modifié écrasé ; corrections ensuite apportées aux deux frontières, avec régressions dédiées |
+| Gate local, `7385c59dd8c93f227bbd` | `scripts/check.sh` passe : 23 tests Python, dont 12 builder et 11 serveur historique, puis 41 tests Node |
+| Navigateurs, `7385c59dd8c93f227bbd` | Gestionnaire et récupération passent sur Chromium et WebKit ; lecteur complet WebKit passé. Gestionnaire WebKit : 75 entrées, aucune lecture des fichiers pendant la liste, aucune erreur de page, aucun POST ni requête externe observée. Le lecteur complet Chromium reste la preuve de `f26b29840edc0e48d215` |
+| Récupération WebKit, `7385c59dd8c93f227bbd` | Rejeu passé après correction de la fixture pour réutiliser le buffer initial. Le premier échec d’attente du doublon provenait d’un ZIP régénéré avec des octets et un identifiant différents ; aucun défaut produit conclu de cet échec |
+| Bouton lecture/pause, `7385c59dd8c93f227bbd` | 11 états par moteur : Écouter désactivé à vide, Annuler pendant préparation/décompte, Pause en lecture, Écouter après pause, Réécouter à la fin ; clavier/souris et signal mesuré passent |
+
+La restauration conserve l’arrêt au premier échec de préparation, avec fichier,
+ajouts terminés et entrées non ajoutées dans le bilan. L’ajout multiple continue
+après une erreur ordinaire. Harmoniser ces règles reste un choix utilisateur
+en attente, pas un changement appliqué implicitement.
+
+### Triage des 46 entrées de l’audit ShipGuard
+
+Le corpus original comporte 38 entrées actives et huit non vérifiées, pas
+46 bogues reproduits. « Corrigé localement » désigne un changement de code ou de
+test correspondant ; seuls les parcours exécutés constituent une preuve runtime.
+Les identifiants regroupés ci-dessous couvrent les 46 entrées : 43 traitées dans
+le code ou les tests, deux non retenues comme changement à imposer et une limite
+non vérifiée exhaustivement.
+
+| Identifiants | Traitement et source |
+|---|---|
+| `r1-z01-002`, `r1-z01-005`, `r1-z01-006` | Corrigés localement : titres, identifiant actif et budget ; `score-metadata.js`, `library.js`, `backup.js`, tests backup/récupération |
+| `r1-z01-004`, `r1-z01-007`, `r1-z01-019` | Corrigés localement : connexion, abandon après commit et identité d’une vue en échec ; bibliothèque, lecteur et recette récupération |
+| `r1-z01-001`, `r1-z01-008`, `r1-z01-009`, `r1-z01-014`, `r1-z01-015`, `r1-z01-016`, `r1-z01-017`, `r1-z01-021` | Corrigés localement : annulation/bilans, état occupé, temporisation des réglages, persistance, message après commit et sémantique de liste ; `app.js` |
+| `r1-z01-010`, `r1-z01-011`, `r1-z01-012`, `r1-z01-013` | Corrigés localement : catalogue léger, ouverture unique, sauvegarde dans l’état occupé et URL sans expiration arbitraire ; `app.js`, `library.js` |
+| `r1-z01-020`, `r1-z01-023` | Corrigés localement : rôle du signal audio et réduction des transitions ; HTML/CSS |
+| `r1-z01-022` | Non retenu comme défaut : couleurs littérales hors variables ne prouvent pas une erreur ; contraste du champ et du signal vérifié séparément |
+| `r1-z01-003` | Non retenu comme changement à imposer : arrêt au premier échec conservé ; nouvelle politique en attente de choix utilisateur |
+| `r1-z01-018` | Corrigé localement : démarrage sur la dernière partition disponible quand l’identifiant demandé est absent ; changement relu dans `app.js` |
+| `r1-z02-017`, `r1-z02-018`, `r1-z02-019`, `r1-z02-020`, `r1-z02-021`, `r1-z02-022` | Corrigés localement : sorties distinctes, manifeste contrôlé, empreintes, liens symboliques, repère de version et liste publique ; builder/tests Python |
+| `r1-z02-001`, `r1-z02-002`, `r1-z02-003`, `r1-z02-004`, `r1-z02-005`, `r1-z02-008`, `r1-z02-009`, `r1-z02-010`, `r1-z02-013` | Tests renforcés : réglages préexistants, restauration mixte, rollback des réglages, identité, annulation, lectures réelles, retards et décodage indépendant |
+| `r1-z02-006`, `r1-z02-007`, `r1-z02-011`, `r1-z02-014`, `r1-z02-015`, `r1-z02-016` | Recettes corrigées : port/URL, profils temporaires, nettoyage, erreur finale contrôlée et éléments inutilisés retirés |
+| `r1-z02-012` | Limite non vérifiée exhaustivement : l’observation Playwright WebKit ne garantit pas les requêtes des Service Workers ; les totaux décrivent ce que l’outil voit |
+| `r1-z02-023` | Corrigé localement : MIDI fictif de repli retiré ; absence de MIDI préparé signalée explicitement |
+
+### Campagne AY11 et reprises ciblées
+
+Sur `f26b29840edc0e48d215`, les agents ont exercé les 18 voies CLI disponibles,
+plus le point `candidate-static` sans variante : neuf états du lecteur et la page
+des notices. Les 469 appels statiques/projections, 144 projections visuelles et
+27 compléments CSS ne sont pas des totaux de critères réussis. Le plan comporte
+106 critères/258 tests ; aucune conformité n’en est déduite. Le préaudit natif
+fournit 55 preuves et 24 constats candidats. Les plafonds, formulaires fermés,
+changements d’état par les sondes et CSS non résolu restent explicitement limités.
+Les labels implicites valides et petites cibles avec exception d’espacement ne
+sont pas transformés automatiquement en défauts.
+
+Les trois défauts mesurés de focus/message et celui des commandes en faible
+hauteur ont reçu une correction. Le rejeu ciblé sur `c9a92abf3377c4793737`
+vérifie quatre contrôles par moteur et 13 arrêts clavier à 320 × 256, défilement
+et masquage compris, sans erreur de page ni trafic externe observé. Le complément
+`7385c59dd8c93f227bbd` vérifie les étiquettes de deux parties, noms/rôles,
+références de labels et descriptions des deux pages ; le signal audio donne
+des contrastes de 5,53:1 au repos et 4,65:1 actif. Les 20 labels ont un contrôle
+associé, sans identifiant dupliqué ; les 13 arrêts clavier restent visibles en
+320 × 256. La campagne complète n’a pas été rejouée sur chaque correctif.
+
+Reçus des dernières recettes : `pupitro-library-f3BWuU` (Chromium),
+`pupitro-library-3hfZTH` (WebKit), `pupitro-recovery-71vDQH` (Chromium),
+`pupitro-recovery-KfoaWq` (WebKit) et `pupitro-browser-Feco4s` (WebKit),
+dans le dossier temporaire du système. Les contextes sont fermés ; les nouveaux
+profils sont supprimés par défaut après fermeture, les preuves sont conservées.
+
+Artefacts locaux : `/private/tmp/pupitro-corrections-20261021.JvUWTT/`
+(`ay11-coverage/COVERAGE-AY11.md`, `ay11-coverage/coverage-summary.json`, `ay11-interactions/`
+et `pdv-review.md`), `/private/tmp/pupitro-ay11-ui-20261021.XHbgEc/`
+et `/private/tmp/pupitro-ay11-labels-20261021.RXET48/`. Le corpus ShipGuard original
+reste dans `/private/tmp/pupitro-recette-20261021.buFM9S/shipguard/visual-tests/_results/`.
+Ces fichiers temporaires ne sont pas des ressources publiques.
+
+**Toujours non vérifié :** iPhone/iPad/Android physiques, lecteur d’écran humain,
+écoute humaine, saturation réelle et mises à jour multi-fenêtres. L’inventaire
+média HTML ne couvre pas exhaustivement la synthèse MIDI WebAudio. Les fenêtres
+temporelles sans candidat ne prouvent pas une absence générale de comportement.
 
 ## Gestionnaire et sauvegarde complète — 21 octobre 2026
 
@@ -83,7 +180,7 @@ rien. Aucun POST, appel externe ou `pageerror`. Artefact local :
 `/private/tmp/pupitro-library-public-verification.json`. Aucune partition publiée.
 Les commits documentaires suivants ne changent pas les ressources applicatives.
 
-### Limite connue : titre composé d’espaces — à corriger
+### Défaut historique publié : titre composé d’espaces
 
 Le candidat ShipGuard `r1-z01-002` est reproduit sur l’adresse publique, construction
 `a211530ec3d09aedecdb`, avec Chromium Mac et un MSCZ synthétique valide dont
@@ -93,7 +190,8 @@ contient ces trois espaces et **Exporter la bibliothèque** échoue avec
 
 Contournement vérifié : dans **Bibliothèque**, renommer cette entrée en
 **Titre renseigné**, puis relancer l’export. Un fichier `.pupitro` de 1 264 octets
-est alors téléchargé. Le produit reste inchangé ; la correction reste à faire.
+est alors téléchargé. Le produit était resté inchangé pendant cette recette ;
+la correction locale est décrite plus haut, sans nouveau déploiement revendiqué.
 Preuves locales : `blank-title-result.json` et `check-blank-title.cjs`, dans
 `/private/tmp/pupitro-recette-20261021.buFM9S/`.
 
