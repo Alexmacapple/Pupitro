@@ -18,4 +18,12 @@ main{padding-bottom:calc(var(--dock-height,260px) + 18px)}
 .offline-bar button,.score-tools button{font-size:12px}
 #libraryItems{display:grid;gap:10px;margin:16px 0}
 #libraryItems button{text-align:left;width:100%}
+.library-item{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:10px;min-width:0}
+.library-item button[data-action="open"]{flex:1;min-width:0;overflow-wrap:anywhere}
+.library-item button:not([data-action="open"]){width:auto}
+@media(max-width:640px){.library-item{flex-wrap:wrap}.library-item button[data-action="open"]{flex-basis:100%}}
+.library-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+#libraryNameLabel{display:grid;gap:8px;margin-top:16px}
+#libraryName{width:100%;min-height:44px;border:1px solid var(--line);border-radius:7px;padding:8px}
+#libraryActionError{color:#a21c30}
 @media(max-width:640px){.offline-bar{padding:10px 6px}.header-actions{gap:12px}.header-actions button{flex-grow:1}.header-actions{width:100%}.offline-bar p{flex-basis:100%}}

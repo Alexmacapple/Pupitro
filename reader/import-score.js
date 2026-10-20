@@ -146,7 +146,8 @@ export function normalizeLegacyScore(xml, originalXml) {
   return new TextEncoder().encode(new XMLSerializer().serializeToString(document)).buffer;
 }
 
-export async function importScore(file, onProgress, signal) {
+export async function readScoreSource(file, signal) {
+  if (signal?.aborted) throw new DOMException("Import annulé.","AbortError");
   if (!/\.mscz$/i.test(file.name)) throw new Error("Choisis un fichier .mscz.");
   if (file.size > 50 * 1024 * 1024) throw new Error("Le fichier dépasse la capacité de l’import local (50 Mo).");
   const original = await file.arrayBuffer();
@@ -154,6 +155,14 @@ export async function importScore(file, onProgress, signal) {
   if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
   const id = [...new Uint8Array(await crypto.subtle.digest("SHA-256", original))].map(x => x.toString(16).padStart(2, "0")).join("");
   if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
+  return {id,bytes};
+}
+
+export async function importScore(file, onProgress, signal, {resolveExisting} = {}) {
+  const {id,bytes} = await readScoreSource(file, signal);
+  const existing = await resolveExisting?.(id);
+  if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
+  if (existing) return existing;
   const result = await new Promise((resolve, reject) => {
     const worker = new Worker(new URL("./import-worker.js", import.meta.url), {type: "module"});
     const finish = (error, value) => {

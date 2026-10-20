@@ -6,7 +6,7 @@ import json
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "reader"
-SHELL = ["index.html", "credits.html", "app.js", "style.css", "library.js", "playback.js",
+SHELL = ["index.html", "credits.html", "app.js", "style.css", "library.js", "playback.js", "backup.js",
          "import-score.js", "import-worker.js", "offline.js", "manifest.webmanifest",
          "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"]
 ENGINE = ["webmscore.lib.js", "webmscore.lib.data", "webmscore.lib.wasm",

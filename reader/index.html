@@ -17,7 +17,7 @@
 <body>
   <header>
     <div><span class="eyebrow">PUPITRO</span><h1 id="title">Choisir une partition</h1></div>
-    <div class="header-actions"><span class="badge">Lecture autonome</span><button id="openFile">Ouvrir un fichier .mscz</button><input id="scoreFile" type="file" accept=".mscz" hidden><button id="libraryButton" aria-haspopup="dialog">Bibliothèque</button><button id="mixerButton" aria-haspopup="dialog">Instruments</button></div>
+    <div class="header-actions"><span class="badge">Lecture autonome</span><button id="openFile">Ouvrir un fichier .mscz</button><input id="scoreFile" type="file" accept=".mscz" multiple hidden><button id="libraryButton" aria-haspopup="dialog">Bibliothèque</button><button id="mixerButton" aria-haspopup="dialog">Instruments</button></div>
   </header>
   <main>
     <aside class="offline-bar" aria-label="Installation et stockage">
@@ -72,8 +72,31 @@
   <dialog id="library" aria-labelledby="libraryTitle">
     <div class="dialog-title"><h2 id="libraryTitle">Sur cet appareil</h2><button id="closeLibrary">Fermer</button></div>
     <p>Ces partitions sont conservées ici. L’iPhone et l’iPad ont chacun leur bibliothèque ; il n’y a pas de synchronisation automatique.</p>
+    <div class="library-actions"><button id="libraryAdd" class="primary">Ajouter des MSCZ</button><button id="exportLibrary">Exporter la bibliothèque</button><button id="restoreLibrary">Restaurer une sauvegarde</button><button id="cancelLibraryOperation" hidden>Annuler l’opération</button><input id="backupFile" type="file" accept=".pupitro" hidden></div>
+    <p id="libraryStatus" role="status"></p>
     <div id="libraryItems"></div>
     <p class="hint">Garde une copie de tes MSCZ dans Fichiers. Effacer les données du site peut effacer cette bibliothèque.</p>
+  </dialog>
+  <dialog id="restorePreview" aria-labelledby="restoreTitle">
+    <h2 id="restoreTitle">Restaurer la bibliothèque</h2>
+    <p id="restoreSummary"></p>
+    <p>Les partitions déjà présentes gardent leur nom et leurs réglages. Les autres seront préparées sur cet appareil, sans réseau.</p>
+    <div class="library-actions"><button id="confirmRestore" class="primary">Restaurer les partitions absentes</button><button id="cancelRestore">Annuler la restauration</button></div>
+  </dialog>
+  <dialog id="duplicate" aria-labelledby="duplicateTitle">
+    <h2 id="duplicateTitle">Cette partition est déjà ici</h2>
+    <p id="duplicateDescription"></p>
+    <p>Ouvre la version enregistrée, ou reprépare le MSCZ pour recalculer son affichage. Son nom dans Pupitro et ses réglages sont conservés.</p>
+    <div class="library-actions"><button id="reuseScore">Ouvrir la partition existante</button><button id="reprepareScore">Repréparer le MSCZ</button><button id="cancelDuplicate">Annuler cet ajout</button></div>
+  </dialog>
+  <dialog id="libraryAction" aria-labelledby="libraryActionTitle">
+    <form id="libraryActionForm">
+      <h2 id="libraryActionTitle">Renommer la partition</h2>
+      <p id="libraryActionDescription">Le nom change dans Pupitro. Le fichier MSCZ d’origine reste intact.</p>
+      <label id="libraryNameLabel">Nom dans Pupitro <input id="libraryName" type="text" required></label>
+      <p id="libraryActionError" role="alert"></p>
+      <div class="library-actions"><button id="cancelLibraryAction" type="button">Annuler</button><button id="confirmLibraryAction" type="submit" class="primary">Enregistrer le nom</button></div>
+    </form>
   </dialog>
   <dialog id="installation" aria-labelledby="installationTitle">
     <div class="dialog-title"><h2 id="installationTitle">Installer Pupitro</h2><button id="closeInstallation">Fermer</button></div>

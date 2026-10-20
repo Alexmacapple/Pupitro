@@ -187,7 +187,7 @@ if(require.main===module)(async()=>{
   await expect(page.locator('#audioSignal')).toHaveClass(/active/,{timeout:15000});
   await page.locator('#play').click();
   await page.locator('#libraryButton').click();
-  await expect(page.locator('#libraryItems button')).toHaveCount(2);
+  await expect(page.locator('#libraryItems [data-action="open"]')).toHaveCount(2);
   const selected=await page.evaluate(async()=>{
     const library=await import('./library.js');
     const records=await library.listScores();
@@ -214,7 +214,7 @@ if(require.main===module)(async()=>{
       IDBObjectStore.prototype.get=get;
       Object.defineProperty(IDBTransaction.prototype,'oncomplete',complete);
     };
-    const buttons=document.querySelectorAll('#libraryItems button');
+    const buttons=document.querySelectorAll('#libraryItems [data-action="open"]');
     buttons[0].click();buttons[1].click();
     return records[1].id;
   });

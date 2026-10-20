@@ -1,6 +1,7 @@
 "use strict";
 import {importScore} from "./import-score.js";
-import {saveScore,getScore,listScores,openRecord,saveSettings,getSettings,requestPersistence,storageState} from "./library.js";
+import {saveScore,getScore,getScoreInfo,listScores,renameScore,deleteScore,snapshotLibrary,openRecord,saveSettings,getSettings,requestPersistence,storageState} from "./library.js";
+import {encodeBackup,inspectBackup} from "./backup.js";
 import {initializeOffline,activateUpdate} from "./offline.js";
 import {positionAtPoint,tempoAtTick,countInAtTick,loopBounds,cursorScrollOptions} from "./playback.js";
 const $ = id => document.getElementById(id);
@@ -189,25 +190,70 @@ async function load(next){
   status(`${score.pages.length} pages · ${score.channels.length} parties · prêt à écouter.`);
 }
 $("openFile").onclick=()=>$("scoreFile").click();
+$("libraryAdd").onclick=()=>{$("library").close();$("scoreFile").click();};
+function duplicateChoice(record,signal){
+  if(signal.aborted)return Promise.reject(new DOMException("Ajout annulé.","AbortError"));
+  return new Promise((resolve,reject)=>{
+    const dialog=$("duplicate");
+    const finish=choice=>{
+      signal.removeEventListener("abort",abort);dialog.close();
+      if(choice==="cancel")reject(new DOMException("Ajout annulé.","AbortError"));else resolve(choice);
+    };
+    const abort=()=>finish("cancel");
+    signal.addEventListener("abort",abort,{once:true});
+    $("duplicateDescription").textContent=`« ${record.title} » contient déjà exactement ce MSCZ.`;
+    $("reuseScore").onclick=()=>finish("reuse");$("reprepareScore").onclick=()=>finish("prepare");
+    $("cancelDuplicate").onclick=()=>finish("cancel");dialog.oncancel=event=>{event.preventDefault();finish("cancel");};
+    dialog.showModal();$("reuseScore").focus();
+  });
+}
+function fileOperationUi(busy,label="Annuler l’ajout"){
+  for(const id of ["openFile","libraryButton","libraryAdd","exportLibrary","restoreLibrary","backupFile"])$(id).disabled=busy;
+  $("play").disabled=busy||!score;$("cancelImport").hidden=$("cancelLibraryOperation").hidden=!busy;
+  $("cancelImport").textContent=label;
+  for(const button of $("libraryItems").querySelectorAll("button"))button.disabled=busy;
+}
 $("scoreFile").onchange=async()=>{
-  const file=$("scoreFile").files[0];
-  if(!file)return;
+  const files=[...$("scoreFile").files];
+  if(!files.length||importing)return;
   if(score)stop();
   importing=new AbortController();
-  $("openFile").disabled=$("play").disabled=$("libraryButton").disabled=true;
-  $("cancelImport").hidden=false;
+  fileOperationUi(true);
   status("Préparation sur cet appareil…");
+  let added=0,reused=0;
+  const failures=[];
   try{
-    const record=await importScore(file,status,importing.signal);
-    await saveScore(record);
-    await showRecord(record);
+    for(const [index,file]of files.entries()){
+      let existing=false;
+      try{
+        const record=await importScore(file,message=>status(`${index+1}/${files.length} · ${file.name} · ${message}`),importing.signal,{
+          resolveExisting:async id=>{
+            const found=await getScore(id);if(!found)return;
+            if(await duplicateChoice(found,importing.signal)==="reuse"){existing=true;return found;}
+          },
+        });
+        if(importing.signal.aborted)throw new DOMException("Import annulé.","AbortError");
+        if(!existing){await saveScore(record,{signal:importing.signal});added++;}else reused++;
+        await showRecord(record);
+      }catch(error){
+        if(error.name==="AbortError"||error.name==="QuotaExceededError")throw error;
+        failures.push(`${file.name} : ${error.message||String(error)}`);
+      }
+    }
     requestPersistence().catch(()=>{});
-    status(`${score.pages.length} pages · ${score.channels.length} parties · partition enregistrée sur cet appareil.`);
-    window.scrollTo({top:0});
-  }catch(error){status(error.name==="AbortError"?"Import annulé. La bibliothèque est conservée.":error.name==="QuotaExceededError"?"Stockage insuffisant : la partition n’a pas été enregistrée. Garde ton fichier MSCZ.":error.message||String(error));}
-  finally{importing=null;$("cancelImport").hidden=true;$("openFile").disabled=$("libraryButton").disabled=false;$("play").disabled=!score;$("scoreFile").value="";}
+    const summary=added?`${added} partition${added>1?"s enregistrées":" enregistrée"} sur cet appareil.`:
+      reused?"Partition existante ouverte, sans nouvel ajout.":"Aucune partition ajoutée.";
+    status([summary,failures.join(" · ")].filter(Boolean).join(" "));
+    if(added||reused)window.scrollTo({top:0});
+  }catch(error){
+    const message=error.name==="AbortError"?"Ajout annulé. La bibliothèque est conservée.":error.name==="QuotaExceededError"?
+      "Stockage insuffisant : l’ajout est arrêté. Les partitions déjà enregistrées sont conservées. Garde tes MSCZ dans Fichiers.":error.message||String(error);
+    status(`${message}${added?` ${added} partition(s) ajoutée(s) avant l’arrêt.`:""}`);
+  }
+  finally{importing=null;fileOperationUi(false);$("scoreFile").value="";}
 };
 $("cancelImport").onclick=()=>importing?.abort();
+$("cancelLibraryOperation").onclick=()=>importing?.abort();
 $("play").onclick=play;$("stop").onclick=()=>stop(true);$("seek").onchange=e=>seek(Number(e.target.value));$("master").oninput=e=>{if(gain)gain.gain.value=Number(e.target.value)/100;};$("speed").onchange=e=>{if(synth)synth.setPlayerTempo(0,Number(e.target.value));};$("goMeasure").onclick=()=>{const bounds=boundary();if(bounds)seek(bounds.start);else status("Vérifie les mesures de la boucle.");};$("metronome").onchange=()=>{if(synth)synth.midiAllSoundsOff(score.clickChannel);};$("follow").onchange=()=>{followedSystem=null;paint();};$("zoom").onchange=e=>{for(const figure of document.querySelectorAll(".paper")){figure.style.width=`${e.target.value}%`;figure.style.maxWidth="none";}followedSystem=null;paint();};$("mixerButton").onclick=()=>$("mixer").showModal();$("closeMixer").onclick=()=>$("mixer").close();
 // A suspended page can return from Safari's back/forward cache. Keep its
 // synthesizer reusable; unloading the document releases its audio resources.
@@ -215,20 +261,30 @@ window.addEventListener("pagehide",()=>{if(score)stop();persistPreferences();if(
 setInterval(poll,40);
 
 const preferenceIds=["zoom","speed","master","metronome","clickVolume","precount","follow","loop","loopStart","loopEnd"];
+function currentPreferences(){
+  const controls=Object.fromEntries(preferenceIds.map(id=>[id,$(id).type==="checkbox"?$(id).checked:$(id).value]));
+  return {controls,parts:[...parts.values()].map(({channel,sound,volume,muted,solo})=>({channel,sound,volume,muted,solo}))};
+}
 function persistPreferences(){
   if(!activeRecord||restoring)return;
   clearTimeout(savingTimer);
-  const controls=Object.fromEntries(preferenceIds.map(id=>[id,$(id).type==="checkbox"?$(id).checked:$(id).value]));
-  saveSettings(activeRecord.id,{controls,parts:[...parts.values()].map(({channel,sound,volume,muted,solo})=>({channel,sound,volume,muted,solo}))}).catch(()=>status("Les derniers réglages n’ont pas pu être enregistrés."));
+  saveSettings(activeRecord.id,currentPreferences()).catch(()=>status("Les derniers réglages n’ont pas pu être enregistrés."));
 }
 document.addEventListener("change",()=>{if(!restoring&&!importing)savingTimer=setTimeout(persistPreferences,200);});
 
-function showRecord(record){
+function queueRecord(action){
   // One opening owns the displayed pages, preferences and last-score write
   // until it completes. A failed opening must not block the next selection.
-  const opened=recordOpening.then(()=>restoreRecord(record));
+  const opened=recordOpening.then(action);
   recordOpening=opened.catch(()=>{});
   return opened;
+}
+function showRecord(record){
+  return queueRecord(async()=>{
+    const current=await getScore(record.id);
+    if(!current)throw new Error("Cette partition n’est plus disponible.");
+    await restoreRecord(current);
+  });
 }
 async function restoreRecord(record){
   if(score)stop();
@@ -268,20 +324,140 @@ $("exportSource").onclick=()=>{
   link.href=url;link.download=activeRecord.filename;link.click();
   setTimeout(()=>URL.revokeObjectURL(url),60000);
 };
+let libraryAction, libraryActionBusy=false;
+async function clearRecord(){
+  if(score)stop();
+  clearTimeout(savingTimer);activeRecord=null;
+  await releaseAudio();
+  activeUrls?.release();activeUrls=null;score=undefined;parts.clear();cursor.remove();
+  $("score").replaceChildren();$("parts").replaceChildren();
+  $("title").textContent="Choisir une partition";document.title="Pupitro";
+  $("pdfLink").removeAttribute("href");$("pdfLink").hidden=$("exportSource").hidden=true;
+  $("play").disabled=$("stop").disabled=$("seek").disabled=$("goMeasure").disabled=true;
+  $("seek").value="0";$("clock").textContent="0:00 / 0:00";$("measure").textContent="Mesure 1";
+  $("sourceNote").textContent="Import et lecture sur cet appareil. Tes partitions ne sont envoyées à aucun serveur.";
+  const url=new URL(location.href);url.searchParams.delete("score");history.replaceState(null,"",url);
+}
+function askLibraryAction(kind,item){
+  libraryAction={kind,id:item.id};$("libraryActionError").textContent="";
+  const deleting=kind==="delete";
+  $("libraryActionTitle").textContent=deleting?`Supprimer « ${item.title} » ?`:"Renommer la partition";
+  $("libraryActionDescription").textContent=deleting?
+    "La partition et ses réglages seront retirés de cet appareil. Ton MSCZ dans Fichiers reste conservé.":
+    "Le nom change dans Pupitro. Le fichier MSCZ d’origine reste intact.";
+  $("libraryNameLabel").hidden=deleting;$("libraryName").disabled=deleting;$("libraryName").value=item.title;
+  $("confirmLibraryAction").textContent=deleting?"Supprimer cette partition":"Enregistrer le nom";
+  $("libraryAction").showModal();
+  if(deleting)$("cancelLibraryAction").focus();else{$("libraryName").focus();$("libraryName").select();}
+}
+async function refreshLibrary(){
+  const records=await listScores();$("libraryItems").replaceChildren();
+  $("libraryStatus").textContent=`${records.length} partition${records.length===1?"":"s"} sur cet appareil.`;
+  if(!records.length)$("libraryItems").textContent="Aucune partition ici. Utilise « Ouvrir un fichier .mscz ».";
+  for(const item of records){
+    const row=document.createElement("article");row.className="library-item";row.dataset.id=item.id;
+    const button=document.createElement("button");button.dataset.action="open";
+    button.textContent=`${item.title} · ${item.pages} pages`;
+    button.onclick=async()=>{try{const record=await getScore(item.id);if(!record)throw new Error("Cette partition n’est plus disponible.");await showRecord(record);$("library").close();}catch(error){$("libraryStatus").textContent=error.message;}};
+    const rename=document.createElement("button");rename.textContent="Renommer";
+    rename.setAttribute("aria-label",`Renommer ${item.title}`);
+    rename.onclick=()=>askLibraryAction("rename",item);
+    const remove=document.createElement("button");remove.textContent="Supprimer";
+    remove.setAttribute("aria-label",`Supprimer ${item.title}`);remove.onclick=()=>askLibraryAction("delete",item);
+    row.append(button,rename,remove);$("libraryItems").append(row);
+  }
+}
+$("libraryActionForm").onsubmit=async event=>{
+  event.preventDefault();if(libraryActionBusy)return;
+  libraryActionBusy=true;$("confirmLibraryAction").disabled=$("cancelLibraryAction").disabled=true;
+  try{
+    const {kind,id}=libraryAction;
+    await queueRecord(async()=>{
+      if(kind==="delete"){
+        await deleteScore(id);
+        if(activeRecord?.id===id)await clearRecord();
+      }else{
+        const item=await renameScore(id,$("libraryName").value);
+        if(activeRecord?.id===item.id){
+          activeRecord.title=score.title=item.title;$("title").textContent=item.title;document.title=`Pupitro · ${item.title}`;
+          document.querySelectorAll(".paper img").forEach((img,index)=>{img.alt=`${item.title}, page ${index+1} sur ${score.pages.length}`;});
+        }
+      }
+    });
+    $("libraryAction").close();await refreshLibrary();
+    status(kind==="delete"?"Partition supprimée de cet appareil. Le fichier d’origine est conservé.":"Nom enregistré dans Pupitro.");
+  }catch(error){$("libraryActionError").textContent=error.message;}
+  finally{libraryActionBusy=false;$("confirmLibraryAction").disabled=$("cancelLibraryAction").disabled=false;}
+};
+$("cancelLibraryAction").onclick=()=>$("libraryAction").close();
+$("libraryAction").addEventListener("cancel",event=>{if(libraryActionBusy)event.preventDefault();});
 $("libraryButton").onclick=async()=>{
   try{
-    const records=await listScores();$("libraryItems").replaceChildren();
-    if(!records.length)$("libraryItems").textContent="Aucune partition ici. Utilise « Ouvrir un fichier .mscz ».";
-    for(const item of records){
-      const button=document.createElement("button");
-      button.textContent=`${item.title} · ${item.pages} pages`;
-      button.onclick=async()=>{try{const record=await getScore(item.id);if(!record)throw new Error("Cette partition n’est plus disponible.");await showRecord(record);$("library").close();}catch(error){status(error.message);}};
-      $("libraryItems").append(button);
-    }
+    await refreshLibrary();
     $("library").showModal();
   }catch(error){status(error.message||"Bibliothèque locale indisponible.");}
 };
-$("closeLibrary").onclick=()=>$("library").close();
+$("closeLibrary").onclick=()=>{importing?.abort();$("library").close();};
+$("library").addEventListener("cancel",()=>importing?.abort());
+$("exportLibrary").onclick=async()=>{
+  $("exportLibrary").disabled=true;
+  try{
+    const snapshot=await queueRecord(async()=>{
+      clearTimeout(savingTimer);
+      if(activeRecord)await saveSettings(activeRecord.id,currentPreferences());
+      return snapshotLibrary();
+    });
+    const url=URL.createObjectURL(encodeBackup(snapshot)),link=document.createElement("a");
+    link.href=url;link.download=`Pupitro-${new Date().toISOString().slice(0,10)}.pupitro`;link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+    $("libraryStatus").textContent=`Sauvegarde prête : ${snapshot.records.length} partition(s). Enregistre le fichier .pupitro dans Fichiers.`;
+  }catch(error){$("libraryStatus").textContent=error.message||"La sauvegarde n’a pas pu être préparée.";}
+  finally{$("exportLibrary").disabled=false;}
+};
+let pendingBackup;
+$("restoreLibrary").onclick=()=>$("backupFile").click();
+$("backupFile").onchange=async()=>{
+  const file=$("backupFile").files[0];if(!file||importing)return;
+  if(score)stop();importing=new AbortController();fileOperationUi(true,"Annuler la vérification");
+  try{
+    pendingBackup=await inspectBackup(file,message=>{$("libraryStatus").textContent=message;status(message);},importing.signal);
+    const existing=new Set((await listScores()).map(item=>item.id));
+    const kept=pendingBackup.entries.filter(item=>existing.has(item.id)).length;
+    $("restoreSummary").textContent=`${pendingBackup.entries.length-kept} partition(s) à ajouter ; ${kept} déjà présente(s), conservée(s) sans remplacement.`;
+    $("restorePreview").showModal();$("cancelRestore").focus();
+  }catch(error){
+    pendingBackup=null;const message=error.name==="AbortError"?"Vérification annulée. La bibliothèque est conservée.":error.message;
+    $("libraryStatus").textContent=message;status(message);
+  }
+  finally{importing=null;fileOperationUi(false);$("backupFile").value="";}
+};
+$("cancelRestore").onclick=()=>{pendingBackup=null;$("restorePreview").close();};
+$("restorePreview").addEventListener("cancel",()=>{pendingBackup=null;});
+$("confirmRestore").onclick=async()=>{
+  const backup=pendingBackup;if(!backup||importing)return;
+  pendingBackup=null;$("restorePreview").close();$("library").close();
+  importing=new AbortController();fileOperationUi(true,"Annuler la restauration");
+  let added=0,skipped=0;
+  try{
+    for(const [index,entry]of backup.entries.entries()){
+      if(importing.signal.aborted)throw new DOMException("Restauration annulée.","AbortError");
+      if(await getScoreInfo(entry.id)){skipped++;continue;}
+      const record=await importScore(entry.source,message=>status(`Restauration ${index+1}/${backup.entries.length} · ${message}`),importing.signal);
+      record.importedAt=entry.importedAt;
+      const saved=await saveScore(record,{ifAbsent:true,title:entry.title,settings:entry.settings,signal:importing.signal});
+      if(saved)added++;else skipped++;
+    }
+    if(!activeRecord&&backup.entries.length){
+      const id=backup.lastScore||backup.entries[0].id,record=await getScore(id);
+      if(record)await showRecord(record);
+    }
+    requestPersistence().catch(()=>{});
+    status(`Restauration terminée : ${added} restaurées, ${skipped} déjà présentes et conservées.`);
+  }catch(error){
+    const reason=error.name==="AbortError"?"Restauration annulée.":error.name==="QuotaExceededError"?"Stockage insuffisant : restauration arrêtée.":error.message;
+    status(`${reason} ${added} restaurées avant l’arrêt ; les partitions déjà présentes sont conservées.`);
+  }finally{importing=null;fileOperationUi(false);}
+};
 $("installButton").onclick=async()=>{
   $("installation").showModal();
   try{const state=await storageState();$("storageStatus").textContent=state.persistent?"Stockage persistant accordé par le navigateur. Garde aussi tes fichiers d’origine.":"Le navigateur peut effacer les données locales. Garde aussi tes fichiers d’origine dans Fichiers.";}
