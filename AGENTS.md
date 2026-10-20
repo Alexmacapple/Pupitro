@@ -19,7 +19,8 @@ Un retour utilisateur reste distinct d’un essai direct ou d’un navigateur si
 - `python3 scripts/setup_assets.py --standalone` : ressources épinglées et notices.
 - `bash scripts/check.sh` : syntaxe, tests ciblés et construction statique.
 - `bash scripts/serve-web.sh` : aperçu local sur le port 8770.
-- `npm ci --ignore-scripts` puis `npm test` : dépendances de test et tests ciblés.
+- `npm ci --ignore-scripts`, `python3 scripts/setup_assets.py --standalone`, puis
+  `npm test` : ressources épinglées et tests Node ciblés. Les tests ZIP utilisent fflate installé.
 - `npm run test:browser -- /chemin/exemple.mscz` : recette avec une partition privée.
 
 Le navigateur reçoit uniquement `web-dist/`, construit depuis une liste explicite.

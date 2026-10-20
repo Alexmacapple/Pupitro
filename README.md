@@ -51,8 +51,10 @@ nécessaires à l’installation. Pas d’édition, d’annotation Pencil ni d�
 La version autonome est publiée en HTTPS depuis le 20 octobre 2026. Installation
 depuis Safari, puis import des MSCZ dans l’app : aucun clonage du dépôt n’est requis.
 Les contrôles sur le site publié ont passé sur Chrome Mac. La version autonome est
-repérée par le tag [v0.2.0](https://github.com/Alexmacapple/Pupitro/tree/v0.2.0) ;
+repérée dans sa première version par le tag [v0.2.0](https://github.com/Alexmacapple/Pupitro/tree/v0.2.0) ;
 le fonctionnement iPhone est confirmé, celui de l’iPad reste à confirmer.
+Les correctifs ultérieurs et leurs preuves figurent dans
+[l’historique](CHANGELOG.md) et [la validation](docs/VALIDATION.md).
 
 - [Installation sur iPhone et iPad](docs/INSTALLATION.md)
 - [Vérifications et limites](docs/VALIDATION.md)

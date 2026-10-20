@@ -4,9 +4,9 @@
 |---|---|
 | `reader/index.html`, `style.css` | Interface mobile et commandes |
 | `reader/app.js` | Transport, bascule lecture/pause au pointeur, présentation, bibliothèque et réglages |
-| `reader/import-score.js` | Validation ZIP, annulation, délai et migration v2 avec barrés et images |
+| `reader/import-score.js` | Interprétation ZIP commune au moteur et à la migration, bornes avant extraction, annulation et migration v2 |
 | `reader/import-worker.js` | Moteur WASM, gravure et exports |
-| `reader/playback.js` | MIDI, clic, tempos, positions et sélection d’une note au pointeur |
+| `reader/playback.js` | Parseur MIDI partagé, métriques, décompte, boucle, clic, tempos, positions et sélection au pointeur |
 | `reader/library.js` | Transactions IndexedDB et URL de Blob temporaires |
 | `reader/sw.js` | Cache immuable par version et activation des mises à jour |
 | `reader/offline.js` | État hors ligne et demande de mise à jour |
@@ -14,7 +14,8 @@
 | `scripts/setup_assets.py` | Ressources et notices épinglées |
 | `scripts/build_web.py` | Liste publique explicite et empreintes de version |
 | `scripts/serve-web.sh` | Aperçu statique sur localhost |
-| `scripts/check.sh`, `tests/playback.test.js` | Syntaxe, tests Node ciblés et construction |
+| `scripts/check.sh`, `tests/*.test.js` | Syntaxe, tests Node de lecture, transport et archives, tests Python et construction |
+| `serve_reader.py`, `tests/test_legacy_server.py` | Serveur Mac historique : autorité HTTP, échéance d’envoi et erreurs ; tests avec convertisseur simulé |
 | `tests/legacy.cjs`, `tests/browser.cjs` | Migration v2 et recette Chromium/WebKit, dont souris et toucher |
 | `.github/workflows/pages.yml` | Publication statique manuelle |
 

@@ -37,6 +37,8 @@ par l’utilisateur ; les scénarios ci-dessous ne sont pas encore détaillés.
 
 ## Fiabiliser à partir de cas réels
 
+- [x] Corriger les constats ShipGuard et le faux lien PDF, avec 30 tests Node,
+  11 tests HTTP et les recettes Chromium/WebKit sur la construction corrigée.
 - [ ] Tester d’autres partitions : reprises, changements de tempo/métrique,
   plusieurs portées, percussions, silences et erreurs d’import.
 - [ ] Mesurer mémoire, consommation et durée du premier chargement sur téléphone.

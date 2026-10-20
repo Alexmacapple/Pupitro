@@ -11,11 +11,61 @@ sources:
 
 # Vérifications — version autonome
 
-État documentaire au 20 octobre 2026 ; référence du code testé : `d14dbff`.
+État documentaire au 20 octobre 2026 ; dernière référence du code testé : `68176e5`.
 Cette page consigne des preuves passées, sans annoncer une validation générale.
 
 Une partition personnelle MuseScore 2 sert d’exemple. Ni elle ni ses captures
 ne sont publiées dans le dépôt ou l’artefact applicatif.
+
+## Corrections issues de ShipGuard après v0.2.0
+
+Revue rapide en trois zones sur `a48de0e`, puis corrections demandées par
+l’utilisateur : 11 constats initiaux, un défaut de journalisation lié découvert
+pendant la correction et le faux lien PDF trouvé par le crawl. Les 12 constats
+de code ont une correction et une preuve ; le lien PDF est contrôlé dans la recette.
+Cette revue ciblée ne démontre pas l’absence de tout autre défaut.
+
+| Point corrigé | Vérification |
+|---|---|
+| Boucle avant import et bornes invalides | Bouton désactivé dans le navigateur ; tests sans partition, fin excessive, fractions, reprises et dernière mesure |
+| Décompte après changement de métrique | MIDI synthétique 4/4 puis 6/8 : six impulsions espacées de 0,25 seconde à tempo normal ; ancien enregistrement enrichi depuis son MIDI, sans réimport ni seconde piste de clic |
+| Réduction des animations | Le suivi conserve le curseur et choisit un défilement immédiat pour `prefers-reduced-motion` |
+| Archives et allocation | Fixtures stockées/déflatées, tailles locales et centrales, chevauchements, chemins ambigus, images et déclaration de capacité ; petits fichiers de test sans allocation de 200 Mo |
+| Fin d’archive dans un commentaire | Faux EOCD simple ou avec bornes plausibles : le même parseur retient le vrai répertoire ; copie de travail bornée, source et empreinte originales préservées |
+| Surveillance après redémarrage | Collecte attachée à chaque contexte et page ; erreur et POST synthétiques du second contexte font échouer l’assertion |
+| PDF | Absence de faux lien initial ; après import, lien visible vers un Blob PDF local non vide |
+| Ancien serveur Mac | 11 tests HTTP : écoute wildcard, autorité locale, refus des origines étrangères, en-têtes absents/dupliqués, jeton, corps partiel ou au compte-gouttes, échéance et réutilisation du verrou, réponses 404/408/409/413/422/500 et diagnostic expurgé |
+| Construction | Import inutilisé retiré ; CI installant les ressources avant les tests, sans double lancement Node |
+
+`bash scripts/check.sh` passe : syntaxe, **30 tests Node, 11 tests Python HTTP**
+et construction de 30 ressources, 58 132 331 octets, version
+`baefded0afd663fc5988`. Les tests HTTP utilisent un convertisseur simulé :
+ils ne valident pas une nouvelle conversion par MuseScore 2 installé.
+
+Les recettes complètes `tests/browser.cjs` passent sur Chromium et WebKit Mac,
+avec le MSCZ personnel choisi localement : 13 pages, 2 parties, PDF, six
+programmes avec signal audio, métronome, boucle 1–2 à 75 %, commandes masquées,
+lecture/pause/reprise à la souris et au toucher, nouvel import hors ligne,
+fichier invalide sans perte, redémarrage hors ligne et ouvertures concurrentes.
+Aucun POST, appel HTTP externe ou `pageerror` n’est détecté dans les deux contextes.
+Les messages de fonctions de fichiers simulées de FluidSynth restent présents.
+La seconde entrée conserve la même musique avec un commentaire ZIP différent.
+
+Le CLI ShipGuard 2.16.1 termine avec un code 0 : crawl de deux pages et de
+13 ressources, aucun lien cassé, trois parcours mécaniques sur trois réussis
+(accueil hors ligne, bibliothèque vide et installation, commandes masquées).
+L’assertion de bibliothèque attend désormais la fin du chargement IndexedDB ;
+le premier passage vérifiait son texte trop tôt. Aucun jugement visuel par modèle
+n’est revendiqué pour ces parcours. La revue de code ci-dessus a été menée séparément.
+
+Revue structurelle PDV du diff et des consommateurs directs : **GO**, aucun
+bloqueur structurel relevé. Le parseur ZIP possède la frontière de validation ;
+le parseur MIDI est partagé entre import et compatibilité des anciens manifestes.
+Aucun fichier modifié n’approche 1 000 lignes. Ce verdict ne remplace ni les
+tests ni une écoute humaine. Les tags `v0.1.0` et `v0.2.0` sont préservés.
+
+La confirmation physique iPhone ci-dessous concerne `v0.2.0`, avant ces correctifs.
+Les correctifs n’ont pas encore reçu de validation physique iPhone ou iPad.
 
 ## Moteur retenu
 

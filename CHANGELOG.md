@@ -1,5 +1,23 @@
 # Historique
 
+## Correctifs après v0.2.0 — 2026-10-20
+
+- Revue ShipGuard : 12 constats corrigés, dont un défaut de journalisation découvert
+  pendant la correction, plus le faux lien PDF signalé par le crawl.
+- Commande de boucle désactivée avant import ; bornes entières et valides exigées.
+- Décompte conforme à la métrique courante, y compris pour les partitions déjà
+  enregistrées ; suivi du curseur respectant la réduction des animations.
+- Validation commune des répertoires ZIP et des en-têtes locaux : tailles,
+  chevauchements, chemins et commentaires contrôlés avant extraction.
+  Le MSCZ source et son empreinte restent intacts.
+- PDF accessible depuis la partition locale ; aucun lien vers un PDF fictif.
+- Serveur Mac historique : origines liées au socket local, échéance absolue
+  d’envoi de 30 secondes, verrou libéré et diagnostic local expurgé du jeton.
+- 30 tests Node et 11 tests HTTP passent ; recettes complètes Chromium et WebKit
+  sur la construction `baefded0afd663fc5988`. Voir [VALIDATION.md](docs/VALIDATION.md).
+
+Le tag `v0.2.0` reste inchangé comme point de retour.
+
 ## v0.2.0 — 2026-10-20 — lecteur autonome, fonctionnement iPhone confirmé
 
 - Import MSCZ traité sur l’appareil par webmscore 0.22.0, sans serveur de conversion.

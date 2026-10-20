@@ -14,6 +14,22 @@ Lire [AGENTS.md](../AGENTS.md), [todo.md](../todo.md), puis
 
 ## Code et preuves au 20 octobre 2026
 
+Après le tag `v0.2.0`, les corrections ShipGuard sont intégrées au code `68176e5` :
+12 constats de code, dont un défaut de journalisation lié découvert pendant les
+corrections, plus le faux lien PDF du crawl. Construction `baefded0afd663fc5988`,
+30 ressources, 58 132 331 octets. `bash scripts/check.sh` passe : 30 tests Node,
+11 tests HTTP et syntaxe. Les recettes complètes Chromium et WebKit passent
+avec import local, PDF, lecture, instruments, boucle, hors ligne et redémarrage ;
+aucun POST, appel externe ou erreur JavaScript dans les deux contextes.
+Le CLI ShipGuard termine avec un code 0 : trois parcours mécaniques réussis,
+deux pages et 13 ressources parcourues, aucun lien cassé.
+Le serveur historique est testé avec un convertisseur simulé, sans nouvel essai
+MuseScore natif. Les preuves et limites sont dans [VALIDATION.md](../docs/VALIDATION.md).
+Les deux tags de retour restent inchangés. La confirmation physique iPhone porte
+sur `v0.2.0`, avant ces correctifs ; l’iPad et les correctifs restent à tester physiquement.
+
+### Références antérieures
+
 La référence fonctionnelle reste `d14dbff` ; le commit publié `1ef5985` ajoute la
 documentation sans changer le lecteur. Vérifier la parité locale et distante dans Git.
 La construction testée porte `ef89840b97399c25f4b2` : 30 ressources, environ 58 Mo,
