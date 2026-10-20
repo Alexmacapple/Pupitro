@@ -84,7 +84,8 @@ Le dépôt source exclut les ressources téléchargées et les partitions person
 L’artefact statique est construit depuis une liste explicite et inclut les notices
 tierces. Il ne publie ni les imports ni le lien privé de l’ancien serveur Mac.
 GitHub Pages est la cible HTTPS préparée, avec un workflow déclenché manuellement.
-L’activation et le premier déploiement restent à autoriser ; le code poussé ne prouve
-ni la publication ni l’installation. La procédure et l’état courant sont tenus dans
+L’activation et le premier déploiement ont été explicitement autorisés, puis réalisés
+le 20 octobre 2026. Le code poussé ne déclenche pas automatiquement un déploiement
+et la publication ne prouve pas l’installation. La procédure et l’état courant sont tenus dans
 [INSTALLATION.md](INSTALLATION.md).
 La licence du code propre reste à décider avant distribution de paquets.

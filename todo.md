@@ -15,8 +15,8 @@
 - [x] Mettre à jour les 13 documents structurants, dont le guide Safari.
 - [ ] Faire confirmer le barré B♭ et les clics sur les notes par l’utilisateur ;
   réimporter le MSCZ pour remplacer les anciennes pages conservées.
-- [ ] Obtenir l’accord pour activer GitHub Pages et publier l’application statique.
-- [ ] Déployer puis contrôler HTTPS, le chemin `/Pupitro/`, les ressources et le hors ligne.
+- [x] Obtenir l’accord pour activer GitHub Pages et publier l’application statique.
+- [x] Déployer puis contrôler HTTPS, le chemin `/Pupitro/`, les ressources et le hors ligne sur Chrome Mac.
 - [ ] Installer depuis Safari et vérifier sur l’iPhone et l’iPad M4.
 - [ ] Recueillir les versions du système et du navigateur de ces appareils.
 - [ ] Vérifier Android avant de l’annoncer comme testé.

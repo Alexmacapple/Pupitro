@@ -54,9 +54,11 @@ Les anciens outils Python de conversion et MuseScore 2 restent disponibles ;
 le tag `v0.1.0` protège la version Mac. Aucun remplacement de MuseScore installé.
 Ce projet possède son propre dépôt : ne pas commiter dans son parent.
 Pas de démarrage automatique ni d’exposition du serveur Mac sur Internet.
-Le workflow Pages est manuel ; l’autorisation de pousser les sources ne vaut pas
-autorisation du premier déploiement public. Ne pas annoncer une URL installable
-avant d’avoir contrôlé HTTPS, les ressources et le chemin `/Pupitro/`.
+Le premier déploiement Pages a été explicitement autorisé et réalisé le 20 octobre
+2026. Le workflow reste manuel : pousser les sources ne met pas le site à jour.
+Après un déploiement, contrôler HTTPS, les empreintes et le chemin `/Pupitro/` ;
+consigner sa référence dans `docs/VALIDATION.md` sans confondre publication et
+validation physique sur les appareils.
 
 ## Vérification
 

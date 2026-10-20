@@ -13,8 +13,8 @@ Lire [AGENTS.md](../AGENTS.md), [todo.md](../todo.md), puis
 
 ## Code et preuves au 20 octobre 2026
 
-La référence fonctionnelle `d14dbff` était identique sur `main` et `origin/main`
-avant cette mise à jour documentaire. Vérifier à nouveau la parité dans Git.
+La référence fonctionnelle reste `d14dbff` ; le commit publié `1ef5985` ajoute la
+documentation sans changer le lecteur. Vérifier la parité locale et distante dans Git.
 La construction testée porte `ef89840b97399c25f4b2` : 30 ressources, environ 58 Mo,
 sans partition privée. Le moteur retenu est webmscore 0.22.0 ; 1.2.1 a échoué à
 exporter les positions de l’exemple. L’exemple donne 13 pages au lieu de 7,
@@ -38,13 +38,23 @@ contrôlés, sans essai direct du clic sur note dans cet onglet. D’autres ongl
 peuvent encore garder l’ancienne version. Réimporter le MSCZ après mise à jour
 pour recalculer les pages et bénéficier de la correction du barré.
 
-## Prochaine étape : installer sur les deux appareils
+## Publication réalisée ; installation sur les appareils à confirmer
 
-GitHub Pages n’est pas activé, confirmé par l’API HTTP 404. Le workflow manuel
-`Publier Pupitro` est prêt ; aucun premier déploiement public n’est encore autorisé.
-Obtenir cet accord, publier uniquement `web-dist/`, puis vérifier HTTPS, ressources,
-chemin `/Pupitro/` et hors ligne avant de donner une URL installable.
-[INSTALLATION.md](../docs/INSTALLATION.md) possède la procédure Safari.
+L’utilisateur a explicitement autorisé l’activation et la publication GitHub Pages.
+Le [workflow 39497476043](https://github.com/Alexmacapple/Pupitro/actions/runs/39497476043)
+a déployé le commit `1ef5985` avec succès. L’adresse publique est
+[https://alexmacapple.github.io/Pupitro/](https://alexmacapple.github.io/Pupitro/),
+avec HTTPS imposé. Les 30 ressources correspondent aux empreintes de la construction
+testée. Import, lecture, pause, rechargement et nouvel import sans réseau ont été
+contrôlés sur Chrome Mac. Le contexte hors ligne a été fermé et le lecteur rouvert
+normalement, avec la bibliothèque conservée. Les détails sont dans
+[VALIDATION.md](../docs/VALIDATION.md).
+
+Le workflow reste manuel : un push ne met pas l’app en ligne à jour. Après un
+nouveau déploiement, ouvrir l’app avec Internet puis utiliser **Mettre à jour**
+à l’arrêt. Les corrections de gravure demandent ensuite de réimporter le MSCZ.
+[INSTALLATION.md](../docs/INSTALLATION.md) possède la procédure Safari et explique
+la différence entre installation de l’app et import d’une partition, sans clonage.
 
 L’installation, l’écoute et le mode avion sur l’iPhone 12 Pro Max présumé et l’iPad
 M4 restent à vérifier ; versions système inconnues. Le son iPhone confirmé auparavant

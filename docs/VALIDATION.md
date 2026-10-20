@@ -61,7 +61,7 @@ reprise par clic et toucher, import hors ligne et redémarrage. Les huit tests
 Node et la construction passent aussi. Le test de pause échoue sur la version
 précédente : le bouton reste « Pause » et la lecture continue après le clic.
 La construction contient 30 ressources et environ 58 Mo, sans partition personnelle.
-La publication HTTPS reste à autoriser et vérifier. Les changements documentaires
+La publication HTTPS est vérifiée ci-dessous. Les changements documentaires
 n’affectent pas cette construction et ne constituent pas une nouvelle recette du code.
 
 L’onglet Chrome de l’utilisateur affichait encore une version antérieure. La
@@ -88,14 +88,29 @@ bibliothèque utilisateur ; le fichier d’origine doit être réimporté.
 
 ## Publication et installation
 
-Le contrôle de l’API GitHub Pages du dépôt a renvoyé HTTP 404 : Pages n’est pas
-activé au moment du contrôle. Le workflow manuel existe dans les sources, sans
-premier déploiement autorisé. L’adresse prévue et les étapes Safari sont dans
-[INSTALLATION.md](INSTALLATION.md).
+Le premier déploiement a été explicitement autorisé par l’utilisateur, puis exécuté
+par le [workflow GitHub Actions](https://github.com/Alexmacapple/Pupitro/actions/runs/39497476043)
+sur le commit source `1ef5985`. Les étapes de construction et de déploiement ont réussi.
+L’API confirme Pages en mode `workflow`, avec HTTPS imposé et l’adresse
+[https://alexmacapple.github.io/Pupitro/](https://alexmacapple.github.io/Pupitro/).
 
-Le chemin public `/Pupitro/`, le chargement réel en HTTPS, l’installation depuis
-cette adresse et son fonctionnement hors ligne restent non vérifiés. Les essais
-locaux utilisent l’adresse de boucle locale du Mac ; ils ne prouvent pas ces points.
+| Contrôle du site public sur Chrome Mac | Observation |
+|---|---|
+| Chemin `/Pupitro/` et ressources | 30 fichiers ; 58 126 848 octets ; toutes les tailles et empreintes SHA-256 identiques à la construction locale `ef89840b97399c25f4b2` |
+| Types servis | JavaScript, manifeste et WASM avec les types attendus |
+| Fichiers privés | Les routes de la partition de référence, du jeton et des imports renvoient 404 ; aucune partition dans la liste publique |
+| Cache et import initial | Indicateur prêt hors ligne ; 13 pages et 2 parties enregistrées après choix du MSCZ local |
+| Lecture et pause | Compteur actif, signal audio détecté, puis pause par le bouton |
+| Réouverture sans réseau | Mode Offline de DevTools actif pour cet onglet ; partition et ressources retrouvées au rechargement |
+| Nouvel import sans réseau | Copie avec commentaire ZIP distinct : moteur servi par le Service Worker, nouvelle empreinte et 13 pages enregistrées |
+| Réouverture après le test | Nouvel onglet normal avec partition conservée ; lecture et signal audio contrôlés |
+
+Le contexte de test hors ligne a été fermé après contrôle. Le second fichier
+contient la même musique avec une empreinte distincte ; ce n’est pas une seconde
+partition musicalement indépendante. La lecture du nouvel import a été contrôlée
+après réouverture d’un onglet normal ; aucune nouvelle écoute humaine n’est revendiquée.
+L’installation Safari et l’écoute sur les appareils physiques restent non vérifiées.
+La procédure est dans [INSTALLATION.md](INSTALLATION.md).
 
 ## Appareils physiques
 

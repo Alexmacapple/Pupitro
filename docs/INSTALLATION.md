@@ -13,10 +13,15 @@ sources:
 
 ## État de publication au 20 octobre 2026
 
-Les sources sont sur `main`, mais GitHub Pages n’est pas activé et le premier
-déploiement public n’est pas encore autorisé. L’adresse prévue est
-`https://alexmacapple.github.io/Pupitro/` ; elle ne doit pas encore être présentée
-comme disponible. La publication doit être contrôlée avant l’installation.
+**Adresse d’installation : [https://alexmacapple.github.io/Pupitro/](https://alexmacapple.github.io/Pupitro/).**
+GitHub Pages est activé avec HTTPS. Le premier déploiement a été explicitement
+autorisé et a réussi ; les ressources, l’import et la réouverture sans réseau ont
+été contrôlés sur Chrome Mac. Les essais physiques iPhone/iPad restent à réaliser.
+
+Installer consiste à ouvrir cette adresse dans Safari et à ajouter Pupitro à
+l’écran d’accueil. L’application télécharge ses ressources et les conserve localement.
+Il n’y a aucun dépôt à cloner. Importer consiste ensuite à choisir un fichier
+de partition `.mscz` dans Fichiers ; son traitement s’effectue sur l’appareil.
 
 L’adresse `http://127.0.0.1:8770/` sert uniquement à l’aperçu sur le Mac.
 L’ancienne adresse HTTP du Mac sur le Wi-Fi ne permet pas cette installation
@@ -25,13 +30,13 @@ plus nécessaires pour importer, consulter ou écouter.
 
 ## Installer depuis Safari sur chaque appareil
 
-Cette procédure sera utilisable après la publication. L’iPhone 12 Pro Max présumé
-et l’iPad M4 n’ont pas encore été testés avec la version autonome ; relever leurs
-versions iOS/iPadOS dans Réglages → Général → Informations avant la recette.
+L’iPhone 12 Pro Max présumé et l’iPad M4 n’ont pas encore été testés avec la version
+autonome ; relever leurs versions iOS/iPadOS dans Réglages → Général → Informations
+avant la recette.
 
 1. Avec Internet, ouvrir l’adresse HTTPS vérifiée dans **Safari**.
 2. Sur iPhone, ouvrir **Partager**, directement ou via le menu **Plus** selon
-   la disposition de Safari. Sur iPad, ouvrir **Partager**, puis **Plus** si nécessaire.
+   la disposition de Safari. Sur iPad, ouvrir **Partager**, puis **En voir plus** si nécessaire.
 3. Choisir **Sur l’écran d’accueil**, activer **Ouvrir comme app web** si proposé,
    puis **Ajouter**. Si l’action manque, vérifier **Modifier les actions**.
 4. Ouvrir **Pupitro depuis sa nouvelle icône**, puis attendre
@@ -76,8 +81,10 @@ L’absence de son ou d’une page laisse la recette ouverte ; les tests Mac ne 
 
 ## Mettre à jour sans perdre la bibliothèque
 
-Avec le réseau rétabli, recharger l’app pour chercher une version, arrêter la
-lecture, puis toucher **Mettre à jour** si le bouton apparaît. La bibliothèque
+Après publication d’une nouvelle version, avec Internet, fermer complètement puis
+rouvrir Pupitro pour chercher une mise à jour. Sur un navigateur classique, recharger
+l’onglet convient aussi. Attendre le téléchargement, arrêter la lecture, puis toucher
+**Mettre à jour** si le bouton apparaît. Répéter sur chaque appareil. La bibliothèque
 IndexedDB est conservée. Une autre fenêtre déjà ouverte peut garder l’ancien
 lecteur jusqu’à son propre rechargement.
 
@@ -121,10 +128,11 @@ PUPITRO_ENGINE=webkit npm run test:browser -- /chemin/exemple.mscz
 ## Publication
 
 Le workflow `Publier Pupitro` est manuel. Il construit et déploie uniquement
-`web-dist/` sur GitHub Pages ; pousser un commit ne le déclenche pas. Après accord
-sur la première publication, activer Pages avec GitHub Actions puis exécuter ce
-workflow. Contrôler l’URL finale en HTTPS, les ressources sous `/Pupitro/`, le cache
-et un import local sans réseau. Les partitions et anciens imports sont exclus.
+`web-dist/` sur GitHub Pages ; pousser un commit ne le déclenche pas. Pages est
+déjà activé avec GitHub Actions. Pour publier une nouvelle version, exécuter ce
+workflow sur `main`, attendre le succès, puis contrôler l’URL HTTPS, les ressources
+sous `/Pupitro/`, le cache et un import local sans réseau. Les partitions et anciens
+imports sont exclus. La mise à jour des appareils intervient après cette publication.
 
 Le dépôt public peut utiliser GitHub Pages avec l’offre gratuite, selon la
 [documentation officielle](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).

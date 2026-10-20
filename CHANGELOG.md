@@ -1,6 +1,6 @@
 # Historique
 
-## 0.2.0 — non publiée, autonomie en cours de validation
+## 0.2.0 — aperçu web publié, validation mobile en cours
 
 - Import MSCZ traité sur l’appareil par webmscore 0.22.0, sans serveur de conversion.
 - Rendu web différent accepté par l’utilisateur ; exemple de 13 pages contre 7.
@@ -18,8 +18,11 @@
 - Guide Safari pour les deux appareils, distinction entre mise à jour de l’app
   et réimport nécessaire après une correction de gravure.
 
-GitHub Pages n’est pas activé au 20 octobre 2026. Aucun tag `v0.2.0` ni déploiement
-HTTPS n’est annoncé ; les recettes sur iPhone et iPad restent ouvertes.
+Première publication HTTPS autorisée et réalisée le 20 octobre 2026 sur
+[Pupitro](https://alexmacapple.github.io/Pupitro/). Les 30 ressources publiques
+correspondent à la construction testée ; réouverture et nouvel import sans réseau
+contrôlés sur Chrome Mac. Aucun tag `v0.2.0` n’est créé ; les recettes sur iPhone
+et iPad restent ouvertes.
 
 ## v0.1.0 — 2026-10-20 — premier prototype
 
