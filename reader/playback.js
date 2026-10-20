@@ -17,7 +17,7 @@ function encode(value) {
   return bytes;
 }
 
-export function preparePlayback(raw, {silentDuration = 0} = {}) {
+export function readMidiTiming(raw, {silentDuration = 0} = {}) {
   const view = new DataView(raw.buffer, raw.byteOffset, raw.byteLength);
   const text = (at, length) => decoder.decode(raw.subarray(at, at + length));
   if (raw.length < 14 || text(0, 4) !== "MThd") fail();
@@ -96,12 +96,21 @@ export function preparePlayback(raw, {silentDuration = 0} = {}) {
   if (!Number.isSafeInteger(lastTick) || !lastTick) fail();
   const lastTempo = tempo.at(-1);
   const duration = lastTempo.seconds + (lastTick - lastTempo.tick) * lastTempo.us / ppq / 1e6;
-  const clickChannel = Array.from({length: 16}, (_, i) => 15 - i).find(ch => !channels.has(ch));
+  const meterEvents = [...meters].sort((a, b) => a[0] - b[0])
+    .map(([tick, [numerator, denominator]]) => ({tick, numerator, denominator}));
+  return {channels: [...channels.values()], ppq, tempo, totalTicks: lastTick, duration,
+    meterEvents, firstMeter: [meterEvents[0].numerator, meterEvents[0].denominator], secondsTick};
+}
+
+export function preparePlayback(raw, options) {
+  const timing = readMidiTiming(raw, options);
+  const {channels, ppq, totalTicks, meterEvents} = timing;
+  const clickChannel = Array.from({length: 16}, (_, i) => 15 - i).find(ch => !channels.some(part => part.channel === ch));
   if (clickChannel === undefined) throw new Error("Les 16 canaux MIDI sont utilisés : aucun canal libre pour le métronome.");
-  const meterList = [...meters].sort((a, b) => a[0] - b[0]);
   const clicks = [];
-  for (let i = 0; i < meterList.length; i++) {
-    const [start, [num, den]] = meterList[i], end = meterList[i + 1]?.[0] ?? lastTick;
+  for (let i = 0; i < meterEvents.length; i++) {
+    const {tick: start, numerator: num, denominator: den} = meterEvents[i];
+    const end = meterEvents[i + 1]?.tick ?? totalTicks;
     const step = ppq * 4 / den, beats = Math.ceil((end - start) / step);
     // Bound the additional MIDI track to a few MB on mobile devices.
     if (clicks.length + beats * 2 > 500000) throw new Error("Cette partition dépasse la capacité du métronome local.");
@@ -115,14 +124,42 @@ export function preparePlayback(raw, {silentDuration = 0} = {}) {
   const clickData = [0, 255, 3, 9, ...new TextEncoder().encode("Metronome")];
   let previous = 0;
   for (const [tick, event] of clicks) { clickData.push(...encode(tick - previous), ...event); previous = tick; }
-  clickData.push(...encode(Math.max(0, lastTick - previous)), 255, 47, 0);
+  clickData.push(...encode(Math.max(0, totalTicks - previous)), 255, 47, 0);
   const midi = new Uint8Array(raw.length + 8 + clickData.length);
   midi.set(raw); midi.set(new TextEncoder().encode("MTrk"), raw.length);
   const midiView = new DataView(midi.buffer);
+  const count = new DataView(raw.buffer, raw.byteOffset, raw.byteLength).getUint16(10);
   midiView.setUint16(8, 1); midiView.setUint16(10, count + 1);
   midiView.setUint32(raw.length + 4, clickData.length); midi.set(clickData, raw.length + 8);
-  return {midi, channels: [...channels.values()], clickChannel, ppq, tempo,
-    totalTicks: lastTick, duration, firstMeter: meterList[0][1], secondsTick};
+  return {midi, clickChannel, ...timing};
+}
+
+export function tempoAtTick(score, tick) {
+  let tempo = score.tempo[0];
+  for (const item of score.tempo) { if (item.tick > tick) break; tempo = item; }
+  return tempo;
+}
+
+export function countInAtTick(score, tick, speed) {
+  let meter = {numerator: score.firstMeter[0], denominator: score.firstMeter[1]};
+  for (const item of score.meterEvents || []) { if (item.tick > tick) break; meter = item; }
+  return {beats: meter.numerator,
+    secondsPerBeat: tempoAtTick(score, tick).us / 1e6 / speed * 4 / meter.denominator};
+}
+
+export function loopBounds(score, start, end) {
+  if (!score || !Number.isInteger(start) || !Number.isInteger(end) ||
+      start < 1 || end < start || end > score.measureCount) return null;
+  const from = score.measureEvents.findIndex(event => event.id === start - 1);
+  if (from < 0) return null;
+  const startTick = score.measureEvents[from].tick;
+  const endTick = end === score.measureCount ? score.totalTicks :
+    score.measureEvents.find((event, index) => index > from && event.id === end)?.tick;
+  return endTick > startTick ? {start: startTick, end: endTick} : null;
+}
+
+export function cursorScrollOptions(top, reducedMotion) {
+  return {top: Math.max(0, top), behavior: reducedMotion ? "auto" : "smooth"};
 }
 
 export function preparePositions(measures, segments, playback, pageCount) {

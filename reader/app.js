@@ -2,7 +2,7 @@
 import {importScore} from "./import-score.js";
 import {saveScore,getScore,listScores,openRecord,saveSettings,getSettings,requestPersistence,storageState} from "./library.js";
 import {initializeOffline,activateUpdate} from "./offline.js";
-import {positionAtPoint} from "./playback.js";
+import {positionAtPoint,tempoAtTick,countInAtTick,loopBounds,cursorScrollOptions} from "./playback.js";
 const $ = id => document.getElementById(id);
 const presets = {percussion:{label:"Percussions",program:0,bank:128},guitar:{label:"Guitare",program:24,bank:0},ukulele:{label:"Ukulélé",program:24,bank:0},mandolin:{label:"Mandoline",program:24,bank:0},flute:{label:"Flûte",program:73,bank:0},accordion:{label:"Accordéon",program:21,bank:0}};
 let score, synth, context, node, analyser, gain, fontId, initPromise;
@@ -16,10 +16,8 @@ cursor.setAttribute("aria-hidden","true");
 const parts=new Map(), countOscillators=new Set();
 function status(message){$("status").textContent=message;}
 function time(seconds){const n=Math.max(0,Math.floor(seconds));return `${Math.floor(n/60)}:${String(n%60).padStart(2,"0")}`;}
-function tempoAtTick(tick){let result=score.tempo[0];for(const item of score.tempo){if(item.tick>tick)break;result=item;}return result;}
-function tickSeconds(tick){const t=tempoAtTick(tick);return t.seconds+(tick-t.tick)*t.us/score.ppq/1e6;}
-function atMeasure(number){return score.measureEvents.find(e=>e.id===number-1);}
-function boundary(){const a=atMeasure(Number($("loopStart").value)), end=Number($("loopEnd").value);const b=score.measureEvents.find(e=>e.id===end);return a&&end>=Number($("loopStart").value)?{start:a.tick,end:b?b.tick:score.totalTicks}:null;}
+function tickSeconds(tick){const t=tempoAtTick(score,tick);return t.seconds+(tick-t.tick)*t.us/score.ppq/1e6;}
+function boundary(){return loopBounds(score,Number($("loopStart").value),Number($("loopEnd").value));}
 function enabled(part){const anySolo=[...parts.values()].some(p=>p.solo);return !part.muted&&(!anySolo||part.solo);}
 function applyPart(part){if(!synth)return;const preset=presets[part.sound];synth.setChannelType(part.channel,part.sound==="percussion");synth.midiProgramSelect(part.channel,fontId,preset.bank,preset.program);synth.midiControl(part.channel,7,Math.round(part.fileVolume*part.volume));if(!enabled(part))synth.midiAllSoundsOff(part.channel);}
 function refreshParts(){for(const part of parts.values())applyPart(part);}
@@ -45,7 +43,7 @@ function endAudioSession(){
 async function initAudio(){if(initPromise)return initPromise;context=new (window.AudioContext||window.webkitAudioContext)();const resumed=context.resume();initPromise=(async()=>{await resumed;await JSSynth.waitForReady();synth=new JSSynth.Synthesizer();synth.init(context.sampleRate);synth.setGain(.5);node=synth.createAudioNode(context,2048);analyser=context.createAnalyser();analyser.fftSize=512;gain=context.createGain();gain.gain.value=Number($("master").value)/100;node.connect(analyser);analyser.connect(gain);gain.connect(context.destination);const [soundfont,midi]=await Promise.all([checkedFetch("assets/standalone/sounds.sf3").then(r=>r.arrayBuffer()),checkedFetch(score.midiUrl||"assets/score.mid").then(r=>r.arrayBuffer())]);fontId=await synth.loadSFont(soundfont);await synth.addSMFDataToPlayer(midi);synth.hookPlayerMIDIEvents(playerHook);synth.setChannelType(score.clickChannel,true);synth.midiProgramSelect(score.clickChannel,fontId,128,0);refreshParts();return synth;})().catch(error=>{if(synth)synth.close();if(context)context.close();synth=null;initPromise=null;throw error;});return initPromise;}
 function cancelCount(){for(const oscillator of countOscillators){try{oscillator.stop();}catch{} }countOscillators.clear();}
 function stop(reset=false){generation++;cancelCount();if(synth){if(playing)currentTick=synth.getPlayerCurrentTick();synth.stopPlayer();synth.midiAllSoundsOff();}playing=false;starting=false;endAudioSession();if(reset)currentTick=0;$("play").textContent="Écouter";$("play").disabled=false;$("audioSignal").classList.remove("active");paint();status(reset?"Prêt à écouter.":"Lecture en pause.");}
-async function precount(token){const count=score.firstMeter[0],secondsPerBeat=tempoAtTick(currentTick).us/1e6/Number($("speed").value)*4/score.firstMeter[1];status(`Décompte : ${count} temps…`);for(let i=0;i<count;i++){const oscillator=context.createOscillator(),v=context.createGain();oscillator.type="sine";oscillator.frequency.value=i===0?1000:760;const t=context.currentTime+.05+i*secondsPerBeat;v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(.15*Number($("clickVolume").value)/100,t+.002);v.gain.exponentialRampToValueAtTime(.0001,t+.07);oscillator.connect(v);v.connect(gain);oscillator.start(t);oscillator.stop(t+.08);countOscillators.add(oscillator);oscillator.onended=()=>{countOscillators.delete(oscillator);v.disconnect();};}await new Promise(resolve=>setTimeout(resolve,(.05+count*secondsPerBeat)*1000));return token===generation;}
+async function precount(token){const {beats:count,secondsPerBeat}=countInAtTick(score,currentTick,Number($("speed").value));status(`Décompte : ${count} temps…`);for(let i=0;i<count;i++){const oscillator=context.createOscillator(),v=context.createGain();oscillator.type="sine";oscillator.frequency.value=i===0?1000:760;const t=context.currentTime+.05+i*secondsPerBeat;v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(.15*Number($("clickVolume").value)/100,t+.002);v.gain.exponentialRampToValueAtTime(.0001,t+.07);oscillator.connect(v);v.connect(gain);oscillator.start(t);oscillator.stop(t+.08);countOscillators.add(oscillator);oscillator.onended=()=>{countOscillators.delete(oscillator);v.disconnect();};}await new Promise(resolve=>setTimeout(resolve,(.05+count*secondsPerBeat)*1000));return token===generation;}
 async function play(){if(playing||starting){stop();return;}starting=true;const token=++generation;$("play").textContent="Annuler";status("Préparation des sons…");try{beginAudioSession();await initAudio();if(token!==generation)return;await context.resume();if(currentTick>=score.totalTicks)currentTick=0;if($("loop").checked){const bounds=boundary();if(!bounds)throw new Error("Vérifie les mesures de la boucle.");if(currentTick<bounds.start||currentTick>=bounds.end)currentTick=bounds.start;}if($("precount").checked&&!(await precount(token)))return;if(token!==generation)return;synth.seekPlayer(currentTick);synth.setPlayerTempo(0,Number($("speed").value));refreshParts();await synth.playPlayer();if(token!==generation){synth.stopPlayer();return;}starting=false;playing=true;$("play").textContent="Pause";status("Lecture en cours.");}catch(error){if(token!==generation)return;stop();status(error.message||String(error));}}
 function seek(tick){currentTick=Math.max(0,Math.min(score.totalTicks,Math.round(tick)));if(synth){synth.midiAllSoundsOff();synth.seekPlayer(currentTick);refreshParts();}paint();}
 function updateTransportLayout(){
@@ -84,7 +82,7 @@ function paintCursor(){
     if(bounds.top<12||bounds.bottom>bottom-12){
       // Leave the current staff above the fixed playback controls.
       const top=window.scrollY+bounds.top-Math.max(12,(bottom-bounds.height)/2);
-      window.scrollTo({top:Math.max(0,top),behavior:"smooth"});
+      window.scrollTo(cursorScrollOptions(top,window.matchMedia("(prefers-reduced-motion: reduce)").matches));
     }
   }
 }
@@ -146,8 +144,8 @@ async function load(next){
   $("parts").replaceChildren();
   $("title").textContent=score.title;
   document.title=`Pupitro · ${score.title}`;
-  $("pdfLink").href=score.pdfUrl||"assets/partition.pdf";
-  $("pdfLink").hidden=false;
+  if(score.pdfUrl){$("pdfLink").href=score.pdfUrl;$("pdfLink").hidden=false;}
+  else{$("pdfLink").removeAttribute("href");$("pdfLink").hidden=true;}
   for(const [index,page]of score.pages.entries()){
     const figure=document.createElement("figure");
     figure.className="paper";
@@ -186,7 +184,7 @@ async function load(next){
   $("loopStart").max=$("loopEnd").max=String(score.measureCount);
   $("loopStart").value="1";
   $("loopEnd").value=String(Math.min(4,score.measureCount));
-  $("play").disabled=$("stop").disabled=false;
+  $("play").disabled=$("stop").disabled=$("goMeasure").disabled=false;
   paint();
   status(`${score.pages.length} pages · ${score.channels.length} parties · prêt à écouter.`);
 }

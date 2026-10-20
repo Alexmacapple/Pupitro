@@ -1,4 +1,6 @@
 // User partitions belong to IndexedDB, separately from the replaceable app cache.
+import {readMidiTiming} from "./playback.js";
+
 const DATABASE = "pupitro";
 let databasePromise;
 
@@ -86,6 +88,11 @@ export function openRecord(record) {
   const urls = [];
   const url = data => { const value = URL.createObjectURL(data); urls.push(value); return value; };
   const manifest = structuredClone(record.manifest);
+  // v0.2.0 stored only the opening meter. Reuse its existing prepared MIDI;
+  // do not reconvert the source or append another metronome track.
+  if (!manifest.meterEvents?.length) {
+    manifest.meterEvents = readMidiTiming(new Uint8Array(record.midi)).meterEvents;
+  }
   manifest.pages = manifest.pages.map((page, index) => ({...page, src: url(record.pages[index])}));
   manifest.midiUrl = url(new Blob([record.midi], {type: "audio/midi"}));
   manifest.pdfUrl = url(record.pdf);

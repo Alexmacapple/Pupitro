@@ -28,7 +28,7 @@
     <div class="score-tools">
       <p id="status" role="status">Chargement de la partition…</p>
       <label>Zoom <select id="zoom"><option value="100">Largeur de l’écran</option><option value="125">125 %</option><option value="150">150 %</option><option value="200">200 %</option></select></label>
-      <a id="pdfLink" href="assets/partition.pdf" target="_blank" rel="noopener" hidden>Ouvrir le PDF</a>
+      <a id="pdfLink" target="_blank" rel="noopener" hidden>Ouvrir le PDF</a>
       <button id="cancelImport" hidden>Annuler l’import</button>
       <button id="exportSource" hidden>Enregistrer le MSCZ dans Fichiers</button>
     </div>
@@ -58,7 +58,7 @@
       <label class="check"><input type="checkbox" id="loop"> Boucle</label>
       <label>De la mesure <input id="loopStart" type="number" min="1" value="1"></label>
       <label>à <input id="loopEnd" type="number" min="1" value="4"></label>
-      <button id="goMeasure">Aller au début de la boucle</button>
+      <button id="goMeasure" disabled>Aller au début de la boucle</button>
       <output id="measure">Mesure 1</output>
     </div>
     </section>
