@@ -47,6 +47,11 @@ nécessaires à l’installation. Pas d’édition, d’annotation Pencil ni d�
 
 ## Installer ou développer
 
+**État au 20 octobre 2026 :** les sources de la version autonome sont sur `main`.
+GitHub Pages n’est pas activé ; la première publication HTTPS reste à autoriser
+et à vérifier. Le lecteur n’a donc pas encore d’adresse publique d’installation.
+Les essais sur iPhone et iPad restent à réaliser.
+
 - [Installation sur iPhone et iPad](docs/INSTALLATION.md)
 - [Vérifications et limites](docs/VALIDATION.md)
 - [Besoin et critères de réussite](docs/PRD.md)

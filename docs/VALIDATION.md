@@ -11,6 +11,9 @@ sources:
 
 # Vérifications — version autonome
 
+État documentaire au 20 octobre 2026 ; référence du code testé : `d14dbff`.
+Cette page consigne des preuves passées, sans annoncer une validation générale.
+
 Une partition personnelle MuseScore 2 sert d’exemple. Ni elle ni ses captures
 ne sont publiées dans le dépôt ou l’artefact applicatif.
 
@@ -50,6 +53,7 @@ les symboles et de toutes les partitions n’a pas été réalisée.
 | Lecture/pause sur une note | Souris en 1440 × 1000 puis toucher en 428 × 926 : démarrage, pause avec tick stable et signal coupé, reprise depuis la note visée |
 | Réseau | Aucune requête POST et aucune requête HTTP vers un autre serveur pendant la recette |
 | Construction | Liste explicite de ressources applicatives ; aucune partition copiée |
+| Mise à jour dans Chrome utilisateur | Nouveau lecteur activé, bibliothèque conservée ; lecture et pause par le bouton contrôlées |
 
 Les recettes complètes Chromium et WebKit ont passé sur la construction
 `ef89840b97399c25f4b2` : 13 pages, les 2 parties d’origine, lecture/pause et
@@ -57,7 +61,8 @@ reprise par clic et toucher, import hors ligne et redémarrage. Les huit tests
 Node et la construction passent aussi. Le test de pause échoue sur la version
 précédente : le bouton reste « Pause » et la lecture continue après le clic.
 La construction contient 30 ressources et environ 58 Mo, sans partition personnelle.
-La publication HTTPS reste à autoriser et vérifier.
+La publication HTTPS reste à autoriser et vérifier. Les changements documentaires
+n’affectent pas cette construction et ne constituent pas une nouvelle recette du code.
 
 L’onglet Chrome de l’utilisateur affichait encore une version antérieure. La
 mise à jour y a été activée ; démarrage et pause par le bouton ont été contrôlés.
@@ -78,12 +83,25 @@ vide. Le signalement utilisateur concerne le barré du B♭ page 5 : la migratio
 plaçait la case 1 à la case 3. La correction a été inspectée avec le barré sur les
 deux cordes de droite à la case 1 ; sa confirmation par l’utilisateur reste attendue.
 La copie intermédiaire recharge maintenant les images de notation avec le MSCZ.
+Une mise à jour du lecteur seule ne remplace pas les anciennes pages dans la
+bibliothèque utilisateur ; le fichier d’origine doit être réimporté.
+
+## Publication et installation
+
+Le contrôle de l’API GitHub Pages du dépôt a renvoyé HTTP 404 : Pages n’est pas
+activé au moment du contrôle. Le workflow manuel existe dans les sources, sans
+premier déploiement autorisé. L’adresse prévue et les étapes Safari sont dans
+[INSTALLATION.md](INSTALLATION.md).
+
+Le chemin public `/Pupitro/`, le chargement réel en HTTPS, l’installation depuis
+cette adresse et son fonctionnement hors ligne restent non vérifiés. Les essais
+locaux utilisent l’adresse de boucle locale du Mac ; ils ne prouvent pas ces points.
 
 ## Appareils physiques
 
 | Appareil | Version autonome |
 |---|---|
-| iPhone | Installation, affichage, son et mode avion non encore confirmés |
+| iPhone 12 Pro Max présumé | Installation, affichage, son et mode avion non encore confirmés |
 | iPad M4 | Installation, affichage, son et mode avion non encore confirmés |
 | Android | Non testé physiquement |
 
@@ -97,8 +115,18 @@ cette nouvelle version. WebKit de test sur Mac ne remplace pas Safari sur iPhone
 2. Importer un MSCZ et contrôler notes, portées, tablatures, textes et accords.
 3. Écouter les six instruments, volume, coupure, solo, métronome et décompte.
 4. Tester curseur, vitesse, boucle, zoom et commandes masquées.
-5. Mode avion : fermer, rouvrir, lire puis importer un nouveau fichier local.
+5. Mac éteint, mode avion et Wi-Fi coupé : fermer, rouvrir, lire puis importer un nouveau fichier local.
 6. Vérifier les réglages après redémarrage et le retour après verrouillage.
+
+| Résultat à consigner | iPhone | iPad M4 |
+|---|---|---|
+| Version système, navigateur et date | À relever | À relever |
+| Installation et indicateur prêt hors ligne | À tester | À tester |
+| Partition connue, pages et barrés | À tester | À tester |
+| Son entendu, instruments, métronome et décompte | À tester | À tester |
+| Lecture/pause au toucher, curseur, tempo et boucle | À tester | À tester |
+| Réouverture et nouvel import sans réseau ni Mac | À tester | À tester |
+| Réglages conservés et retour après verrouillage | À tester | À tester |
 
 Restent aussi non validés : stockage saturé réel, interruption système pendant une
 transaction, mise à jour avec plusieurs fenêtres ouvertes et partitions complexes

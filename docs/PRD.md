@@ -20,7 +20,8 @@ sans abonnement et sans dépendre d’un Mac allumé.
 - Importer directement des `.mscz` natifs depuis Fichiers, même hors ligne.
 - Conserver les fichiers et la bibliothèque sur l’appareil ; aucun envoi externe.
 - Garder tempo, métronome, décompte, boucle, curseur, zoom et commandes escamotables.
-- Démarrer la lecture à partir d’une note cliquée à la souris ou touchée sur l’écran.
+- Démarrer depuis une note cliquée ou touchée ; pendant la lecture ou le décompte,
+  le même geste met en pause, puis un nouveau clic démarre depuis la note visée.
 - Six instruments : percussion, guitare, ukulélé, mandoline, flûte et accordéon.
 - Installer l’app depuis Safari ; pas d’achat sans accord explicite.
 - iPhone 12 Pro Max présumé et iPad M4 ; versions système encore inconnues.
@@ -39,15 +40,21 @@ Cette dernière contrainte remplace l’exigence initiale de rendu strictement i
 | Curseur | Alignement et suivi des pages pendant la lecture |
 | Lecture/pause au pointeur | Clic ou toucher sur une note pour lire, clic suivant pour mettre en pause ; espaces vides sans effet |
 | Persistance | Bibliothèque et réglages retrouvés après fermeture et redémarrage |
-| Installation | Icône ouvrant l’app hors ligne sur iPhone et iPad |
+| Installation | Icône Safari ouvrant l’app hors ligne sur chacun des deux appareils |
 | Confidentialité | Aucun envoi des partitions ; aucune partition dans l’artefact public |
 
 Les vérifications de navigateur et les essais physiques restent distincts dans
-[VALIDATION.md](VALIDATION.md).
+[VALIDATION.md](VALIDATION.md). La procédure et les conditions de publication sont
+dans [INSTALLATION.md](INSTALLATION.md). Au 20 octobre 2026, la publication HTTPS
+et la recette sur les deux appareils restent à mener.
 
 ## Limites
 
 Pas d’édition, d’annotation Pencil ni de synchronisation entre appareils.
+La bibliothèque utilise IndexedDB ; les ressources utilisent Cache Storage.
+Le terme « local » ne promet pas une sauvegarde permanente : garder les originaux
+dans Fichiers. La première installation et les mises à jour nécessitent Internet,
+puis import, rendu et lecture doivent fonctionner sans Mac ni réseau.
 Le moteur est épinglé : aucun engagement général sur les fichiers MuseScore 4.
 Les fichiers trop lourds ou certains éléments de notation peuvent rester incompatibles.
 

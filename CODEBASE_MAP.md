@@ -3,7 +3,7 @@
 | Entrée | Propriétaire et rôle |
 |---|---|
 | `reader/index.html`, `style.css` | Interface mobile et commandes |
-| `reader/app.js` | Transport, présentation, bibliothèque et réglages |
+| `reader/app.js` | Transport, bascule lecture/pause au pointeur, présentation, bibliothèque et réglages |
 | `reader/import-score.js` | Validation ZIP, annulation, délai et migration v2 avec barrés et images |
 | `reader/import-worker.js` | Moteur WASM, gravure et exports |
 | `reader/playback.js` | MIDI, clic, tempos, positions et sélection d’une note au pointeur |
@@ -14,16 +14,33 @@
 | `scripts/setup_assets.py` | Ressources et notices épinglées |
 | `scripts/build_web.py` | Liste publique explicite et empreintes de version |
 | `scripts/serve-web.sh` | Aperçu statique sur localhost |
-| `scripts/check.sh`, `tests/` | Contrôles et recettes de navigateur |
+| `scripts/check.sh`, `tests/playback.test.js` | Syntaxe, tests Node ciblés et construction |
+| `tests/legacy.cjs`, `tests/browser.cjs` | Migration v2 et recette Chromium/WebKit, dont souris et toucher |
 | `.github/workflows/pages.yml` | Publication statique manuelle |
 
 ## Flux autonome
 
-MSCZ choisi → contrôle ZIP → worker webmscore → SVG/PDF/MIDI/positions →
-transaction IndexedDB → affichage et synthèse locale.
+MSCZ choisi → contrôle ZIP et empreinte → worker webmscore →
+adaptation v2 par `import-score.js` si nécessaire → rechargement du MSCZ de travail
+avec ses images → SVG/PDF/MIDI/positions → transaction IndexedDB → lecteur local.
 
 Le Service Worker sert les fichiers applicatifs de sa version ; les partitions
 ne traversent aucun serveur. La bibliothèque de chaque appareil est indépendante.
+
+## Carte de la documentation
+
+| Document | Source de vérité |
+|---|---|
+| [README.md](README.md) | Pourquoi, fonctions et accès aux guides |
+| [docs/PRD.md](docs/PRD.md) | Besoin, contraintes acceptées et critères de réussite |
+| [docs/INSTALLATION.md](docs/INSTALLATION.md) | Installation, mises à jour et état de publication |
+| [docs/VALIDATION.md](docs/VALIDATION.md) | Essais exécutés, limites et recette physique |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Flux, propriétaires et stockage |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Raisons des choix et point de retour |
+| [docs/DEPENDANCES.md](docs/DEPENDANCES.md) | Versions, notices et sources officielles |
+| [CHANGELOG.md](CHANGELOG.md), [todo.md](todo.md) | Changements livrés et travail restant |
+| [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md) | Contrat local et entrée de compatibilité |
+| [.claude/session-context.md](.claude/session-context.md) | État de reprise, à vérifier dans Git |
 
 ## Données et historique
 

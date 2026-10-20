@@ -1,6 +1,6 @@
 # Historique
 
-## 0.2.0 — autonomie en cours de validation
+## 0.2.0 — non publiée, autonomie en cours de validation
 
 - Import MSCZ traité sur l’appareil par webmscore 0.22.0, sans serveur de conversion.
 - Rendu web différent accepté par l’utilisateur ; exemple de 13 pages contre 7.
@@ -13,7 +13,13 @@
 - Annulation contrôlée après le calcul d’empreinte ; ouvertures de partitions sérialisées.
 - Partitions de silences consultables, avec durée du métronome issue du moteur.
 - Barrés MuseScore 2 : numéro de case et cordes conservés ; images incluses dans la copie MSCZ.
-- Lecture/pause par clic ou toucher sur une note ; reprise depuis la note visée.
+- Lecture/pause par clic ou toucher sur une note : en lecture ou décompte, pause
+  sans déplacement ; au clic suivant, départ depuis la note visée.
+- Guide Safari pour les deux appareils, distinction entre mise à jour de l’app
+  et réimport nécessaire après une correction de gravure.
+
+GitHub Pages n’est pas activé au 20 octobre 2026. Aucun tag `v0.2.0` ni déploiement
+HTTPS n’est annoncé ; les recettes sur iPhone et iPad restent ouvertes.
 
 ## v0.1.0 — 2026-10-20 — premier prototype
 

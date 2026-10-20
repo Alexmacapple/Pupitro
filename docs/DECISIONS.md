@@ -25,7 +25,8 @@ de curseur exploitables. Elle est retenue et épinglée, sans mise à jour impli
 
 Le moteur plus récent ajoute par défaut une lecture automatique des symboles
 d’accords, absente de l’ancien export. Pour les fichiers de version inférieure à 3,
-une copie MSCX intermédiaire désactive cette nouvelle lecture des harmonies.
+le MSCX intermédiaire est adapté puis replacé dans une archive MSCZ de travail,
+avec ses pièces jointes, pour désactiver cette nouvelle lecture des harmonies.
 Le fichier original reste intact. L’exemple conserve ainsi les 3 015 notes de la
 partie principale et les deux notes de la partie de percussions.
 
@@ -48,8 +49,8 @@ Un clic ou un toucher dans la portée démarre au segment musical le plus proche
 Les coordonnées viennent du moteur ; aucun élément SVG n’est interprété comme une
 note. Pendant la lecture ou le décompte, le clic met en pause sans déplacer le
 curseur ; le clic suivant reprend depuis la note visée. Hors de la portée, le clic
-reste sans effet. Une sélection extérieure à la
-boucle active la désactive pour permettre le départ à l’endroit choisi.
+reste sans effet. Un départ depuis une note extérieure à la boucle active la
+désactive pour permettre la lecture à l’endroit choisi ; une pause seule la conserve.
 
 ## Stockage local explicite
 
@@ -57,6 +58,8 @@ IndexedDB conserve partitions et réglages. Cache Storage conserve l’applicati
 son moteur et les sons. Chaque appareil possède sa bibliothèque. Aucune
 synchronisation ni conversion distante n’est introduite. Une copie du MSCZ peut
 être réenregistrée dans Fichiers ; le stockage du navigateur n’est pas une sauvegarde.
+Le besoin exprimé comme « local storage » est donc satisfait par un stockage local
+de fichiers dans IndexedDB, plutôt que par l’API textuelle `localStorage`.
 
 ## Installation et mises à jour
 
@@ -64,6 +67,10 @@ Une adresse HTTPS permet la première installation et la mise en cache complète
 Le Service Worker est lié à sa version, avec empreintes des ressources. Une mise
 à jour n’interrompt pas automatiquement un morceau. Aucun nettoyage de cache
 applicatif ne doit supprimer les données IndexedDB.
+Cette séparation préserve la bibliothèque lors d’une mise à jour du lecteur.
+Les pages déjà gravées ne sont pas recalculées automatiquement : après une correction
+de gravure, l’utilisateur réimporte l’original. La réception de fichiers passe par
+le sélecteur Fichiers ; la procédure iOS ne dépend pas de l’API Web Share Target.
 
 ## Six choix d’instruments
 
@@ -76,4 +83,8 @@ de l’installation MuseScore du Mac. Leur rendu sonore peut différer de `v0.1.
 Le dépôt source exclut les ressources téléchargées et les partitions personnelles.
 L’artefact statique est construit depuis une liste explicite et inclut les notices
 tierces. Il ne publie ni les imports ni le lien privé de l’ancien serveur Mac.
+GitHub Pages est la cible HTTPS préparée, avec un workflow déclenché manuellement.
+L’activation et le premier déploiement restent à autoriser ; le code poussé ne prouve
+ni la publication ni l’installation. La procédure et l’état courant sont tenus dans
+[INSTALLATION.md](INSTALLATION.md).
 La licence du code propre reste à décider avant distribution de paquets.

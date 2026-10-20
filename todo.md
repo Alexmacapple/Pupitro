@@ -11,18 +11,26 @@
 - [x] Terminer la revue ; corriger annulation, ouvertures concurrentes et silences.
 - [x] Corriger le barré B♭ de la page 5 et préserver les images de notation.
 - [x] Démarrer, mettre en pause et relancer par clic ou toucher sur une note.
-- [ ] Faire confirmer ces deux changements par l’utilisateur dans l’aperçu.
-- [ ] Autoriser puis exécuter la publication statique HTTPS.
+- [x] Activer la mise à jour dans l’onglet Chrome utilisateur avec bibliothèque conservée.
+- [x] Mettre à jour les 13 documents structurants, dont le guide Safari.
+- [ ] Faire confirmer le barré B♭ et les clics sur les notes par l’utilisateur ;
+  réimporter le MSCZ pour remplacer les anciennes pages conservées.
+- [ ] Obtenir l’accord pour activer GitHub Pages et publier l’application statique.
+- [ ] Déployer puis contrôler HTTPS, le chemin `/Pupitro/`, les ressources et le hors ligne.
 - [ ] Installer depuis Safari et vérifier sur l’iPhone et l’iPad M4.
 - [ ] Recueillir les versions du système et du navigateur de ces appareils.
 - [ ] Vérifier Android avant de l’annoncer comme testé.
 
 ## Recette physique
 
+À exécuter séparément sur l’iPhone et l’iPad, selon
+[le guide d’installation](docs/INSTALLATION.md). Consigner les résultats dans
+[VALIDATION.md](docs/VALIDATION.md) ; aucun de ces essais n’est encore confirmé.
+
 - [ ] Comparer tous les éléments affichés d’une partition connue.
 - [ ] Écouter les instruments, le métronome et le décompte.
-- [ ] Tester vitesse, curseur, boucle, zoom et commandes masquées.
-- [ ] Mode avion : fermer, rouvrir puis importer un nouveau MSCZ local.
+- [ ] Tester lecture/pause au toucher, vitesse, curseur, boucle, zoom et commandes masquées.
+- [ ] Mac éteint, mode avion et Wi-Fi coupé : fermer, rouvrir puis importer un nouveau MSCZ local.
 - [ ] Vérifier les réglages et le retour après verrouillage/changement d’app.
 
 ## Fiabiliser à partir de cas réels
@@ -30,7 +38,7 @@
 - [ ] Tester d’autres partitions : reprises, changements de tempo/métrique,
   plusieurs portées, percussions, silences et erreurs d’import.
 - [ ] Mesurer mémoire, consommation et durée du premier chargement sur téléphone.
-- [ ] Valider une mise à jour de l’app avec une bibliothèque existante.
+- [ ] Valider les mises à jour sur appareils physiques et avec plusieurs fenêtres ouvertes.
 - [ ] Choisir la licence du code propre avant distribution de paquets.
 
 Aucun achat ni envoi de partition vers un service externe n’est autorisé.

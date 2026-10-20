@@ -8,8 +8,10 @@ que les éléments s’affichent correctement. Préserver lecture, six instrumen
 curseur, métronome, décompte, boucle et commandes escamotables.
 Pas d’édition, d’App Store ni d’achat sans accord explicite.
 
-Lire `README.md`, `todo.md`, `CODEBASE_MAP.md`, puis le document utile dans `docs/`.
-Les preuves sont dans `docs/VALIDATION.md` et les arbitrages dans `docs/DECISIONS.md`.
+Lire [README.md](README.md), [todo.md](todo.md), puis [CODEBASE_MAP.md](CODEBASE_MAP.md).
+[docs/INSTALLATION.md](docs/INSTALLATION.md) possède la procédure d’installation
+et l’état de publication ; [docs/VALIDATION.md](docs/VALIDATION.md) possède les
+preuves et les inconnues ; [docs/DECISIONS.md](docs/DECISIONS.md) possède les arbitrages.
 Un retour utilisateur reste distinct d’un essai direct ou d’un navigateur simulé.
 
 ## Commandes
@@ -39,6 +41,8 @@ Ne pas servir ou publier la racine du dépôt.
   Pendant la lecture ou le décompte, le clic met en pause sans déplacer le curseur.
 - Cache : un Service Worker appartient à une version complète ; aucune bascule
   automatique pendant une lecture. Les mises à jour attendent l’action utilisateur.
+  Une mise à jour du lecteur ne regrave pas les partitions déjà enregistrées ;
+  une correction de gravure nécessite leur réimport depuis le MSCZ d’origine.
 - Ressources : l’installateur possède les versions, noms attendus et empreintes.
 - La hauteur réelle de `readerDock` possède l’espace des commandes et du curseur.
 
@@ -50,6 +54,9 @@ Les anciens outils Python de conversion et MuseScore 2 restent disponibles ;
 le tag `v0.1.0` protège la version Mac. Aucun remplacement de MuseScore installé.
 Ce projet possède son propre dépôt : ne pas commiter dans son parent.
 Pas de démarrage automatique ni d’exposition du serveur Mac sur Internet.
+Le workflow Pages est manuel ; l’autorisation de pousser les sources ne vaut pas
+autorisation du premier déploiement public. Ne pas annoncer une URL installable
+avant d’avoir contrôlé HTTPS, les ressources et le chemin `/Pupitro/`.
 
 ## Vérification
 

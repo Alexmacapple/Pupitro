@@ -18,6 +18,7 @@ sources:
 | @librescore/sf3 | 0.8.0, MuseScore General Lite | Six choix d’instruments |
 | fflate | 0.8.2 | Copie locale du MSCZ avec barrés corrigés et images conservées |
 | Playwright | 1.64.1, développement seulement | Recettes Chromium et WebKit |
+| Node.js | 22 ou supérieur, développement seulement | Tests JavaScript ; workflow de publication sur Node 24 |
 | Python | 3.12 recommandé, développement seulement | Installation et construction statique |
 
 `setup_assets.py --standalone` vérifie le SHA-256 de chaque archive, banque et
@@ -34,7 +35,16 @@ Sources : [webmscore](https://github.com/LibreScore/webmscore),
 [js-synthesizer](https://github.com/jet2jet/js-synthesizer),
 [banque et attributions](https://github.com/LibreScore/sf3),
 [stockage WebKit](https://webkit.org/blog/14403/updates-to-storage-policy/),
-[installation Safari](https://support.apple.com/fr-fr/guide/iphone/iphea86e5236/ios).
+[installation Safari sur iPhone](https://support.apple.com/fr-fr/guide/iphone/iphea86e5236/ios),
+[installation Safari sur iPad](https://support.apple.com/fr-fr/guide/ipad/ipad8f1f7a29/ipados).
+
+## Coûts et installation
+
+Aucun compte MuseScore, achat ou abonnement n’est requis par le lecteur autonome.
+La cible de publication est GitHub Pages pour le dépôt public, disponible dans
+l’offre gratuite selon [GitHub](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+La procédure et l’état de déploiement sont dans [INSTALLATION.md](INSTALLATION.md).
+Les outils Python, Node et Playwright ne sont pas nécessaires sur iPhone ou iPad.
 
 Les anciens scripts de conversion native utilisent toujours MuseScore 2.3.2 et
 PyMuPDF 1.28.0. Ils ne sont pas des dépendances du lecteur autonome.
