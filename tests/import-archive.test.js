@@ -150,9 +150,10 @@ test("capacity declarations fail without allocating their expanded contents", ()
   assert.throws(() => validateArchive(buffer));
 });
 
-test("the worker receives a safe copy while the identifier and source keep original bytes", async t => {
-  const comment = new Uint8Array(23); new DataView(comment.buffer).setUint32(0, 0x06054b50, true);
-  const original = commented(archive(), comment), file = new File([original], "source.mscz");
+for(const commentSize of [0,23])test(`worker transfer preserves original bytes with ${commentSize} comment bytes`, async t => {
+  const comment = new Uint8Array(commentSize);
+  if(commentSize)new DataView(comment.buffer).setUint32(0, 0x06054b50, true);
+  const original = commentSize?commented(archive(), comment):archive(), file = new File([original], "source.mscz");
   const expected = Buffer.from(await crypto.subtle.digest("SHA-256", original)).toString("hex");
   const previous = Object.getOwnPropertyDescriptor(globalThis, "Worker");
   let received, terminated = 0;
