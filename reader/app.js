@@ -422,6 +422,7 @@ $("backupFile").onchange=async()=>{
   try{
     pendingBackup=await inspectBackup(file,message=>{$("libraryStatus").textContent=message;status(message);},importing.signal);
     const existing=new Set((await listScores()).map(item=>item.id));
+    if(importing.signal.aborted)throw new DOMException("Vérification annulée.","AbortError");
     const kept=pendingBackup.entries.filter(item=>existing.has(item.id)).length;
     $("restoreSummary").textContent=`${pendingBackup.entries.length-kept} partition(s) à ajouter ; ${kept} déjà présente(s), conservée(s) sans remplacement.`;
     $("restorePreview").showModal();$("cancelRestore").focus();

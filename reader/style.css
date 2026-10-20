@@ -17,7 +17,7 @@ main{padding-bottom:calc(var(--dock-height,260px) + 18px)}
 .offline-bar p{margin:0;flex:1;min-width:200px}
 .offline-bar button,.score-tools button{font-size:12px}
 #libraryItems{display:grid;gap:10px;margin:16px 0}
-#libraryItems button{text-align:left;width:100%}
+#libraryItems button{text-align:left}
 .library-item{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:10px;min-width:0}
 .library-item button[data-action="open"]{flex:1;min-width:0;overflow-wrap:anywhere}
 .library-item button:not([data-action="open"]){width:auto}

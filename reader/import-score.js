@@ -155,14 +155,17 @@ export async function readScoreSource(file, signal) {
   if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
   const id = [...new Uint8Array(await crypto.subtle.digest("SHA-256", original))].map(x => x.toString(16).padStart(2, "0")).join("");
   if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
-  return {id,bytes};
+  return {id,bytes,original};
 }
 
 export async function importScore(file, onProgress, signal, {resolveExisting} = {}) {
-  const {id,bytes} = await readScoreSource(file, signal);
+  const {id,bytes,original} = await readScoreSource(file, signal);
   const existing = await resolveExisting?.(id);
   if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
   if (existing) return existing;
+  // Own the bytes that were verified. In WebKit, persisting a File made from a
+  // slice of another file can retain its backing file instead of just the MSCZ.
+  const source = new Blob([original], {type:"application/octet-stream"});
   const result = await new Promise((resolve, reject) => {
     const worker = new Worker(new URL("./import-worker.js", import.meta.url), {type: "module"});
     const finish = (error, value) => {
@@ -187,6 +190,6 @@ export async function importScore(file, onProgress, signal, {resolveExisting} = 
     worker.onerror = event => { event.preventDefault(); finish(new Error("Le moteur de lecture n’a pas pu préparer cette partition.")); };
     worker.postMessage({bytes, filename: file.name}, [bytes]);
   });
-  return {id, title: result.manifest.title, filename: file.name, source: file,
+  return {id, title: result.manifest.title, filename: file.name, source,
     importedAt: Date.now(), manifest: result.manifest, pages: result.pages, midi: result.midi, pdf: result.pdf};
 }

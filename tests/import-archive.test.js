@@ -165,7 +165,7 @@ test("the worker receives a safe copy while the identifier and source keep origi
   }});
   t.after(() => { if (previous) Object.defineProperty(globalThis, "Worker", previous); else delete globalThis.Worker; });
   const record = await importScore(file, () => {});
-  assert.equal(record.id, expected); assert.equal(record.source, file);
+  assert.equal(record.id, expected); assert.ok(record.source instanceof Blob);
   assert.deepEqual(await record.source.arrayBuffer(), original);
   assert.deepEqual(unzipSync(new Uint8Array(received))["Pictures/rhythm.png"], picture);
   assert.equal(received.byteLength, original.byteLength - comment.length);

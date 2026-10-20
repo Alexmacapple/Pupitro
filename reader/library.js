@@ -152,7 +152,9 @@ export function normalizePreferences(value) {
       if (Object.hasOwn(choices,key)) { if (!choices[key].includes(item)) fail(); }
       else if (["metronome","precount","follow","loop"].includes(key)) { if (typeof item !== "boolean") fail(); }
       else if (["master","clickVolume"].includes(key)) { if (typeof item !== "string" || !item.trim() || !Number.isFinite(Number(item)) || Number(item)<0 || Number(item)>100) fail(); }
-      else if (["loopStart","loopEnd"].includes(key)) { if (typeof item !== "string" || !Number.isSafeInteger(Number(item)) || Number(item)<1) fail(); }
+      // Number inputs can persist blank or unfinished bounds, even with a min.
+      // Playback owns their validity; saving a draft must preserve legacy data.
+      else if (["loopStart","loopEnd"].includes(key)) { if (typeof item !== "string" || (item!=="" && (!item.trim() || !Number.isFinite(Number(item))))) fail(); }
       else fail();
       result.controls[key] = item;
     }

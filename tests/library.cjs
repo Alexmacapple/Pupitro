@@ -171,6 +171,28 @@ async function records(page){
   const download=await downloading,backupPath=path.join(output,'bibliotheque.pupitro');
   await download.saveAs(backupPath);
   assert.ok(fs.statSync(backupPath).size>files[0].buffer.length);
+  // Delay the actual catalog transaction completion after backup inspection.
+  await page.evaluate(()=>{
+    const original=IDBDatabase.prototype.transaction;
+    window.catalogWaiting=false;
+    window.restoreTransaction=()=>{IDBDatabase.prototype.transaction=original;};
+    IDBDatabase.prototype.transaction=function(stores,mode,...args){
+      const tx=original.call(this,stores,mode,...args);
+      if(Array.isArray(stores)&&stores.length===1&&stores[0]==='catalog'&&mode==='readonly'){
+        Object.defineProperty(tx,'oncomplete',{set(handle){tx.addEventListener('complete',event=>{
+          window.catalogWaiting=true;window.completeCatalog=()=>handle(event);
+        },{once:true});}});
+      }
+      return tx;
+    };
+  });
+  await page.locator('#backupFile').setInputFiles(backupPath);
+  await expect.poll(()=>page.evaluate(()=>window.catalogWaiting)).toBe(true);
+  await page.locator('#cancelLibraryOperation').click();
+  await page.evaluate(()=>{window.completeCatalog();window.restoreTransaction();});
+  await expect(page.locator('#libraryStatus')).toContainText('Vérification annulée');
+  await expect(page.locator('#restorePreview')).toBeHidden();
+  assert.deepEqual(await records(page),beforeBackup);
   await page.getByRole('button',{name:'Renommer Mes exercices',exact:true}).click();
   await page.getByLabel('Nom dans Pupitro',{exact:true}).fill('Nom local prioritaire');
   await page.getByRole('button',{name:'Enregistrer le nom',exact:true}).click();
@@ -202,6 +224,7 @@ async function records(page){
   assert.deepEqual(restoredPreferences,beforePreferences);
   await page.reload();
   await expect(page.locator('#title')).toHaveText('Mes exercices');
+  assert.deepEqual(await records(page),beforeBackup);
   await expect(page.locator('#speed')).toHaveValue('1.25');
   await page.locator('#play').click();
   await expect(page.locator('#audioSignal')).toHaveClass(/active/,{timeout:15000});
@@ -234,6 +257,7 @@ async function records(page){
     return {id,bytes:Array.from(new Uint8Array(await encodeBackup(snapshot).arrayBuffer()))};
   },Array.from(third.buffer));
   const extraFile={name:'trois.pupitro',mimeType:'application/octet-stream',buffer:Buffer.from(extra.bytes)};
+  fs.writeFileSync(path.join(output,'trois.pupitro'),extraFile.buffer);
   await page.locator('#backupFile').setInputFiles(extraFile);
   await expect(page.locator('#restorePreview')).toBeVisible();
   await page.evaluate(id=>{
@@ -289,6 +313,8 @@ async function records(page){
   assert.ok(await page.locator('#library').evaluate(el=>el.scrollWidth<=el.clientWidth));
   await page.screenshot({path:path.join(output,'library-mobile.png')});
   await page.setViewportSize({width:1440,height:1000});
+  const openButton=page.locator('#libraryItems [data-action="open"]').first();
+  assert.ok(await openButton.evaluate(el=>el.clientWidth>150),'Desktop score names need readable width');
   await page.screenshot({path:path.join(output,'library-desktop.png')});
   await context.close();context=await launch();await context.setOffline(true);
   page=await context.newPage();await page.goto(base);
@@ -297,5 +323,5 @@ async function records(page){
   await page.locator('#libraryButton').click();
   await expect(page.locator('#libraryItems [data-action="open"]')).toHaveCount(75);
   assertObservations(observations);
-  console.log(JSON.stringify({legacyMigration:true,rename:true,sourcePreserved:true,cancel:true,deleteActive:true,deleteRollback:true,lateSettingsIgnored:true,multiImportOffline:true,duplicateChoices:true,backupRoundTripOffline:true,restoreKeepsExisting:true,settingsRestored:true,quotaRollback:true,restoreQuotaRollback:true,restoreCancelled:true,invalidBackupPreservesLibrary:true,catalogRecords:large.count,rawScoreReadsForListing:large.rawScoreReads.length,restartOffline:true,errors:observations.errors,posts:observations.posts.length,externalRequests:observations.outside.length,output}));
+  console.log(JSON.stringify({legacyMigration:true,rename:true,sourcePreserved:true,cancel:true,deleteActive:true,deleteRollback:true,lateSettingsIgnored:true,multiImportOffline:true,duplicateChoices:true,backupRoundTripOffline:true,restoreKeepsExisting:true,settingsRestored:true,quotaRollback:true,restoreQuotaRollback:true,restoreCancelled:true,lateInspectionCancelled:true,invalidBackupPreservesLibrary:true,catalogRecords:large.count,rawScoreReadsForListing:large.rawScoreReads.length,restartOffline:true,errors:observations.errors,posts:observations.posts.length,externalRequests:observations.outside.length,output}));
 })().catch(async e=>{console.error(e);const page=context?.pages().at(-1);if(page)await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});console.error('Artifacts:',output);process.exitCode=1;}).finally(async()=>{if(context)await context.close();});

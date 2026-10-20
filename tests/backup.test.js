@@ -17,6 +17,14 @@ test("a backup retains original bytes, display names and settings without Base64
   assert.deepEqual(record.settings,before.records[0].settings);
   assert.deepEqual(await record.source.arrayBuffer(),await before.records[0].source.arrayBuffer());
 });
+test("legacy empty and fractional loop inputs survive a complete backup",async()=>{
+  for(const value of ["","1.5","-1","1e2"]){
+    const before=await snapshot();
+    before.records[0].settings.controls={loop:false,loopStart:value,loopEnd:value};
+    const after=await inspectBackup(encodeBackup(before));
+    assert.deepEqual(after.entries[0].settings,before.records[0].settings);
+  }
+});
 test("truncation, trailing bytes and damaged MSCZ content reject the whole backup",async()=>{
   const file=encodeBackup(await snapshot()),bytes=new Uint8Array(await file.arrayBuffer());
   for(const length of [0,16,bytes.length-1,bytes.length-5])await assert.rejects(inspectBackup(new Blob([bytes.subarray(0,length)])));
@@ -34,7 +42,7 @@ test("duplicate identifiers in a backup are rejected before restoration",async()
 });
 test("unknown settings and prototype keys never reach reader controls or instruments",()=>{
   for(const settings of [JSON.parse('{"controls":{"__proto__":{}}}'),{controls:{speed:"99"}},
-    {controls:{follow:"true"}}, {controls:{toString:"x"}},
+    {controls:{follow:"true"}}, {controls:{toString:"x"}}, {controls:{loopStart:"non numérique"}},
     {parts:[{channel:16,sound:"flute",volume:1,muted:false,solo:false}]},
     JSON.parse('{"parts":[{"channel":0,"sound":"flute","volume":1,"muted":false,"solo":false,"__proto__":{}}]}')]){
     assert.throws(()=>normalizePreferences(settings));
