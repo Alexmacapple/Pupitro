@@ -2,6 +2,7 @@
 import {importScore} from "./import-score.js";
 import {saveScore,getScore,listScores,openRecord,saveSettings,getSettings,requestPersistence,storageState} from "./library.js";
 import {initializeOffline,activateUpdate} from "./offline.js";
+import {positionAtPoint} from "./playback.js";
 const $ = id => document.getElementById(id);
 const presets = {percussion:{label:"Percussions",program:0,bank:128},guitar:{label:"Guitare",program:24,bank:0},ukulele:{label:"Ukulélé",program:24,bank:0},mandolin:{label:"Mandoline",program:24,bank:0},flute:{label:"Flûte",program:73,bank:0},accordion:{label:"Accordéon",program:21,bank:0}};
 let score, synth, context, node, analyser, gain, fontId, initPromise;
@@ -158,6 +159,20 @@ async function load(next){
     img.width=Math.round(page.width);
     img.height=Math.round(page.height);
     img.loading=index===0?"eager":"lazy";
+    img.draggable=false;
+    img.addEventListener("click",event=>{
+      if(event.button!==0||importing||restoring)return;
+      const rect=img.getBoundingClientRect();
+      const target=positionAtPoint(score.cursorEvents,index,(event.clientX-rect.left)/rect.width,(event.clientY-rect.top)/rect.height,currentTick);
+      if(!target)return;
+      if(starting)stop();
+      const bounds=$("loop").checked?boundary():null;
+      if($("loop").checked&&(!bounds||target.tick<bounds.start||target.tick>=bounds.end)){
+        $("loop").checked=false;persistPreferences();
+      }
+      seek(target.tick);
+      if(!playing)void play();
+    });
     figure.append(img);
     const label=document.createElement("span");
     label.className="page-label";
@@ -243,7 +258,7 @@ async function restoreRecord(record){
     }
     $("zoom").dispatchEvent(new Event("change"));
     $("exportSource").hidden=false;
-    $("sourceNote").textContent="Rendu web : la mise en page peut différer de MuseScore 2. Partition et lecture conservées sur cet appareil.";
+    $("sourceNote").textContent="Clique ou touche une note pour écouter à partir de là. Rendu web : la mise en page peut différer de MuseScore 2. Partition et lecture conservées sur cet appareil.";
     history.replaceState(null,"",`?score=${record.id}`);
     await saveSettings("last-score",record.id);
   }catch(error){if(activeUrls!==nextUrls)nextUrls.release();throw error;}

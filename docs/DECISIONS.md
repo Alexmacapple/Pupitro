@@ -29,11 +29,25 @@ une copie MSCX intermédiaire désactive cette nouvelle lecture des harmonies.
 Le fichier original reste intact. L’exemple conserve ainsi les 3 015 notes de la
 partie principale et les deux notes de la partie de percussions.
 
+MuseScore 2 stocke la case du barré comme un entier. Le lecteur de compatibilité
+de MuseScore 3 le réduit à un booléen et choisit le premier point : le B♭ signalé
+page 5 passe ainsi de la case 1 à la case 3. La migration reprend cette case et
+la première corde portant ce point depuis le XML source, après vérification de
+l’identité du diagramme. Elle recharge une archive complète pour préserver les images.
+Le test ciblé échoue avec l’ancienne conversion et passe avec la correction.
+Références : [MuseScore 2](https://github.com/musescore/MuseScore/blob/v2.3.2/libmscore/fret.cpp),
+[MuseScore 3](https://github.com/musescore/MuseScore/blob/v3.6.2/libmscore/fret.cpp).
+
 ## Séparer gravure et lecture
 
 Les SVG conservent la gravure web ; MIDI, tempos et positions guident la lecture.
 Changer de vitesse ou d’instrument ne regrave pas la partition. Les glyphes de
 l’exemple sont des tracés, pour éviter une dépendance aux polices musicales iOS.
+
+Un clic ou un toucher dans la portée démarre au segment musical le plus proche.
+Les coordonnées viennent du moteur ; aucun élément SVG n’est interprété comme une
+note. Hors de la portée, le clic reste sans effet. Une sélection extérieure à la
+boucle active la désactive pour permettre le départ à l’endroit choisi.
 
 ## Stockage local explicite
 

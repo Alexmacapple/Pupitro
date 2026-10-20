@@ -3,6 +3,7 @@
 .header-actions button{color:#27243b}
 .playback-cursor{position:absolute;z-index:1;width:5px;border-left:2px solid #1463ce;background:#1463ce30;box-shadow:0 0 0 1px #fff9;pointer-events:none;transform:translateX(-3px);border-radius:2px}
 .playback-cursor[hidden]{display:none}
+.paper img{cursor:crosshair}
 @media(max-width:800px){header{flex-wrap:wrap}.header-actions{flex-wrap:wrap;gap:10px}.header-actions button{font-size:13px}}
 @media(max-width:640px){header{padding:16px;gap:12px}.badge{display:none}.header-actions{gap:12px}main{padding:0 6px 340px}.score-tools{padding:12px 6px;gap:8px}.score-tools p{flex-basis:100%;font-size:12px}.score-tools select{max-width:180px}.transport{gap:6px;padding-top:8px}.play-row{gap:8px}.play-row .volume{display:none}.play-row button{padding:8px 10px}.play-row button#stop{font-size:12px}.play-row output{font-size:12px;margin-left:auto}.signal{display:none}.practice-row,.loop-row{gap:8px 12px}.practice-row select{min-height:38px}.practice-row label{min-height:32px}.loop-row label{white-space:normal}.loop-row button{font-size:11px;padding:6px 8px}.loop-row output{font-size:11px}.loop-row input[type=number]{width:55px}.paper{margin-bottom:10px}.source-note{padding:0 10px}}
 .transport[hidden]{display:none}

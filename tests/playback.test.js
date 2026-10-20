@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {preparePlayback, preparePositions} from "../reader/playback.js";
+import {preparePlayback, preparePositions, positionAtPoint} from "../reader/playback.js";
 import {validateArchive, importScore} from "../reader/import-score.js";
 
 function midi(events) {
@@ -53,13 +53,26 @@ test("malformed and truncated MIDI fail instead of hanging or inventing notes",(
 test("repeats retain playback order while coordinates belong to the exported pages",()=>{
   const playback=preparePlayback(midi(note));
   const measures={elements:[{id:0,page:0},{id:1,page:1}],events:[{elid:0,position:0},{elid:1,position:100},{elid:0,position:300}]};
-  const segments={pageSize:{width:1000,height:2000},elements:[{id:0,page:0,x:200,y:300,sy:100},{id:1,page:1,x:50,y:200,sy:200}],events:measures.events};
+  const segments={pageSize:{width:1000,height:2000},elements:[{id:0,page:0,x:200,y:300,sx:20,sy:100},{id:1,page:1,x:50,y:200,sx:20,sy:200}],events:measures.events};
   const positions=preparePositions(measures,segments,playback,2);
   assert.deepEqual(positions.measureEvents.map(item=>item.id),[0,1,0]);
   assert.deepEqual(positions.cursorEvents.map(item=>item.page),[0,1,0]);
   assert.equal(positions.cursorEvents[0].x,.2);
+  assert.equal(positions.cursorEvents[0].width,.02);
   segments.elements[1].page=2;
   assert.throws(()=>preparePositions(measures,segments,playback,2));
+});
+
+test("point selection belongs to a staff, page and nearest repeat occurrence",()=>{
+  const a={page:0,x:.2,y:.3,width:.01,height:.04,tick:100};
+  const b={...a,tick:900},c={...a,page:1,tick:1500};
+  assert.equal(positionAtPoint([a,b,c],0,.205,.32,0),a);
+  assert.equal(positionAtPoint([a,b,c],0,.205,.32,800),b);
+  assert.equal(positionAtPoint([a,b,c],1,.205,.32,0),c);
+  assert.equal(positionAtPoint([a],0,.2,.1),null);
+  assert.equal(positionAtPoint([a],0,.8,.32),null);
+  assert.equal(positionAtPoint([a],0,NaN,.32),null);
+  assert.equal(positionAtPoint([{...a,width:undefined}],0,.21,.32)?.tick,100);
 });
 
 function archive(unpacked=10) {
@@ -77,6 +90,8 @@ test("ZIP expansion and malformed directory fail before starting WebAssembly",()
   assert.doesNotThrow(()=>validateArchive(archive()));
   assert.throws(()=>validateArchive(archive(201*1024*1024)));
   assert.throws(()=>validateArchive(new ArrayBuffer(20)));
+  const counts=archive();new DataView(counts).setUint16(counts.byteLength-22+8,2,true);
+  assert.throws(()=>validateArchive(counts));
   const encrypted=archive();new DataView(encrypted).setUint16(30+10+8,1,true);
   assert.throws(()=>validateArchive(encrypted));
 });

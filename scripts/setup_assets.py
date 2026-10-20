@@ -92,6 +92,9 @@ def install_standalone():
     # Expose the original memory file exactly where the raw entry requests it.
     engine_map["package/webmscore.lib.mem.wasm"] = "webmscore.lib.js.mem"
     extract_files(engine, assets / "webmscore", engine_map)
+    archive_reader = download("fflate-0.8.2.tgz", "https://registry.npmjs.org/fflate/-/fflate-0.8.2.tgz",
+                              "61fd5061e2fc8e5e3e3129f7f2fec7bd78a313e1bf4becbf1cc1cc9998d141dc", 1024 * 1024)
+    extract_files(archive_reader, assets, {"package/esm/browser.js": "fflate.js", "package/LICENSE": "LICENSE.fflate.txt"})
     resources = [
         ("soundfont-lite-0.8.0.sf3", "https://cdn.jsdelivr.net/npm/@librescore/sf3@0.8.0/MuseScore_General_Lite.sf3.wasm",
          "916aaca6b0eb9f9083eb42399614acb2ff4ec72ce28dffff1814592a9696b479", 50 * 1024 * 1024, "standalone/sounds.sf3"),

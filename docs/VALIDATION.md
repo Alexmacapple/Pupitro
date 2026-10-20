@@ -33,7 +33,7 @@ les symboles et de toutes les partitions n’a pas été réalisée.
 
 | Scénario | Portée de la preuve |
 |---|---|
-| Sept tests Node ciblés | Tempos, MIDI tronqué, SysEx, reprises, coordonnées, capacité ZIP, silences et annulation pendant le calcul SHA-256 |
+| Huit tests Node ciblés | Tempos, MIDI tronqué, SysEx, reprises, coordonnées, sélection au pointeur, capacité ZIP, silences et annulation pendant le calcul SHA-256 |
 | Import depuis le bouton | Préparation sur le navigateur, données enregistrées dans IndexedDB |
 | Lecture Chrome et WebKit | Compteur et signal audio ; aucune écoute humaine sur ces moteurs de test |
 | Six instruments | Sélection de chaque programme avec signal audio |
@@ -45,14 +45,18 @@ les symboles et de toutes les partitions n’a pas été réalisée.
 | Fichier invalide | Refus avec partition précédente conservée |
 | Ouvertures rapides | Deux sélections avec achèvement IndexedDB retardé ; réglages, URL et dernière partition cohérents |
 | Partition de silences | Moteur réel puis import WebKit hors ligne : 1 page, durée de 2 secondes, signal du métronome |
+| Barrés v2 | Reproduction rouge avec l’ancienne migration, verte avec la correction ; 65 barrés contrôlés parmi 209 diagrammes après rechargement par le moteur |
+| Images de notation | Archive conservée ; 4 images sur la page 5, comme dans le premier export, avec inspection visuelle Chrome et WebKit |
+| Départ sur une note | Clic au tick 1 200 et toucher au tick 3 119, curseur déplacé et signal audio ; espace vide sans démarrage |
 | Réseau | Aucune requête POST et aucune requête HTTP vers un autre serveur pendant la recette |
 | Construction | Liste explicite de ressources applicatives ; aucune partition copiée |
 
-La recette finale Chromium a passé sur la construction `6774ecccc1b1f93ecb20`.
-WebKit a passé le parcours complet après correction des ouvertures concurrentes,
-puis le cas des silences sur cette construction finale. Les deux parcours complets
-ont contrôlé 13 pages, les 2 parties d’origine, l’import hors ligne et le redémarrage.
-La construction contient 28 ressources et environ 58 Mo, sans partition personnelle.
+Les recettes complètes Chromium et WebKit ont passé sur la construction
+`4569f498f84de8a51da7` : 13 pages, les 2 parties d’origine, clic et toucher,
+import hors ligne et redémarrage. Après ajout des contrôles de compte ZIP et
+de taille de la copie intermédiaire, les huit tests et la migration réelle ont
+repassé sur la construction `b8ab11dc702e9af7a4fc`. Aucun changement audio ajouté.
+La construction contient 30 ressources et environ 58 Mo, sans partition personnelle.
 La publication HTTPS reste à autoriser et vérifier.
 
 Le test de navigateur consomme `tests/browser.cjs`, avec un MSCZ donné en argument.
@@ -66,10 +70,10 @@ des grandes pages SVG a fermé un onglet Chromium ; le parcours successif a pass
 La mémoire et la consommation restent à mesurer sur les appareils physiques.
 
 Les 13 pages ont aussi été rendues séparément dans Chromium et WebKit, sans page
-vide. Le retour utilisateur signale un problème sur une empreinte de B♭ :
-l’occurrence et l’écart exact restent à préciser avant un éventuel correctif.
-La comparaison du premier B♭ avec la référence native montre les trois points
-et la corde à vide dans les deux rendus ; elle ne clôt pas ce signalement.
+vide. Le signalement utilisateur concerne le barré du B♭ page 5 : la migration
+plaçait la case 1 à la case 3. La correction a été inspectée avec le barré sur les
+deux cordes de droite à la case 1 ; sa confirmation par l’utilisateur reste attendue.
+La copie intermédiaire recharge maintenant les images de notation avec le MSCZ.
 
 ## Appareils physiques
 

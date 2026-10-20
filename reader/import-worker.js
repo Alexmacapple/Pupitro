@@ -17,17 +17,17 @@ self.onmessage = async ({data: {bytes, filename}}) => {
     const {default: WebMscore} = await import("./assets/webmscore/src/index.js");
     score = await WebMscore.load("mscz", new Uint8Array(bytes));
     const metadata = await score.metadata();
-    if (metadata.fileVersion < 300 && metadata.hasHarmonies === "true") {
+    if (metadata.fileVersion < 300) {
       const xml = await score.saveMsc("mscx"), channel = new MessageChannel();
       const normalized = await new Promise((resolve, reject) => {
         channel.port1.onmessage = ({data}) => {
           channel.port1.close();
           if (data.error) reject(new Error(data.error)); else resolve(data.bytes);
         };
-        self.postMessage({type: "migrate-v2", xml: xml.buffer}, [xml.buffer, channel.port2]);
+        self.postMessage({type: "migrate-v2", xml: xml.buffer, archive: bytes}, [xml.buffer, bytes, channel.port2]);
       });
       score.destroy(); score = null;
-      score = await WebMscore.load("mscx", new Uint8Array(normalized));
+      score = await WebMscore.load("mscz", new Uint8Array(normalized));
     }
     const count = await score.npages();
     if (!count || count > 300) throw new Error("La partition doit contenir entre 1 et 300 pages.");

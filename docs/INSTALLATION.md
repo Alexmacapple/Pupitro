@@ -31,6 +31,14 @@ Importer les fichiers depuis l’app installée pour les retrouver dans cette ap
 Le bouton **Enregistrer le MSCZ dans Fichiers** conserve une copie de l’original.
 L’effacement des données du site ou de l’app peut effacer sa bibliothèque.
 
+Cliquer ou toucher une note démarre la lecture à cet endroit. En cours de lecture,
+cela déplace le curseur et poursuit le morceau. Une sélection hors de la boucle
+active la désactive. Les espaces hors portée restent sans effet.
+
+Après une correction du rendu, recharger l’app puis utiliser **Mettre à jour**
+si le bouton apparaît. Réimporter ensuite le MSCZ pour recalculer ses pages ;
+les partitions déjà enregistrées ne sont pas reconverties automatiquement.
+
 ## Android
 
 Installation proposée par le menu Chrome. Le fonctionnement sur un appareil Android

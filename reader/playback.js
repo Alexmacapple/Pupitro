@@ -132,13 +132,14 @@ export function preparePositions(measures, segments, playback, pageCount) {
   const cursorEvents = segments.events.map(event => {
     const item = elements.get(event.elid);
     if (!item || !Number.isInteger(item.page) || item.page < 0 || item.page >= pageCount ||
-        ![item.x, item.y, item.sy, event.position].every(Number.isFinite) ||
-        item.x < 0 || item.x > width || item.y < 0 || item.y > height || item.sy < 0) {
+        ![item.x, item.y, item.sx, item.sy, event.position].every(Number.isFinite) ||
+        item.x < 0 || item.x > width || item.y < 0 || item.y > height || item.sx < 0 || item.sy < 0) {
       throw new Error("Les positions exportées ne correspondent pas aux pages.");
     }
     const top = Math.max(0, item.y - height * .01);
     return {tick: playback.secondsTick(event.position / 1000), page: item.page,
-      x: item.x / width, y: top / height, height: Math.min(1 - top / height, item.sy / height + .02)};
+      x: item.x / width, width: Math.min(1-item.x/width,item.sx/width),
+      y: top / height, height: Math.min(1 - top / height, item.sy / height + .02)};
   });
   const measureEvents = measures.events.map(event => ({id: event.elid, tick: playback.secondsTick(event.position / 1000)}));
   if (!cursorEvents.length || !measureEvents.length ||
@@ -148,4 +149,18 @@ export function preparePositions(measures, segments, playback, pageCount) {
   }
   return {cursorEvents, measureEvents, measureCount: measures.elements.length,
     measurePages: Object.fromEntries(measures.elements.map(item => [item.id, item.page]))};
+}
+
+export function positionAtPoint(events, page, x, y, currentTick = 0) {
+  if (![x,y].every(Number.isFinite) || x<0 || x>1 || y<0 || y>1) return null;
+  let nearest=null,distance=Infinity;
+  for (const event of events) {
+    if (event.page!==page || y<event.y || y>event.y+event.height) continue;
+    const dx=Math.max(event.x-x,x-event.x-(event.width||0),0);
+    if (dx>.025) continue;
+    if (dx<distance || dx===distance && Math.abs(event.tick-currentTick)<Math.abs(nearest.tick-currentTick)) {
+      nearest=event;distance=dx;
+    }
+  }
+  return nearest;
 }

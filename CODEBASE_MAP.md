@@ -4,9 +4,9 @@
 |---|---|
 | `reader/index.html`, `style.css` | Interface mobile et commandes |
 | `reader/app.js` | Transport, présentation, bibliothèque et réglages |
-| `reader/import-score.js` | Validation ZIP, annulation, délai et adaptation XML v2 |
+| `reader/import-score.js` | Validation ZIP, annulation, délai et migration v2 avec barrés et images |
 | `reader/import-worker.js` | Moteur WASM, gravure et exports |
-| `reader/playback.js` | MIDI, clic, tempos et normalisation des positions |
+| `reader/playback.js` | MIDI, clic, tempos, positions et sélection d’une note au pointeur |
 | `reader/library.js` | Transactions IndexedDB et URL de Blob temporaires |
 | `reader/sw.js` | Cache immuable par version et activation des mises à jour |
 | `reader/offline.js` | État hors ligne et demande de mise à jour |

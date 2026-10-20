@@ -20,6 +20,7 @@ sans abonnement et sans dépendre d’un Mac allumé.
 - Importer directement des `.mscz` natifs depuis Fichiers, même hors ligne.
 - Conserver les fichiers et la bibliothèque sur l’appareil ; aucun envoi externe.
 - Garder tempo, métronome, décompte, boucle, curseur, zoom et commandes escamotables.
+- Démarrer la lecture à partir d’une note cliquée à la souris ou touchée sur l’écran.
 - Six instruments : percussion, guitare, ukulélé, mandoline, flûte et accordéon.
 - Installer l’app depuis Safari ; pas d’achat sans accord explicite.
 - iPhone 12 Pro Max présumé et iPad M4 ; versions système encore inconnues.
@@ -36,6 +37,7 @@ Cette dernière contrainte remplace l’exigence initiale de rendu strictement i
 | Affichage | Notes, portées, tablatures et textes présents sur chaque appareil |
 | Lecture | Son entendu, instruments, clic, décompte et boucle utilisables |
 | Curseur | Alignement et suivi des pages pendant la lecture |
+| Départ sur une note | Clic ou toucher placé dans une portée, sans démarrage dans les espaces vides |
 | Persistance | Bibliothèque et réglages retrouvés après fermeture et redémarrage |
 | Installation | Icône ouvrant l’app hors ligne sur iPhone et iPad |
 | Confidentialité | Aucun envoi des partitions ; aucune partition dans l’artefact public |

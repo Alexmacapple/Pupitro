@@ -30,10 +30,15 @@ flowchart LR
 - `import-worker.js` produit la gravure, le MIDI et les positions. Pour une source
   MuseScore 2, les harmonies de la copie intermédiaire ne deviennent pas un nouvel
   accompagnement automatique. Le parseur XML du navigateur réalise cette adaptation.
+  Le numéro du barré et sa première corde proviennent du fichier d’origine, après
+  vérification des points et du nombre de diagrammes. La copie MSCZ conserve les
+  pièces jointes pour éviter de perdre les images lors du second chargement.
 - `playback.js` possède la lecture du MIDI, le clic ajouté et la normalisation des
   coordonnées. Les événements de reprise restent dans leur ordre temporel.
   Pour une partition sans notes, la durée fournie par le moteur complète le MIDI
   presque vide et permet de conserver le métronome.
+  La largeur des segments permet la sélection d’une note après normalisation du
+  clic dans la page ; les reprises privilégient l’occurrence proche de la lecture.
 - `library.js` possède les transactions IndexedDB et les URL temporaires d’affichage.
 - `app.js` possède le transport, les réglages et la présentation des pages.
   Les ouvertures sont sérialisées jusqu’à l’écriture de la dernière partition :

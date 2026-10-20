@@ -16,6 +16,7 @@ sources:
 | js-synthesizer | 1.13.0 | Interface JavaScript de synthèse |
 | FluidSynth/WASM | 2.4.6 du paquet ci-dessus | Lecture du MIDI avec banque SF3 |
 | @librescore/sf3 | 0.8.0, MuseScore General Lite | Six choix d’instruments |
+| fflate | 0.8.2 | Copie locale du MSCZ avec barrés corrigés et images conservées |
 | Playwright | 1.64.1, développement seulement | Recettes Chromium et WebKit |
 | Python | 3.12 recommandé, développement seulement | Installation et construction statique |
 
@@ -25,7 +26,7 @@ par son entrée Emscripten brute, sans modification de ses octets. Aucune dépen
 n’est téléchargée pendant un import de partition après préparation hors ligne.
 
 Les notices sont incluses dans l’artefact et accessibles par **Ressources et licences** :
-GPL du moteur, notice de js-synthesizer, LGPL de FluidSynth et attributions de la
+GPL du moteur, notice de js-synthesizer, LGPL de FluidSynth, MIT de fflate et attributions de la
 banque. La licence du code propre à Pupitro reste à choisir avant distribution de
 paquets ; les notices tierces ne lui attribuent pas automatiquement une licence.
 

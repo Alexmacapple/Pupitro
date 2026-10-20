@@ -13,7 +13,8 @@ SHELL = ["index.html", "credits.html", "app.js", "style.css", "library.js", "pla
 ENGINE = ["webmscore.lib.js", "webmscore.lib.data", "webmscore.lib.wasm",
           "webmscore.lib.js.mem", "src/index.js", "src/helper.js", "src/utils.js", "LICENSE.GPL"]
 ASSETS = ["assets/fluidsynth.js", "assets/synth.js", "assets/standalone/sounds.sf3",
-          "assets/LICENSE.synth.txt", "assets/LICENSE.fluidsynth.txt", "assets/LICENSE.soundfont.txt"]
+          "assets/LICENSE.synth.txt", "assets/LICENSE.fluidsynth.txt", "assets/LICENSE.soundfont.txt",
+          "assets/fflate.js", "assets/LICENSE.fflate.txt"]
 FILES = SHELL + ASSETS + ["assets/webmscore/" + name for name in ENGINE]
 
 

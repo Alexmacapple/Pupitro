@@ -30,7 +30,12 @@ Ne pas servir ou publier la racine du dépôt.
 - Gravure : worker dédié, libéré ou interrompu après chaque import.
 - Temps MIDI, clic et coordonnées : normalisés une fois dans `reader/playback.js`.
 - Anciens accords MuseScore 2 : désactiver la nouvelle synthèse automatique des
-  harmonies dans la copie de travail, sans modifier le fichier source.
+  harmonies et préserver le numéro de case et les cordes du barré depuis le XML
+  d’origine. Vérifier l’identité des diagrammes avant de les rapprocher.
+  Recharger une archive MSCZ complète pour conserver les images ; ne pas modifier
+  le fichier source ni remplacer le numéro du barré par une heuristique sur les points.
+- Clic et toucher : sélectionner un événement depuis les coordonnées normalisées
+  du moteur, avec les reprises ; une zone hors portée ne démarre pas la lecture.
 - Cache : un Service Worker appartient à une version complète ; aucune bascule
   automatique pendant une lecture. Les mises à jour attendent l’action utilisateur.
 - Ressources : l’installateur possède les versions, noms attendus et empreintes.
