@@ -83,6 +83,65 @@ rien. Aucun POST, appel externe ou `pageerror`. Artefact local :
 `/private/tmp/pupitro-library-public-verification.json`. Aucune partition publiée.
 Les commits documentaires suivants ne changent pas les ressources applicatives.
 
+### Limite connue : titre composé d’espaces — à corriger
+
+Le candidat ShipGuard `r1-z01-002` est reproduit sur l’adresse publique, construction
+`a211530ec3d09aedecdb`, avec Chromium Mac et un MSCZ synthétique valide dont
+`workTitle` contient trois espaces. L’import réussit, mais le titre du lecteur
+contient ces trois espaces et **Exporter la bibliothèque** échoue avec
+« La sauvegarde Pupitro est invalide ou incomplète. » La bibliothèque est conservée.
+
+Contournement vérifié : dans **Bibliothèque**, renommer cette entrée en
+**Titre renseigné**, puis relancer l’export. Un fichier `.pupitro` de 1 264 octets
+est alors téléchargé. Le produit reste inchangé ; la correction reste à faire.
+Preuves locales : `blank-title-result.json` et `check-blank-title.cjs`, dans
+`/private/tmp/pupitro-recette-20261021.buFM9S/`.
+
+### Recettes indépendantes — 21 octobre 2026
+
+Périmètre : diff `605d781..daa2529` et site public de construction
+`a211530ec3d09aedecdb`. Les changements documentaires de `12bb47f` ne modifient
+pas cette construction. Aucun correctif de l’application n’a été appliqué pendant ces recettes.
+
+| Contrôle | Résultat et portée |
+|---|---|
+| Fable 5.1 | 32 scénarios et un contrôle complémentaire du dock : **33/33 sur Chromium, 33/33 sur WebKit**, avec inspection des captures |
+| ShipGuard 2.16.1, parcours | **14/14 scénarios sur chaque moteur** ; CLI **3/3** ; crawl de 2 pages et 13 ressources, aucun lien cassé |
+| ShipGuard, code | Deux agents Opus réels ; **38 constats statiques actifs** (0 critique ou haut, 7 moyens, 31 bas), plus 8 affirmations d’absence non vérifiées ; ce ne sont pas 38 bugs reproduits |
+| ShipGuard, logique | 48 obligations ; 3 signalements classés « confirmed » : titre blanc mesuré, deux bilans après échec d’ouverture raisonnés ; 10 risques et un conflit de contrat à arbitrer |
+| ShipGuard, processus | 26 unités, 79 observations : 15 mesurées et 64 raisonnées |
+| ShipGuard, visuel | Total canonique de 6 entrées : 3 manifestes et 2 recettes agrégées passent ; une inspection échoue, car **Nom dans Pupitro** reste visible dans la confirmation de suppression malgré `hidden` (règle CSS `display: grid`) ; la suppression reste fonctionnelle |
+| Tableau ShipGuard agrégé | 79 constats : 69 raisonnés et 10 mesurés ; ce compte ne désigne pas des tests |
+
+Toutes les phases ShipGuard de `run.json` portent `ran`. Ce fichier indique
+`exit_code: 1` pour constats présents, dont le défaut visuel ; les parcours fonctionnels
+réussis ne valent donc pas un verdict global sans défaut. Les deux recettes navigateur
+ne détectent aucun POST, appel externe ou `pageerror` dans leurs passages finaux ;
+les messages FluidSynth habituels restent présents.
+
+Fable relève aussi trois écarts UX mineurs : **Annuler cet ajout** arrête le lot
+entier (comportement documenté, libellé ambigu), une repréparation est comptée
+« enregistrée », et un ancien message d’erreur reste après l’aperçu d’une sauvegarde
+vide valide. Le lecteur vide après suppression active est attendu : rouvrir une
+autre partition depuis **Bibliothèque**. Les données restent conservées dans ces scénarios.
+Le conflit de contrat porte sur l’ajout multiple qui continue après une erreur de
+fichier, alors que la restauration s’arrête ; la politique attendue reste à décider.
+
+Les premiers scripts Fable ont demandé des corrections de ciblage et d’attente.
+Trois lancements Chromium en arrière-plan ont subi des fermetures inexpliquées ;
+la recette complète réussit en premier plan. Codex rejoue le même script dans un
+profil Chromium distinct en premier plan : **32/32, code 0**. La cause des fermetures
+reste inconnue. Le MSCZ 2 synthétique Fable est refusé par le moteur : cette campagne
+ne renouvelle pas la preuve de compatibilité MuseScore 2 réelle, conservée séparément
+dans les essais historiques de la partition personnelle.
+
+Les essais utilisent les navigateurs Mac et des profils isolés, sans appareil physique
+ni écoute humaine. Fable n’exerce ni saturation réelle, ni mise à jour multi-fenêtres,
+ni très grande bibliothèque. Rapports et captures restent hors Git sous
+`/private/tmp/pupitro-recette-20261021.buFM9S/` : `fable/recette-fable.json`,
+`shipguard/visual-tests/_results/` et `foreground-check/out/chromium/`.
+Le dossier ShipGuard contient le rapport final `shipguard-report.md` et le tableau `review.html`.
+
 ### Standards
 
 Revue indépendante du diff `605d781...c7193f6` : aucune violation documentaire dure.

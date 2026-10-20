@@ -10,6 +10,23 @@
 - [x] Tester sur Chromium/WebKit, publier et vérifier la mise à jour HTTPS avec bibliothèque existante conservée.
 - [ ] Vérifier ce gestionnaire et son aller-retour de sauvegarde sur iPhone et iPad physiques.
 
+## Suites des recettes indépendantes — 21 octobre 2026
+
+Preuves et limites dans [VALIDATION.md](docs/VALIDATION.md) ; aucun correctif appliqué.
+
+- [ ] Aligner les titres acceptés à l’import et à l’export : un titre composé
+  d’espaces bloque actuellement la sauvegarde ; le renommage permet de l’exporter.
+- [ ] Masquer le champ **Nom dans Pupitro** dans la confirmation de suppression
+  en respectant `hidden` malgré la règle CSS `display: grid`.
+- [ ] Clarifier l’annulation du lot et le bilan de repréparation ; retirer l’ancien
+  message d’erreur après l’aperçu d’une sauvegarde vide valide.
+- [ ] Arbitrer la politique après erreur de préparation : l’ajout multiple continue,
+  la restauration s’arrête. Préciser le contrat avant de changer le comportement.
+- [ ] Reproduire les deux bilans raisonnés après échec d’ouverture, puis qualifier
+  les autres constats statiques avant correction.
+- [ ] Élucider les trois fermetures Chromium en arrière-plan ; les rejeux en premier
+  plan passent, sans cause établie pour les fermetures.
+
 ## Livrer la version autonome
 
 - [x] Vérifier le tag de retour `v0.1.0` sur GitHub.
@@ -49,7 +66,7 @@ par l’utilisateur ; les scénarios ci-dessous ne sont pas encore détaillés.
 
 ## Fiabiliser à partir de cas réels
 
-- [x] Corriger les constats ShipGuard et le faux lien PDF, avec 30 tests Node,
+- [x] Corriger les constats ShipGuard du 20 octobre et le faux lien PDF, avec 30 tests Node,
   11 tests HTTP et les recettes Chromium/WebKit sur la construction corrigée.
 - [ ] Tester d’autres partitions : reprises, changements de tempo/métrique,
   plusieurs portées, percussions, silences et erreurs d’import.

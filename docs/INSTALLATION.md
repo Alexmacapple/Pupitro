@@ -91,6 +91,13 @@ par partition et la référence de la dernière partition ouverte. Les pages pr�
 ne sont pas incluses : elles seront recréées par le moteur local lors de la restauration.
 Conserver cette sauvegarde en dehors des données du site.
 
+**Limite connue, à corriger :** un MSCZ dont le titre ne contient que des espaces
+peut être importé avec un nom invisible, puis bloquer l’export avec
+« La sauvegarde Pupitro est invalide ou incomplète. » Dans **Bibliothèque**, choisir
+**Renommer** sur cette entrée et saisir un nom visible, puis relancer
+**Exporter la bibliothèque**. Ce contournement a été vérifié sur Chromium Mac ;
+les détails et la portée de la preuve sont dans [VALIDATION.md](VALIDATION.md).
+
 **Restaurer une sauvegarde** permet de choisir ce fichier, vérifier son contenu
 puis confirmer les ajouts. Les partitions identiques déjà présentes gardent leurs
 noms et leurs réglages ; seules les absentes sont ajoutées. Une annulation depuis

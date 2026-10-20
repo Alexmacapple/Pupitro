@@ -12,6 +12,29 @@ Le tag `v0.2.0` repère le lecteur autonome avec confirmation utilisateur iPhone
 Lire [AGENTS.md](../AGENTS.md), [todo.md](../todo.md), puis
 [VALIDATION.md](../docs/VALIDATION.md). Examiner Git avant toute reprise.
 
+## Recettes indépendantes — 21 octobre 2026
+
+Diff examiné : `605d781..daa2529`, build public `a211530ec3d09aedecdb`.
+La documentation `12bb47f` ne change pas ce build. Fable 5.1 : 33/33 sur Chromium
+et 33/33 sur WebKit ; rejeu du même script par Codex, dans un profil Chromium
+distinct en premier plan : 32/32, code 0.
+ShipGuard 2.16.1 : toutes phases exécutées, recettes 14/14 sur chaque moteur,
+CLI 3/3 ; `run.json` indique des constats présents (`exit_code: 1`).
+
+Aucun correctif de l’application appliqué. Deux défauts mesurés restent ouverts :
+un titre composé d’espaces bloque l’export (renommer l’entrée permet l’export),
+et le champ de nom reste visible dans la confirmation de suppression, qui fonctionne.
+Les 38 constats statiques ne sont pas 38 bugs reproduits ; les deux signalements
+sur les bilans après échec d’ouverture sont raisonnés. La politique d’erreur
+ajout/restauration reste à arbitrer. Les trois fermetures Chromium en arrière-plan
+restent inexpliquées ; les rejeux en premier plan passent.
+
+Le MSCZ 2 synthétique Fable est refusé : les preuves MuseScore 2 réelles restent
+historiques et distinctes. Aucun appareil physique ni écoute humaine dans ces recettes.
+Rapports, captures et limites : [VALIDATION.md](../docs/VALIDATION.md) ; corrections
+et arbitrages à suivre dans [todo.md](../todo.md). Les artefacts restent temporaires,
+hors Git ; la session dédiée ShipGuard est fermée.
+
 ## Gestionnaire livré — 21 octobre 2026
 
 L’utilisateur a demandé un petit gestionnaire et accepté explicitement la
