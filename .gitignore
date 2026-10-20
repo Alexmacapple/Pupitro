@@ -1,0 +1,20 @@
+# Données personnelles et lien d’accès local
+/.access-token
+/imports/
+/reader/scores/
+/reader/assets/
+/reference*
+/apercu-*
+/export-job.json
+/config/
+
+# Ressources installées, caches et inventaire local
+/.cache/
+/synth-package/
+/npm-cache/
+/*.tgz
+/.pdd/
+/.venv/
+__pycache__/
+*.pyc
+.DS_Store

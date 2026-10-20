@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#27243b">
+  <title>Pupitro</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="assets/fluidsynth.js"></script>
+  <script defer src="assets/synth.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header>
+    <div><span class="eyebrow">PUPITRO</span><h1 id="title">Choisir une partition</h1></div>
+    <div class="header-actions"><span class="badge">Rendu MuseScore 2</span><button id="openFile">Ouvrir un fichier .mscz</button><input id="scoreFile" type="file" accept=".mscz" hidden><button id="mixerButton" aria-haspopup="dialog">Instruments</button></div>
+  </header>
+  <main>
+    <div class="score-tools">
+      <p id="status" role="status">Chargement de la partition…</p>
+      <label>Zoom <select id="zoom"><option value="100">Largeur de l’écran</option><option value="125">125 %</option><option value="150">150 %</option><option value="200">200 %</option></select></label>
+      <a id="pdfLink" href="assets/partition.pdf" target="_blank" rel="noopener" hidden>Ouvrir le PDF</a>
+    </div>
+    <div id="score" aria-label="Pages de la partition"></div>
+    <p class="source-note">Pages exportées depuis MuseScore 2.3.2. Les sons et le tempo se règlent sans changer leur mise en page.</p>
+    <p class="source-note">« Ouvrir un fichier .mscz » prépare ta partition sur ce Mac avec MuseScore 2. Aucun envoi vers un service externe.</p>
+  </main>
+  <footer id="readerDock" class="reader-dock" aria-label="Lecture et affichage">
+    <div class="dock-handle"><button id="transportToggle" type="button" aria-controls="transport" aria-expanded="true">Masquer les commandes</button></div>
+    <section id="transport" class="transport" aria-label="Commandes de lecture">
+    <div class="play-row">
+      <button id="play" class="primary" disabled>Écouter</button>
+      <button id="stop" disabled>Revenir au début</button>
+      <output id="clock" aria-label="Position de lecture">0:00 / 0:00</output>
+      <span id="audioSignal" class="signal" aria-label="Signal audio">●</span>
+      <label class="volume">Volume <input id="master" type="range" min="0" max="100" value="75"></label>
+    </div>
+    <input id="seek" type="range" min="0" max="1" step="1" value="0" aria-label="Position dans le morceau" disabled>
+    <div class="practice-row">
+      <label>Vitesse <select id="speed"><option value="0.5">50 %</option><option value="0.75">75 %</option><option value="0.9">90 %</option><option value="1" selected>100 %</option><option value="1.1">110 %</option><option value="1.25">125 %</option><option value="1.5">150 %</option><option value="2">200 %</option></select></label>
+      <label class="check"><input type="checkbox" id="metronome"> Métronome</label>
+      <label>Volume du clic <input id="clickVolume" type="range" min="0" max="100" value="65"></label>
+      <label class="check"><input type="checkbox" id="precount"> Décompte</label>
+      <label class="check"><input type="checkbox" id="follow" checked> Suivre le curseur</label>
+    </div>
+    <div class="loop-row">
+      <label class="check"><input type="checkbox" id="loop"> Boucle</label>
+      <label>De la mesure <input id="loopStart" type="number" min="1" value="1"></label>
+      <label>à <input id="loopEnd" type="number" min="1" value="4"></label>
+      <button id="goMeasure">Aller au début de la boucle</button>
+      <output id="measure">Mesure 1</output>
+    </div>
+    </section>
+  </footer>
+  <dialog id="mixer" aria-labelledby="mixerTitle">
+    <div class="dialog-title"><h2 id="mixerTitle">Instruments et parties</h2><button id="closeMixer" aria-label="Fermer les instruments">Fermer</button></div>
+    <p>Choisis le son de chaque partie, son volume, ou les parties à écouter seules.</p>
+    <div id="parts"></div>
+    <p class="hint">Dans la banque de MuseScore 2, l’ukulélé et la mandoline utilisent le même son de guitare nylon. Flûte, accordéon et percussions ont leurs propres sons.</p>
+  </dialog>
+</body>
+</html>
