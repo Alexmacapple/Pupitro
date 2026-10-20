@@ -61,6 +61,36 @@ synchronisation ni conversion distante n’est introduite. Une copie du MSCZ peu
 Le besoin exprimé comme « local storage » est donc satisfait par un stockage local
 de fichiers dans IndexedDB, plutôt que par l’API textuelle `localStorage`.
 
+## Gestionnaire et sauvegarde complète — 21 octobre 2026
+
+L’utilisateur demande ajout, renommage et suppression ciblée, puis accepte aussi
+la sauvegarde et la restauration complète. Le catalogue séparé évite de recopier
+pages et MIDI pour afficher la liste ou renommer une entrée. Son nom affiché est
+indépendant du titre gravé et du fichier source. La migration de base est atomique ;
+aucune limite de nombre de partitions n’est ajoutée.
+
+Un doublon est défini par l’empreinte du MSCZ original, pas par son nom. Le choix
+d’ouvrir ou de repréparer est explicite. La suppression exige confirmation, attend
+le commit de stockage puis arrête le lecteur si nécessaire. Les transactions
+communes évitent les scores orphelins et les réglages ressuscités après suppression.
+
+La sauvegarde locale transporte les originaux, noms et réglages, puis recrée les
+exports au retour. Un format binaire encadré évite l’expansion Base64 et une nouvelle
+dépendance ZIP. La taille des métadonnées décodées est bornée ; les originaux sont
+vérifiés par le même propriétaire que l’import. Les bornes de boucle saisies mais
+encore vides ou fractionnaires sont conservées : la validité de lecture appartient
+à `loopBounds`, et ne doit pas empêcher une sauvegarde d’anciens réglages.
+
+La restauration est additive : même contenu déjà présent signifie conservation
+du nom et des réglages locaux. Chaque nouvelle entrée est atomique ; un lot
+interrompu garde les ajouts terminés, avec un bilan explicite. La vérification
+du fichier entier précède toute écriture. Les fichiers `.pupitro` peuvent être
+transférés manuellement ; aucun compte ni synchronisation n’est introduit.
+
+La version 2 de la base n’est pas rétrogradée par un retour Git au code d’un ancien
+tag. Les tags historiques restent inchangés ; une sauvegarde externe est le moyen
+de retrouver les originaux et leurs réglages après effacement des données du site.
+
 ## Installation et mises à jour
 
 Une adresse HTTPS permet la première installation et la mise en cache complète.

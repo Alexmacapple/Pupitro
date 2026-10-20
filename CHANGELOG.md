@@ -1,5 +1,20 @@
 # Historique
 
+## Gestionnaire de bibliothèque — 2026-10-21
+
+- Ajout multiple de MSCZ, choix explicite sur les doublons, renommage et suppression
+  confirmée, y compris pendant la lecture de la partition supprimée.
+- Catalogue IndexedDB léger, migration de l’existant sans réimport, aucune limite
+  artificielle de nombre ; originaux et réglages conservés lors d’un échec.
+- Export local `.pupitro` et restauration additive des originaux, noms et réglages.
+  Vérification complète avant écriture, annulation et messages de stockage insuffisant.
+- Anciens champs de boucle vides ou fractionnaires sauvegardés ; annulation tardive
+  de vérification respectée ; noms de bibliothèque lisibles sur grand écran.
+- Originaux restaurés matérialisés en Blobs indépendants pour préserver leurs
+  seuls octets MSCZ dans IndexedDB sous WebKit.
+- 38 tests Node et 11 tests HTTP passent. Les recettes Mac et les limites physiques
+  sont consignées dans [VALIDATION.md](docs/VALIDATION.md). Tags antérieurs inchangés.
+
 ## Correctifs après v0.2.0 — 2026-10-20
 
 - Revue ShipGuard : 12 constats corrigés, dont un défaut de journalisation découvert

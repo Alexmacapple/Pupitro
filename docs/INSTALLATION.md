@@ -65,6 +65,38 @@ les partitions dans cette app ; aucun compte MuseScore n’est nécessaire.
 Le bouton **Enregistrer le MSCZ dans Fichiers** conserve une copie de l’original.
 L’effacement des données du site ou de l’app peut effacer sa bibliothèque.
 
+## Gérer et sauvegarder la bibliothèque
+
+Ouvrir **Bibliothèque**, puis **Ajouter des MSCZ** pour sélectionner un ou plusieurs
+fichiers. Ils sont préparés l’un après l’autre sur l’appareil. Un fichier identique
+est reconnu par son contenu : ouvrir la partition déjà enregistrée, la repréparer
+explicitement ou annuler l’ajout. La repréparation conserve son nom et ses réglages.
+Annuler un lot arrête la suite ; les partitions déjà ajoutées restent enregistrées.
+
+**Renommer** change seulement le nom dans Pupitro. **Supprimer** demande une
+confirmation et enlève cette partition et ses réglages de cet appareil ; si elle
+est ouverte, la lecture s’arrête et le lecteur se vide. Le MSCZ dans Fichiers
+reste intact. Le nombre de partitions n’est pas plafonné par Pupitro ; les limites
+par fichier et l’espace disponible restent applicables. Un stockage insuffisant
+arrête l’opération avec un message et conserve les partitions déjà enregistrées.
+
+**Exporter la bibliothèque** prépare un fichier `.pupitro` à enregistrer dans
+Fichiers. Il contient tous les MSCZ d’origine, leurs noms personnalisés, les réglages
+par partition et la référence de la dernière partition ouverte. Les pages préparées
+ne sont pas incluses : elles seront recréées par le moteur local lors de la restauration.
+Conserver cette sauvegarde en dehors des données du site.
+
+**Restaurer une sauvegarde** permet de choisir ce fichier, vérifier son contenu
+puis confirmer les ajouts. Les partitions identiques déjà présentes gardent leurs
+noms et leurs réglages ; seules les absentes sont ajoutées. Une annulation depuis
+l’aperçu n’écrit rien. Pendant la restauration, annuler ou manquer d’espace conserve
+les ajouts déjà terminés et la bibliothèque précédente ; le bilan donne leur nombre.
+
+Ces opérations fonctionnent sans réseau une fois **Application prête hors ligne**
+affiché, avec les fichiers disponibles localement. Pour transférer une bibliothèque
+vers l’autre appareil, y rendre le fichier `.pupitro` disponible dans Fichiers,
+puis le restaurer dans Pupitro. Ce transfert reste manuel.
+
 ## Lecture et pause sur la partition
 
 Cliquer ou toucher près d’une note dans la portée démarre la lecture au segment
@@ -82,6 +114,10 @@ hors de la boucle active, cette boucle est désactivée ; une pause seule la con
 4. Éteindre le Mac, activer le mode avion et vérifier que le Wi-Fi est coupé.
 5. Fermer puis rouvrir Pupitro depuis son icône : retrouver la partition et l’écouter.
 6. Importer le second MSCZ depuis Fichiers sans rétablir le réseau, puis le lire.
+7. Dans Bibliothèque, renommer, annuler puis confirmer une suppression ; vérifier
+   que le MSCZ d’origine est toujours dans Fichiers.
+8. Exporter la bibliothèque, puis restaurer le fichier sur une bibliothèque vide
+   ou sur l’autre appareil et comparer noms, réglages, pages et lecture.
 
 Consigner le résultat pour chaque appareil dans [VALIDATION.md](VALIDATION.md).
 L’absence de son ou d’une page laisse la recette ouverte ; les tests Mac ne la remplacent pas.
@@ -94,6 +130,10 @@ l’onglet convient aussi. Attendre le téléchargement, arrêter la lecture, pu
 **Mettre à jour** si le bouton apparaît. Répéter sur chaque appareil. La bibliothèque
 IndexedDB est conservée. Une autre fenêtre déjà ouverte peut garder l’ancien
 lecteur jusqu’à son propre rechargement.
+
+Cette version ajoute un catalogue dans la base IndexedDB (version 2). Fermer les
+autres fenêtres Pupitro si la migration est bloquée. Les anciens tags restent des
+références de code ; ils ne rétrogradent pas automatiquement cette base locale.
 
 Une correction des commandes ne demande pas de réimport. Une correction du rendu
 (par exemple le barré B♭) demande de **réimporter le MSCZ d’origine après la mise
@@ -130,6 +170,14 @@ Recette avec une partition privée :
 npx playwright install chromium webkit
 npm run test:browser -- /chemin/exemple.mscz
 PUPITRO_ENGINE=webkit npm run test:browser -- /chemin/exemple.mscz
+```
+
+Recette du gestionnaire avec ses petites partitions de test, sur l’aperçu servi
+par défaut en 8770 :
+
+```sh
+PUPITRO_TEST_URL=http://127.0.0.1:8770/ npm run test:library
+PUPITRO_TEST_URL=http://127.0.0.1:8770/ PUPITRO_ENGINE=webkit npm run test:library
 ```
 
 ## Publication

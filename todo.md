@@ -1,5 +1,14 @@
 # Prochaines étapes
 
+## Gestionnaire de bibliothèque
+
+- [x] Ajouter plusieurs MSCZ, renommer et supprimer après confirmation, sans plafond de nombre.
+- [x] Migrer le catalogue sans modifier les partitions existantes ; garder une liste légère.
+- [x] Traiter explicitement les doublons et la suppression de la partition ouverte.
+- [x] Exporter/restaurer toute la bibliothèque, noms et réglages compris, sans écraser l’existant.
+- [x] Couvrir les annulations, les sauvegardes invalides et les échecs de stockage sans perte.
+- [ ] Vérifier ce gestionnaire et son aller-retour de sauvegarde sur iPhone et iPad physiques.
+
 ## Livrer la version autonome
 
 - [x] Vérifier le tag de retour `v0.1.0` sur GitHub.
@@ -34,6 +43,8 @@ par l’utilisateur ; les scénarios ci-dessous ne sont pas encore détaillés.
 - [ ] Tester lecture/pause au toucher, vitesse, curseur, boucle, zoom et commandes masquées.
 - [ ] Mac éteint, mode avion et Wi-Fi coupé : fermer, rouvrir puis importer un nouveau MSCZ local.
 - [ ] Vérifier les réglages et le retour après verrouillage/changement d’app.
+- [ ] Ajouter plusieurs MSCZ, renommer, supprimer une entrée active puis retrouver les autres.
+- [ ] Exporter et restaurer une sauvegarde, comparer noms et réglages sur chaque appareil.
 
 ## Fiabiliser à partir de cas réels
 

@@ -24,7 +24,9 @@ bibliothèque ; il n’y a pas de synchronisation automatique.
 - Volume, coupure et solo par partie.
 - Percussion, guitare, ukulélé, mandoline, flûte et accordéon.
 - Zoom et commandes escamotables pour libérer l’affichage.
-- Bibliothèque locale, réglages conservés et export du MSCZ d’origine.
+- Bibliothèque locale : ajout multiple de MSCZ, renommage et suppression confirmée.
+- Sauvegarde et restauration de toute la bibliothèque, noms et réglages compris.
+- Réglages conservés et export du MSCZ d’origine.
 
 L’ukulélé et la mandoline partagent ici le timbre de guitare nylon.
 
@@ -39,9 +41,15 @@ l’import autonome ; le rendu strictement identique n’est plus promis.
 Le fonctionnement de la version autonome sur iPhone est confirmé par l’utilisateur.
 La recette détaillée, notamment le mode avion, et la vérification sur iPad restent
 ouvertes. Les essais Chrome et WebKit sur Mac ont leur propre portée de preuve.
+Le nouveau gestionnaire et l’aller-retour de sauvegarde sont testés sur ces moteurs ;
+leur vérification physique sur iPhone et iPad reste à faire.
 
 Gardez vos MSCZ d’origine dans Fichiers : effacer les données du site peut
-effacer la bibliothèque. Une adresse HTTPS et une première connexion sont
+effacer la bibliothèque. Exportez aussi une sauvegarde `.pupitro` dans Fichiers ;
+sa restauration ajoute les partitions absentes et préserve celles déjà présentes.
+Le nombre de partitions n’a pas de plafond applicatif ; la capacité réelle de
+l’appareil et les protections par fichier restent applicables.
+Une adresse HTTPS et une première connexion sont
 nécessaires à l’installation. Pas d’édition, d’annotation Pencil ni d’abonnement.
 <!-- CAUSAL:END -->
 

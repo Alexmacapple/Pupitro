@@ -29,7 +29,9 @@ flowchart LR
 ## Propriétaires
 
 - `import-score.js` contrôle l’archive, l’empreinte, le délai et l’annulation ;
-  le fichier d’origine est conservé sans modification. Pour une source MuseScore 2,
+  les octets d’origine sont conservés sans modification dans un Blob indépendant,
+  pour ne pas persister une File appuyée sur une tranche de sauvegarde sous WebKit.
+  Pour une source MuseScore 2,
   le premier chargement du worker fournit un MSCX à adapter avec le parseur XML
   du navigateur. Les harmonies ne deviennent pas un nouvel accompagnement automatique.
   Le numéro du barré et sa première corde proviennent du fichier d’origine, après
@@ -44,11 +46,14 @@ flowchart LR
   presque vide et permet de conserver le métronome.
   La largeur des segments permet la sélection d’une note après normalisation du
   clic dans la page ; les reprises privilégient l’occurrence proche de la lecture.
-- `library.js` possède les transactions IndexedDB et les URL temporaires d’affichage.
+- `library.js` possède les transactions IndexedDB, le catalogue léger, le contrat
+  des réglages, le snapshot cohérent de sauvegarde et les URL temporaires d’affichage.
+- `backup.js` possède le format binaire `.pupitro` et sa vérification complète ;
+  il réutilise la même validation ZIP et la même empreinte que l’import MSCZ.
 - `app.js` possède le transport, les réglages et la présentation des pages.
   Il démarre depuis le segment sélectionné à l’arrêt et met en pause sans déplacement
   pendant la lecture ou le décompte ; `playback.js` possède la sélection géométrique.
-  Les ouvertures sont sérialisées jusqu’à l’écriture de la dernière partition :
+  Les ouvertures, renommages, suppressions et snapshots sont sérialisés :
   pages, URL et réglages restent rattachés au même document.
 - `sw.js` sert uniquement le cache de sa version. L’installation vérifie chaque
   ressource avant activation ; les mises à jour attendent la fermeture des anciennes
@@ -62,12 +67,35 @@ flowchart LR
 ## Données et limites
 
 IndexedDB conserve MSCZ d’origine, pages SVG, PDF, MIDI préparé, manifeste et
-réglages. Le cache applicatif contient le lecteur, le moteur, les sons et les
+réglages. La base `pupitro`, version 2, sépare `scores` (fichiers préparés),
+`catalog` (identité, nom affiché, nom du fichier, date et nombre de pages) et
+`settings` (réglages et dernière partition). La migration v1 construit le catalogue
+dans une transaction sans modifier les originaux ni les exports existants.
+La liste lit seulement ce catalogue, sans charger les fichiers de chaque partition.
+
+L’ajout écrit score et catalogue ensemble ; une restauration écrit aussi ses
+réglages dans cette même transaction. La suppression enlève score, catalogue,
+réglages et référence active correspondante ensemble. Le lecteur n’est vidé
+qu’après confirmation du commit ; les écritures de réglages tardives ignorent
+les partitions supprimées. Renommer modifie seulement le catalogue et le titre
+présenté par le lecteur, sans changer le manifeste gravé ni le MSCZ.
+
+Le snapshot de sauvegarde utilise une unique transaction de lecture. Le fichier
+`.pupitro` encadre des métadonnées JSON et les octets MSCZ d’origine, conservés
+comme références Blob sans Base64. Chaque cadre JSON est borné à 1 Mio ; chaque
+MSCZ garde sa limite de 50 Mio. Il n’y a pas de quota sur le nombre d’entrées.
+La vérification complète contrôle toutes les empreintes et la fin du fichier
+avant d’afficher la confirmation. La restauration prépare les absentes
+séquentiellement par le worker, avec nom et réglages ; les présentes restent intactes.
+Un arrêt conserve le préfixe déjà enregistré. Les fichiers préparés ne sont pas
+dans la sauvegarde : le moteur épinglé les régénère.
+
+Le cache applicatif contient le lecteur, le moteur, les sons et les
 notices ; son renouvellement laisse la bibliothèque intacte.
 Chaque appareil et contexte d’installation possède ses propres données ; aucune
 synchronisation entre Safari, l’app installée, l’iPhone et l’iPad n’est promise.
 Une mise à jour du lecteur ne regrave pas les pages enregistrées : il faut réimporter
-le MSCZ pour bénéficier d’une correction d’import ou de gravure.
+le MSCZ et choisir sa repréparation pour bénéficier d’une correction d’import ou de gravure.
 
 Les glyphes des pages d’essai sont des tracés SVG ; l’affichage ne dépend pas
 de polices musicales installées sur l’appareil. Le PDF est celui du moteur web.

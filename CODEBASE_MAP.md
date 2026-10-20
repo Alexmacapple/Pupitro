@@ -7,7 +7,8 @@
 | `reader/import-score.js` | Interprétation ZIP commune au moteur et à la migration, bornes avant extraction, annulation et migration v2 |
 | `reader/import-worker.js` | Moteur WASM, gravure et exports |
 | `reader/playback.js` | Parseur MIDI partagé, métriques, décompte, boucle, clic, tempos, positions et sélection au pointeur |
-| `reader/library.js` | Transactions IndexedDB et URL de Blob temporaires |
+| `reader/library.js` | Base v2, catalogue léger, CRUD atomique, réglages, snapshot et URL de Blob temporaires |
+| `reader/backup.js` | Sauvegarde binaire locale des originaux/noms/réglages et vérification avant restauration |
 | `reader/sw.js` | Cache immuable par version et activation des mises à jour |
 | `reader/offline.js` | État hors ligne et demande de mise à jour |
 | `reader/manifest.webmanifest`, `icons/` | Installation et identité de l’app |
@@ -17,6 +18,7 @@
 | `scripts/check.sh`, `tests/*.test.js` | Syntaxe, tests Node de lecture, transport et archives, tests Python et construction |
 | `serve_reader.py`, `tests/test_legacy_server.py` | Serveur Mac historique : autorité HTTP, échéance d’envoi et erreurs ; tests avec convertisseur simulé |
 | `tests/legacy.cjs`, `tests/browser.cjs` | Migration v2 et recette Chromium/WebKit, dont souris et toucher |
+| `tests/library.cjs`, `tests/backup.test.js` | Gestionnaire réel IndexedDB, annulations, erreurs de quota, redémarrage hors ligne et aller-retour de sauvegarde |
 | `.github/workflows/pages.yml` | Publication statique manuelle |
 
 ## Flux autonome
@@ -27,6 +29,9 @@ avec ses images → SVG/PDF/MIDI/positions → transaction IndexedDB → lecteur
 
 Le Service Worker sert les fichiers applicatifs de sa version ; les partitions
 ne traversent aucun serveur. La bibliothèque de chaque appareil est indépendante.
+La liste lit le catalogue, le renommage conserve les originaux et la suppression
+est confirmée. Snapshot local → fichier `.pupitro` dans Fichiers → vérification
+complète → préparation des entrées absentes ; aucun écrasement des présentes.
 
 ## Carte de la documentation
 

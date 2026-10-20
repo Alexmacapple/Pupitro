@@ -12,7 +12,25 @@ Le tag `v0.2.0` repère le lecteur autonome avec confirmation utilisateur iPhone
 Lire [AGENTS.md](../AGENTS.md), [todo.md](../todo.md), puis
 [VALIDATION.md](../docs/VALIDATION.md). Examiner Git avant toute reprise.
 
-## Code et preuves au 20 octobre 2026
+## Gestionnaire en cours de livraison — 21 octobre 2026
+
+L’utilisateur a demandé un petit gestionnaire et accepté explicitement la
+sauvegarde/restauration complète. Le clone de travail isolé est
+`/private/tmp/pupitro-library-manager`, base `605d781`.
+Ajout multiple, doublons explicites, renommage du catalogue, suppression confirmée,
+base IndexedDB v2 et fichier `.pupitro` des originaux/noms/réglages sont implémentés.
+La restauration n’ajoute que les absentes et garde les noms/réglages des présentes.
+Les fichiers d’origine dans Fichiers restent intacts ; aucun quota de nombre.
+
+38 tests Node et 11 HTTP passent. Les recettes du gestionnaire, la revue code-review
+et le reçu PDV sont consignés dans [VALIDATION.md](../docs/VALIDATION.md).
+Un défaut WebKit de source restaurée a conduit à matérialiser un Blob indépendant
+depuis les octets vérifiés, au lieu de persister une File issue d’une tranche
+de sauvegarde. Les tags historiques ne rétrogradent pas la base v2.
+Cette nouvelle fonctionnalité n’est pas encore vérifiée sur les appareils physiques.
+Mettre ce paragraphe à jour après publication ; le workflow reste manuel.
+
+## Référence précédente — 20 octobre 2026
 
 Après le tag `v0.2.0`, les corrections ShipGuard sont intégrées au code `68176e5` :
 12 constats de code, dont un défaut de journalisation lié découvert pendant les

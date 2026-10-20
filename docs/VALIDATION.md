@@ -11,11 +11,84 @@ sources:
 
 # Vérifications — version autonome
 
-État documentaire au 20 octobre 2026 ; dernière référence du code testé : `68176e5`.
+État documentaire au 21 octobre 2026 ; dernière référence du code testé : `8b617b2`.
 Cette page consigne des preuves passées, sans annoncer une validation générale.
 
 Une partition personnelle MuseScore 2 sert d’exemple. Ni elle ni ses captures
 ne sont publiées dans le dépôt ou l’artefact applicatif.
+
+## Gestionnaire et sauvegarde complète — 21 octobre 2026
+
+Le changement part de `605d781` : gestionnaire `c7193f6`, corrections `164848d`
+et complément de test `8b617b2`. Construction `a211530ec3d09aedecdb` :
+31 ressources, 58 157 131 octets, sans partition personnelle.
+`bash scripts/check.sh` passe avec 37 tests Node et 11 tests HTTP ; le complément
+de test sans commentaire ZIP porte ensuite `npm test` à **38 tests Node réussis**.
+Les tests HTTP du serveur historique utilisent toujours un convertisseur simulé.
+
+Les recettes `tests/library.cjs` passent sur Chromium et WebKit Mac avec le moteur
+réel, après téléchargement des ressources puis coupure du réseau :
+
+| Parcours | Preuve |
+|---|---|
+| Existant v1 | Migration du catalogue, réglages et source conservés ; renommage sans modifier le titre gravé |
+| Suppression | Annulation, suppression pendant un signal de métronome, lecteur vidé après commit ; erreur injectée et écriture tardive sans perte |
+| Ajout | Deux petits MSCZ de musique différente préparés hors ligne ; ouvrir, repréparer ou annuler un doublon explicitement |
+| Sauvegarde complète | Export, suppression puis restauration hors ligne ; originaux comparés octet par octet, noms et réglages identiques, lecture après retour |
+| Restauration additive | Les noms et réglages des entrées présentes restent prioritaires ; confirmation annulée sans écriture |
+| Échecs | Sauvegarde tronquée refusée avant écriture ; quota injecté à l’ajout et après des écritures en restauration : transaction annulée, bibliothèque conservée |
+| Annulation tardive | Calcul d’empreinte et achèvement du catalogue retardés aux frontières système ; l’annulation n’ouvre plus d’aperçu ni n’ajoute de partition |
+| Bibliothèque fournie | 75 entrées ; zéro lecture du magasin de fichiers pendant la liste ; pas de débordement horizontal mobile |
+| Redémarrage | Fermeture complète du contexte, réouverture hors ligne ; 75 entrées, nom actif et réglages conservés |
+| Réseau et erreurs | Aucun POST, appel externe ou `pageerror` sur les deux contextes de chaque recette |
+
+Les 73 entrées supplémentaires partagent les petits exports de test et ont des
+sources distinguées par leur commentaire ZIP ; ce ne sont pas 75 partitions
+musicales indépendantes. Les fautes de stockage sont injectées à la frontière
+IndexedDB, sans remplir réellement le disque. Les captures 428 × 926 et 1440 × 1000
+ont été inspectées ; une largeur de bouton trop spécifique a été supprimée.
+
+Un passage WebKit a montré deux originaux relus depuis IndexedDB contenant la
+sauvegarde entière au lieu de leur tranche MSCZ. L’import matérialise maintenant
+un Blob indépendant depuis les octets originaux vérifiés. Le passage final compare
+aussi ces octets après rechargement. Les tests de transfert couvrent les archives
+avec et sans commentaire ; le pic mémoire physique avec WASM n’est pas mesuré.
+
+Artefacts locaux du gestionnaire : `pupitro-library-a4XmWC` (Chromium) et
+`pupitro-library-eAcTwf` (WebKit), dans le dossier temporaire du système.
+Ils ne sont pas publiés. Le lecteur musical complet passe sur Chromium et WebKit avec la
+partition personnelle de 13 pages, deux parties, clic/toucher, PDF, six instruments,
+boucle et redémarrage hors ligne (`pupitro-browser-PmwDxc` et
+`pupitro-browser-Dal5JZ`). Aucun POST, appel externe ou `pageerror` ; les messages
+de fonctions de fichiers simulées de FluidSynth restent présents.
+
+### Standards
+
+Revue indépendante du diff `605d781...c7193f6` : aucune violation documentaire dure.
+Un jugement P3 sur l’annulation tardive est corrigé et son contre-exemple devient vert.
+Aucun smell Fowler suffisamment étayé retenu.
+
+### Spec
+
+Revue indépendante de la demande approuvée : un P2 (anciennes bornes de boucle
+vides ou fractionnaires bloquant l’export) et un P3 (même annulation tardive).
+Les deux ont une correction et une régression vérifiée. Aucun élargissement
+matériel du périmètre retenu ; sauvegarde/restauration explicitement acceptées.
+
+### Reçu PDV
+
+Diff et consommateurs directs inspectés, simplification recherchée : **GO**.
+Le catalogue, les transactions et le snapshot appartiennent à `library.js`, le
+format à `backup.js`, les opérations UI à `app.js`. La frontière d’import possède
+les octets source indépendants ; le format reste compatible. Aucun module
+n’approche 1 000 lignes. Cette revue structurelle est distincte des tests navigateur.
+Les vérifications documentaires passent ; le signal « modifie » est le verbe présent,
+pas un accent manquant. Les tags `v0.1.0` et `v0.2.0` restent inchangés.
+
+**Portée physique :** ce nouveau gestionnaire et sa sauvegarde ne sont pas encore
+vérifiés sur l’iPhone ni l’iPad. La confirmation générale iPhone antérieure reste
+distincte ; l’écoute humaine, les versions système, le stockage presque plein,
+les très grandes bibliothèques et les mises à jour multi-fenêtres restent ouverts.
 
 ## Corrections issues de ShipGuard après v0.2.0
 

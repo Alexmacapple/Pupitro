@@ -19,6 +19,11 @@ sans abonnement et sans dépendre d’un Mac allumé.
 
 - Importer directement des `.mscz` natifs depuis Fichiers, même hors ligne.
 - Conserver les fichiers et la bibliothèque sur l’appareil ; aucun envoi externe.
+- Gérer plusieurs MSCZ : ajout multiple, nom personnalisé et suppression confirmée.
+- Sauvegarder et restaurer toute la bibliothèque, noms et réglages compris,
+  sans écrasement silencieux des partitions présentes (accord explicite utilisateur).
+- Aucun plafond applicatif sur le nombre de partitions ; préserver les protections
+  par fichier et les données existantes en cas de stockage insuffisant.
 - Garder tempo, métronome, décompte, boucle, curseur, zoom et commandes escamotables.
 - Démarrer depuis une note cliquée ou touchée ; pendant la lecture ou le décompte,
   le même geste met en pause, puis un nouveau clic démarre depuis la note visée.
@@ -40,6 +45,8 @@ Cette dernière contrainte remplace l’exigence initiale de rendu strictement i
 | Curseur | Alignement et suivi des pages pendant la lecture |
 | Lecture/pause au pointeur | Clic ou toucher sur une note pour lire, clic suivant pour mettre en pause ; espaces vides sans effet |
 | Persistance | Bibliothèque et réglages retrouvés après fermeture et redémarrage |
+| Gestionnaire | Ajout, doublon explicite, renommage et suppression active ou inactive ; annulations sans effet indu |
+| Sauvegarde | Aller-retour local complet des originaux, noms et réglages ; restauration additive, corruption refusée avant écriture |
 | Installation | Icône Safari ouvrant l’app hors ligne sur chacun des deux appareils |
 | Confidentialité | Aucun envoi des partitions ; aucune partition dans l’artefact public |
 

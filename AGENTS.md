@@ -22,6 +22,8 @@ Un retour utilisateur reste distinct d’un essai direct ou d’un navigateur si
 - `npm ci --ignore-scripts`, `python3 scripts/setup_assets.py --standalone`, puis
   `npm test` : ressources épinglées et tests Node ciblés. Les tests ZIP utilisent fflate installé.
 - `npm run test:browser -- /chemin/exemple.mscz` : recette avec une partition privée.
+- `PUPITRO_TEST_URL=http://127.0.0.1:8770/ npm run test:library` :
+  recette du gestionnaire sur l’aperçu ; répéter avec `PUPITRO_ENGINE=webkit`.
 
 Le navigateur reçoit uniquement `web-dist/`, construit depuis une liste explicite.
 Ne pas servir ou publier la racine du dépôt.
@@ -30,6 +32,12 @@ Ne pas servir ou publier la racine du dépôt.
 
 - Bibliothèque et réglages : `reader/library.js`, IndexedDB ; jamais effacés par
   le nettoyage des caches applicatifs.
+  La base v2 sépare catalogue léger et fichiers. Renommer préserve l’original ;
+  supprimer exige confirmation et transaction commune avec les réglages.
+- Sauvegarde : `reader/backup.js` possède le format `.pupitro`, `library.js`
+  possède son snapshot cohérent. Préserver noms, originaux et réglages ; restaurer
+  seulement les absentes après vérification complète, sans quota de nombre.
+  Les bornes de lecture incomplètes ne doivent pas bloquer la sauvegarde.
 - Gravure : worker dédié, libéré ou interrompu après chaque import.
 - Temps MIDI, clic et coordonnées : normalisés une fois dans `reader/playback.js`.
 - Anciens accords MuseScore 2 : désactiver la nouvelle synthèse automatique des
