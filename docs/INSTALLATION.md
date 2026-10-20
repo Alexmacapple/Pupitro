@@ -19,6 +19,12 @@ autorisé et a réussi ; les ressources, l’import et la réouverture sans rés
 été contrôlés sur Chrome Mac. L’utilisateur confirme que la version autonome
 fonctionne sur iPhone ; la recette détaillée et la vérification iPad restent ouvertes.
 
+Les correctifs ShipGuard sont publiés depuis `114e2e9`, construction
+`baefded0afd663fc5988`. La mise à jour par le bouton a été contrôlée sur Chromium
+avec deux partitions conservées et réouverture hors ligne ; utiliser la procédure
+ci-dessous. La confirmation physique iPhone concerne la première version `v0.2.0`.
+Les preuves détaillées restent dans [VALIDATION.md](VALIDATION.md).
+
 Installer consiste à ouvrir cette adresse dans Safari et à ajouter Pupitro à
 l’écran d’accueil. L’application télécharge ses ressources et les conserve localement.
 Il n’y a aucun dépôt à cloner. Importer consiste ensuite à choisir un fichier

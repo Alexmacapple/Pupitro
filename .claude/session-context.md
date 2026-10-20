@@ -57,6 +57,16 @@ pour recalculer les pages et bénéficier de la correction du barré.
 
 ## Publication réalisée ; fonctionnement iPhone confirmé
 
+Dernière publication : le
+[workflow 39503298679](https://github.com/Alexmacapple/Pupitro/actions/runs/39503298679)
+a déployé `114e2e9` ; CI et déploiement réussis. Les 30 ressources HTTPS correspondent
+à `baefded0afd663fc5988`, avec chemins privés en 404. Mise à jour du profil Chromium
+de test par le bouton : deux entrées, sources, MIDI et manifestes conservés,
+métriques récupérées sans réimport, lecture et réouverture hors ligne réussies.
+Les corrections restent à vérifier physiquement sur iPhone et iPad.
+
+### Première publication
+
 L’utilisateur a explicitement autorisé l’activation et la publication GitHub Pages.
 Le [workflow 39497476043](https://github.com/Alexmacapple/Pupitro/actions/runs/39497476043)
 a déployé le commit `1ef5985` avec succès. L’adresse publique est

@@ -67,6 +67,20 @@ tests ni une écoute humaine. Les tags `v0.1.0` et `v0.2.0` sont préservés.
 La confirmation physique iPhone ci-dessous concerne `v0.2.0`, avant ces correctifs.
 Les correctifs n’ont pas encore reçu de validation physique iPhone ou iPad.
 
+Les correctifs ont été publiés par le
+[workflow 39503298679](https://github.com/Alexmacapple/Pupitro/actions/runs/39503298679)
+depuis `114e2e9`. Construction, tests CI et déploiement réussissent. Sur l’adresse
+HTTPS `/Pupitro/`, les 30 tailles et empreintes correspondent à la construction
+`baefded0afd663fc5988` ; les chemins privés de référence, jeton et imports renvoient 404.
+
+Le profil Chromium isolé de la recette publique `v0.2.0` a ensuite été réutilisé.
+Le bouton **Mettre à jour** bascule de `ef89840b97399c25f4b2` vers
+`baefded0afd663fc5988`. Les deux entrées, octets MSCZ d’origine, MIDI et manifestes
+enregistrés restent identiques ; l’ouverture récupère les sept métriques du MIDI
+de l’exemple sans réimport. Lecture avec signal audio puis rechargement hors ligne
+passent, sans POST, appel externe ou erreur JavaScript. Ce contrôle de mise à jour
+concerne Chromium Mac ; les mises à jour physiques et à plusieurs fenêtres restent ouvertes.
+
 ## Moteur retenu
 
 | Contrôle | Observation |
