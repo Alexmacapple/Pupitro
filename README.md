@@ -38,11 +38,11 @@ La partition d’essai compte ainsi **13 pages au lieu de 7**. Ce compromis perm
 l’import autonome ; le rendu strictement identique n’est plus promis.
 
 <!-- [IC] Preuves et portée dans docs/VALIDATION.md. -->
-Le fonctionnement de la version autonome sur iPhone est confirmé par l’utilisateur.
-La recette détaillée, notamment le mode avion, et la vérification sur iPad restent
-ouvertes. Les essais Chrome et WebKit sur Mac ont leur propre portée de preuve.
-Le nouveau gestionnaire et l’aller-retour de sauvegarde sont testés sur ces moteurs ;
-leur vérification physique sur iPhone et iPad reste à faire.
+Le fonctionnement général sur iPhone est confirmé par l’utilisateur pour la
+première version autonome `v0.2.0`. Sa recette détaillée, notamment le mode avion,
+et la vérification sur iPad restent ouvertes. Le gestionnaire et l’aller-retour
+de sauvegarde livrés depuis sont testés sur Chromium et WebKit Mac ; leur
+vérification physique sur iPhone et iPad reste à faire.
 
 Gardez vos MSCZ d’origine dans Fichiers : effacer les données du site peut
 effacer la bibliothèque. Exportez aussi une sauvegarde `.pupitro` dans Fichiers ;
@@ -56,15 +56,15 @@ nécessaires à l’installation. Pas d’édition, d’annotation Pencil ni d�
 ## Installer ou développer
 
 **Ouvrir Pupitro : [alexmacapple.github.io/Pupitro](https://alexmacapple.github.io/Pupitro/).**
-La version autonome est publiée en HTTPS depuis le 20 octobre 2026. Installation
-depuis Safari, puis import des MSCZ dans l’app : aucun clonage du dépôt n’est requis.
-Les contrôles sur le site publié ont passé sur Chrome Mac. La version autonome est
-repérée dans sa première version par le tag [v0.2.0](https://github.com/Alexmacapple/Pupitro/tree/v0.2.0) ;
-le fonctionnement iPhone est confirmé, celui de l’iPad reste à confirmer.
-Les correctifs ultérieurs et leurs preuves figurent dans
+Le site inclut le gestionnaire de bibliothèque et les sauvegardes publiés le
+21 octobre 2026. Installation depuis Safari, puis import des MSCZ dans l’app :
+aucun clonage du dépôt n’est requis. Les contrôles sur le site publié ont passé
+sur Chrome Mac. La première version autonome reste repérée par le tag
+[v0.2.0](https://github.com/Alexmacapple/Pupitro/tree/v0.2.0).
+Les changements ultérieurs et leurs preuves figurent dans
 [l’historique](CHANGELOG.md) et [la validation](docs/VALIDATION.md).
 
-- [Installation sur iPhone et iPad](docs/INSTALLATION.md)
+- [Installation, bibliothèque et sauvegardes sur iPhone et iPad](docs/INSTALLATION.md)
 - [Vérifications et limites](docs/VALIDATION.md)
 - [Besoin et critères de réussite](docs/PRD.md)
 - [Architecture](docs/ARCHITECTURE.md) et [décisions](docs/DECISIONS.md)

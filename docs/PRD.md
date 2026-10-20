@@ -6,6 +6,7 @@ sources:
   - resource: ../reader/index.html
   - resource: ../reader/app.js
   - resource: ../reader/import-score.js
+  - resource: ../reader/import-worker.js
 ---
 
 # Besoin et périmètre
@@ -53,8 +54,8 @@ Cette dernière contrainte remplace l’exigence initiale de rendu strictement i
 Les vérifications de navigateur et les essais physiques restent distincts dans
 [VALIDATION.md](VALIDATION.md). La procédure et les conditions de publication sont
 dans [INSTALLATION.md](INSTALLATION.md). La publication HTTPS a été réalisée le
-20 octobre 2026. L’utilisateur confirme le fonctionnement sur iPhone ; la recette
-détaillée et la vérification iPad restent à mener.
+20 octobre 2026. L’utilisateur confirme le fonctionnement de `v0.2.0` sur iPhone ;
+la recette détaillée et la vérification iPad restent à mener.
 
 ## Limites
 
@@ -66,6 +67,7 @@ puis import, rendu et lecture doivent fonctionner sans Mac ni réseau.
 Le moteur est épinglé : aucun engagement général sur les fichiers MuseScore 4.
 Les fichiers trop lourds ou certains éléments de notation peuvent rester incompatibles.
 
-Capacités contrôlées : fichier 50 Mo, archive décompressée 200 Mo, 300 pages,
-SVG cumulés 100 Mo, import limité à deux minutes. Un canal MIDI libre est nécessaire
-au métronome ; la piste ajoutée est bornée à 500 000 événements sur mobile.
+Capacités contrôlées par fichier : MSCZ de 50 Mio, archive décompressée de 200 Mio,
+300 pages et SVG cumulés de 100 Mio. La préparation par le moteur est limitée à
+deux minutes. Un canal MIDI libre est nécessaire au métronome ; la piste ajoutée
+est bornée à 500 000 événements sur mobile.

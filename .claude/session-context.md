@@ -56,7 +56,7 @@ sur `v0.2.0`, avant ces correctifs ; l’iPad et les correctifs restent à teste
 
 ### Références antérieures
 
-La référence fonctionnelle reste `d14dbff` ; le commit publié `1ef5985` ajoute la
+La référence fonctionnelle de `v0.2.0` est `d14dbff` ; le commit publié `1ef5985` ajoute la
 documentation sans changer le lecteur. Vérifier la parité locale et distante dans Git.
 La construction testée porte `ef89840b97399c25f4b2` : 30 ressources, environ 58 Mo,
 sans partition privée. Le moteur retenu est webmscore 0.22.0 ; 1.2.1 a échoué à
@@ -83,7 +83,7 @@ pour recalculer les pages et bénéficier de la correction du barré.
 
 ## Publication précédente ; fonctionnement iPhone confirmé
 
-Dernière publication : le
+Le
 [workflow 39503298679](https://github.com/Alexmacapple/Pupitro/actions/runs/39503298679)
 a déployé `114e2e9` ; CI et déploiement réussis. Les 30 ressources HTTPS correspondent
 à `baefded0afd663fc5988`, avec chemins privés en 404. Mise à jour du profil Chromium

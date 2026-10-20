@@ -4,6 +4,8 @@ title: Vérifications et limites connues
 description: Preuves de la version autonome et essais physiques encore nécessaires.
 sources:
   - resource: ../tests/browser.cjs
+  - resource: ../tests/library.cjs
+  - resource: ../tests/backup.test.js
   - resource: ../tests/playback.test.js
   - resource: ../reader/import-worker.js
   - resource: ../scripts/build_web.py
@@ -273,7 +275,7 @@ La procédure est dans [INSTALLATION.md](INSTALLATION.md).
 
 | Appareil | Version autonome |
 |---|---|
-| iPhone 12 Pro Max présumé | Fonctionnement de la version autonome confirmé par l’utilisateur ; scénarios détaillés non précisés |
+| iPhone 12 Pro Max présumé | Fonctionnement général de `v0.2.0` confirmé par l’utilisateur ; gestionnaire et sauvegarde non vérifiés physiquement |
 | iPad M4 | Installation, affichage, son et mode avion non encore confirmés |
 | Android | Non testé physiquement |
 
@@ -293,17 +295,24 @@ ne remplace pas Safari sur iPhone ; aucun résultat iPad n’a encore été rapp
 4. Tester curseur, vitesse, boucle, zoom et commandes masquées.
 5. Mac éteint, mode avion et Wi-Fi coupé : fermer, rouvrir, lire puis importer un nouveau fichier local.
 6. Vérifier les réglages après redémarrage et le retour après verrouillage.
+7. Ajouter plusieurs MSCZ, traiter un doublon, renommer, puis annuler et confirmer
+   la suppression de la partition ouverte ; retrouver les autres partitions.
+8. Exporter une sauvegarde `.pupitro` hors des données du site, la restaurer
+   et comparer les noms, réglages et originaux. Vérifier que les entrées déjà
+   présentes gardent leur nom et leurs réglages.
 
 | Résultat à consigner | iPhone | iPad M4 |
 |---|---|---|
 | Version système, navigateur et date | À relever | À relever |
-| Fonctionnement général rapporté | Confirmé par l’utilisateur | À tester |
+| Fonctionnement général rapporté | Confirmé pour `v0.2.0` | À tester |
 | Installation et indicateur prêt hors ligne | Non détaillé | À tester |
 | Partition connue, pages et barrés | Non détaillé | À tester |
 | Son entendu, instruments, métronome et décompte | Non détaillé | À tester |
 | Lecture/pause au toucher, curseur, tempo et boucle | Non détaillé | À tester |
 | Réouverture et nouvel import sans réseau ni Mac | Non détaillé | À tester |
 | Réglages conservés et retour après verrouillage | Non détaillé | À tester |
+| Ajout multiple, doublon, renommage et suppression active | À tester | À tester |
+| Sauvegarde complète et restauration additive | À tester | À tester |
 
 Restent aussi non validés : stockage saturé réel, interruption système pendant une
 transaction, mise à jour avec plusieurs fenêtres ouvertes et partitions complexes
