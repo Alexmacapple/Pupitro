@@ -32,8 +32,12 @@ flowchart LR
   accompagnement automatique. Le parseur XML du navigateur réalise cette adaptation.
 - `playback.js` possède la lecture du MIDI, le clic ajouté et la normalisation des
   coordonnées. Les événements de reprise restent dans leur ordre temporel.
+  Pour une partition sans notes, la durée fournie par le moteur complète le MIDI
+  presque vide et permet de conserver le métronome.
 - `library.js` possède les transactions IndexedDB et les URL temporaires d’affichage.
 - `app.js` possède le transport, les réglages et la présentation des pages.
+  Les ouvertures sont sérialisées jusqu’à l’écriture de la dernière partition :
+  pages, URL et réglages restent rattachés au même document.
 - `sw.js` sert uniquement le cache de sa version. L’installation vérifie chaque
   ressource avant activation ; les mises à jour attendent la fermeture des anciennes
   fenêtres ou l’action explicite de l’utilisateur.

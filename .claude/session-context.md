@@ -21,10 +21,18 @@ Construire avec `python3 scripts/setup_assets.py --standalone` et
 
 ## Limites et protection
 
-Les premiers parcours Chrome et WebKit Mac ont passé import, signal audio et
-redémarrage hors ligne. L’installation réelle, l’écoute et le mode avion sur
+Les parcours Chrome et WebKit Mac ont passé import, signal audio et redémarrage
+hors ligne. La revue a conduit à corriger l’annulation pendant le calcul SHA-256,
+les ouvertures concurrentes et l’import des partitions de silences. Sept tests
+Node passent ; un cas réel de silences affiche une page et produit le métronome
+dans WebKit hors ligne. La construction finale porte `6774ecccc1b1f93ecb20`.
+L’installation réelle, l’écoute et le mode avion sur
 l’iPhone et l’iPad restent à vérifier pour cette nouvelle version. La confirmation
 antérieure du son iPhone concernait la version Mac `v0.1.0`.
+
+L’utilisateur consulte l’aperçu local sur `http://127.0.0.1:8770/` et signale
+un problème d’empreinte B♭. La page et la nature de l’écart ont été demandées ;
+aucun changement de diagramme n’est fait sans reproduction de ce signal précis.
 
 La publication statique HTTPS est préparée mais n’est pas encore autorisée ni
 validée. Ne pas annoncer l’adresse comme disponible avant son contrôle.

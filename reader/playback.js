@@ -17,7 +17,7 @@ function encode(value) {
   return bytes;
 }
 
-export function preparePlayback(raw) {
+export function preparePlayback(raw, {silentDuration = 0} = {}) {
   const view = new DataView(raw.buffer, raw.byteOffset, raw.byteLength);
   const text = (at, length) => decoder.decode(raw.subarray(at, at + length));
   if (raw.length < 14 || text(0, 4) !== "MThd") fail();
@@ -76,7 +76,7 @@ export function preparePlayback(raw) {
       lastTick = Math.max(lastTick, tick);
     }
   }
-  if (position !== raw.length || !channels.size || !lastTick) fail();
+  if (position !== raw.length) fail();
   const tempo = [];
   let previousTick = 0, previousUs = 500000, seconds = 0;
   for (const [tick, us] of [...tempos].sort((a, b) => a[0] - b[0])) {
@@ -88,6 +88,12 @@ export function preparePlayback(raw) {
     for (const item of tempo) { if (item.seconds > time) break; entry = item; }
     return Math.round(entry.tick + (time - entry.seconds) * ppq * 1e6 / entry.us);
   }
+  // MuseScore can end an all-rest MIDI track at tick 1. Its score metadata
+  // supplies the missing silent timeline; note-bearing MIDI remains authoritative.
+  if (!channels.size && Number.isFinite(silentDuration) && silentDuration > 0) {
+    lastTick = Math.max(lastTick, secondsTick(silentDuration));
+  }
+  if (!Number.isSafeInteger(lastTick) || !lastTick) fail();
   const lastTempo = tempo.at(-1);
   const duration = lastTempo.seconds + (lastTick - lastTempo.tick) * lastTempo.us / ppq / 1e6;
   const clickChannel = Array.from({length: 16}, (_, i) => 15 - i).find(ch => !channels.has(ch));

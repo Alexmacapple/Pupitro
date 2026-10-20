@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {preparePlayback, preparePositions} from "../reader/playback.js";
-import {validateArchive} from "../reader/import-score.js";
+import {validateArchive, importScore} from "../reader/import-score.js";
 
 function midi(events) {
   const track = new Uint8Array([...events, 0,255,47,0]);
@@ -29,6 +29,18 @@ test("SysEx lengths and running status do not lose events",()=>{
   const data=preparePlayback(midi([0,240,2,1,247,0,144,60,100,0,64,80,0x83,0x60,128,60,0]));
   assert.equal(data.channels[0].notes,2);
   assert.equal(data.totalTicks,480);
+});
+
+test("a score containing only rests retains its timeline and metronome",()=>{
+  const data=preparePlayback(midi([1,255,47,0]),{silentDuration:2});
+  assert.deepEqual(data.channels,[]);
+  assert.equal(data.totalTicks,1920);
+  assert.equal(data.duration,2);
+  const clicks=preparePlayback(data.midi);
+  assert.equal(clicks.totalTicks,1920);
+  assert.equal(clicks.channels[0].channel,data.clickChannel);
+  assert.equal(clicks.channels[0].notes,4);
+  assert.equal(preparePlayback(midi(note),{silentDuration:20}).totalTicks,480);
 });
 
 test("malformed and truncated MIDI fail instead of hanging or inventing notes",()=>{
@@ -67,4 +79,24 @@ test("ZIP expansion and malformed directory fail before starting WebAssembly",()
   assert.throws(()=>validateArchive(new ArrayBuffer(20)));
   const encrypted=archive();new DataView(encrypted).setUint16(30+10+8,1,true);
   assert.throws(()=>validateArchive(encrypted));
+});
+
+test("cancelling during the digest never starts an import worker",async t=>{
+  const controller=new AbortController();
+  let beginDigest,finishDigest,workers=0;
+  const digestStarted=new Promise(resolve=>{beginDigest=resolve;});
+  t.mock.method(crypto.subtle,"digest",()=>{
+    beginDigest();
+    return new Promise(resolve=>{finishDigest=resolve;});
+  });
+  const previousWorker=Object.getOwnPropertyDescriptor(globalThis,"Worker");
+  Object.defineProperty(globalThis,"Worker",{configurable:true,value:class {constructor(){workers++;throw new Error("Unexpected worker");}}});
+  t.after(()=>{if(previousWorker)Object.defineProperty(globalThis,"Worker",previousWorker);else delete globalThis.Worker;});
+  const file=new File([archive()],"rests.mscz");
+  const imported=importScore(file,()=>{},controller.signal);
+  await digestStarted;
+  controller.abort();
+  finishDigest(new ArrayBuffer(32));
+  await assert.rejects(imported,{name:"AbortError"});
+  assert.equal(workers,0);
 });

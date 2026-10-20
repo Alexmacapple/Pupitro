@@ -49,6 +49,7 @@ export async function importScore(file, onProgress, signal) {
   validateArchive(bytes);
   if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
   const id = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map(x => x.toString(16).padStart(2, "0")).join("");
+  if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
   const result = await new Promise((resolve, reject) => {
     const worker = new Worker(new URL("./import-worker.js", import.meta.url), {type: "module"});
     const finish = (error, value) => {

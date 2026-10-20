@@ -8,7 +8,8 @@
 - [x] Préparer les MSCZ localement et conserver la bibliothèque dans IndexedDB.
 - [x] Mettre les ressources applicatives en cache pour les imports hors ligne.
 - [x] Vérifier import, lecture et redémarrage hors ligne sur Chrome et WebKit Mac.
-- [ ] Terminer la revue et les vérifications de la version finale.
+- [x] Terminer la revue ; corriger annulation, ouvertures concurrentes et silences.
+- [ ] Préciser et traiter le problème d’empreinte B♭ signalé dans l’aperçu.
 - [ ] Autoriser puis exécuter la publication statique HTTPS.
 - [ ] Installer depuis Safari et vérifier sur l’iPhone et l’iPad M4.
 - [ ] Recueillir les versions du système et du navigateur de ces appareils.

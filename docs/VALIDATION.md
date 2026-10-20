@@ -33,7 +33,7 @@ les symboles et de toutes les partitions n’a pas été réalisée.
 
 | Scénario | Portée de la preuve |
 |---|---|
-| Tests Node ciblés | Tempos, MIDI tronqué, SysEx, reprises, coordonnées et capacité ZIP |
+| Sept tests Node ciblés | Tempos, MIDI tronqué, SysEx, reprises, coordonnées, capacité ZIP, silences et annulation pendant le calcul SHA-256 |
 | Import depuis le bouton | Préparation sur le navigateur, données enregistrées dans IndexedDB |
 | Lecture Chrome et WebKit | Compteur et signal audio ; aucune écoute humaine sur ces moteurs de test |
 | Six instruments | Sélection de chaque programme avec signal audio |
@@ -43,11 +43,17 @@ les symboles et de toutes les partitions n’a pas été réalisée.
 | Hors ligne | Rechargement, puis import d’un second fichier local |
 | Redémarrage | Fermeture du navigateur et réouverture avec réseau coupé |
 | Fichier invalide | Refus avec partition précédente conservée |
+| Ouvertures rapides | Deux sélections avec achèvement IndexedDB retardé ; réglages, URL et dernière partition cohérents |
+| Partition de silences | Moteur réel puis import WebKit hors ligne : 1 page, durée de 2 secondes, signal du métronome |
 | Réseau | Aucune requête POST et aucune requête HTTP vers un autre serveur pendant la recette |
 | Construction | Liste explicite de ressources applicatives ; aucune partition copiée |
 
-La recette finale doit confirmer ces résultats après les dernières modifications.
-Le dépôt et la publication doivent encore être vérifiés séparément.
+La recette finale Chromium a passé sur la construction `6774ecccc1b1f93ecb20`.
+WebKit a passé le parcours complet après correction des ouvertures concurrentes,
+puis le cas des silences sur cette construction finale. Les deux parcours complets
+ont contrôlé 13 pages, les 2 parties d’origine, l’import hors ligne et le redémarrage.
+La construction contient 28 ressources et environ 58 Mo, sans partition personnelle.
+La publication HTTPS reste à autoriser et vérifier.
 
 Le test de navigateur consomme `tests/browser.cjs`, avec un MSCZ donné en argument.
 Le second fichier est une copie avec commentaire ZIP différent ; la musique est
@@ -58,6 +64,12 @@ FluidSynth écrit des messages sur ses fonctions de fichiers simulées et certai
 pas validation de tous les contenus MIDI. Un stress forçant le décodage simultané
 des grandes pages SVG a fermé un onglet Chromium ; le parcours successif a passé.
 La mémoire et la consommation restent à mesurer sur les appareils physiques.
+
+Les 13 pages ont aussi été rendues séparément dans Chromium et WebKit, sans page
+vide. Le retour utilisateur signale un problème sur une empreinte de B♭ :
+l’occurrence et l’écart exact restent à préciser avant un éventuel correctif.
+La comparaison du premier B♭ avec la référence native montre les trois points
+et la corde à vide dans les deux rendus ; elle ne clôt pas ce signalement.
 
 ## Appareils physiques
 

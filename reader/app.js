@@ -7,6 +7,7 @@ const presets = {percussion:{label:"Percussions",program:0,bank:128},guitar:{lab
 let score, synth, context, node, analyser, gain, fontId, initPromise;
 let previousAudioSessionType;
 let activeRecord, activeUrls, importing, savingTimer, restoring=false;
+let recordOpening=Promise.resolve();
 let playing=false, starting=false, currentTick=0, generation=0, followedSystem=null, polling=false;
 const cursor=document.createElement("div");
 cursor.className="playback-cursor";
@@ -209,7 +210,14 @@ function persistPreferences(){
 }
 document.addEventListener("change",()=>{if(!restoring&&!importing)savingTimer=setTimeout(persistPreferences,200);});
 
-async function showRecord(record){
+function showRecord(record){
+  // One opening owns the displayed pages, preferences and last-score write
+  // until it completes. A failed opening must not block the next selection.
+  const opened=recordOpening.then(()=>restoreRecord(record));
+  recordOpening=opened.catch(()=>{});
+  return opened;
+}
+async function restoreRecord(record){
   if(score)stop();
   persistPreferences();
   restoring=true;

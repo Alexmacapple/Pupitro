@@ -109,8 +109,45 @@ let context;
   await page.locator('#play').click();
   await page.locator('#libraryButton').click();
   await expect(page.locator('#libraryItems button')).toHaveCount(2);
-  await page.locator('#closeLibrary').click();
+  const selected=await page.evaluate(async()=>{
+    const library=await import('./library.js');
+    const records=await library.listScores();
+    await library.saveSettings(records[0].id,{controls:{speed:'1.25'}});
+    await library.saveSettings(records[1].id,{controls:{speed:'0.5'}});
+    // Delay one real IndexedDB completion to exercise overlapping selections.
+    const delayed=new WeakSet(),get=IDBObjectStore.prototype.get;
+    window.storageTestDelayed=window.storageTestCompleted=false;
+    const complete=Object.getOwnPropertyDescriptor(IDBTransaction.prototype,'oncomplete');
+    IDBObjectStore.prototype.get=function(key){
+      if(this.name==='settings'&&key===records[0].id)delayed.add(this.transaction);
+      return get.call(this,key);
+    };
+    Object.defineProperty(IDBTransaction.prototype,'oncomplete',{...complete,set(callback){
+      complete.set.call(this,typeof callback==='function'?function(event){
+        if(delayed.has(this)){
+          window.storageTestDelayed=true;
+          setTimeout(()=>{callback.call(this,event);window.storageTestCompleted=true;},250);
+        }
+        else callback.call(this,event);
+      }:callback);
+    }});
+    window.restoreStorageTest=()=>{
+      IDBObjectStore.prototype.get=get;
+      Object.defineProperty(IDBTransaction.prototype,'oncomplete',complete);
+    };
+    const buttons=document.querySelectorAll('#libraryItems button');
+    buttons[0].click();buttons[1].click();
+    return records[1].id;
+  });
+  await expect.poll(()=>page.evaluate(()=>window.storageTestDelayed)).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>window.storageTestCompleted)).toBe(true);
+  await expect(page.locator('#speed')).toHaveValue('0.5');
+  await expect.poll(()=>new URL(page.url()).searchParams.get('score')).toBe(selected);
+  await expect.poll(()=>page.evaluate(async()=>{
+    const library=await import('./library.js');return library.getSettings('last-score');
+  })).toBe(selected);
+  await page.evaluate(()=>window.restoreStorageTest());
   await page.setViewportSize({width:1440,height:1000});
   await page.screenshot({path:path.join(output,'desktop.png'),fullPage:false});
-  console.log(JSON.stringify({pages,parts:partCount,id,posts:posts.length,externalRequests:outside.length,errors,consoleCounts:[...consoleCounts],offlineImport:true,restartOffline:true,output}));
+  console.log(JSON.stringify({pages,parts:partCount,id,posts:posts.length,externalRequests:outside.length,errors,consoleCounts:[...consoleCounts],offlineImport:true,restartOffline:true,concurrentOpen:true,output}));
 })().catch(async error=>{console.error(error);if(context){const page=context.pages().at(-1);if(page){console.error(await page.locator('body').innerText().catch(()=>''));await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});console.error('Artifacts:',output);}}process.exitCode=1;}).finally(async()=>{if(context)await context.close();});

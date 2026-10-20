@@ -10,6 +10,8 @@
 - Conservation des instruments, du curseur, du métronome et des commandes de lecture.
 - Construction statique par liste explicite et publication HTTPS manuelle préparée.
 - Essais Chrome et WebKit Mac ; appareils physiques encore à valider.
+- Annulation contrôlée après le calcul d’empreinte ; ouvertures de partitions sérialisées.
+- Partitions de silences consultables, avec durée du métronome issue du moteur.
 
 ## v0.1.0 — 2026-10-20 — premier prototype
 

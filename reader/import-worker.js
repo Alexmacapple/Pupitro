@@ -42,7 +42,7 @@ self.onmessage = async ({data: {bytes, filename}}) => {
     }
     progress("Préparation du son, du métronome et du curseur…");
     const midiData = await score.saveMidi(true, true);
-    const playback = preparePlayback(midiData);
+    const playback = preparePlayback(midiData, {silentDuration: metadata.duration});
     const measures = await score.measurePositions(), segments = await score.segmentPositions();
     const positions = preparePositions(measures, segments, playback, count);
     const pdf = new Blob([await score.savePdf()], {type: "application/pdf"});
