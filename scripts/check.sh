@@ -11,6 +11,7 @@ for path in [*Path('.').glob('*.py'), *Path('scripts').glob('*.py')]:
     ast.parse(path.read_text(), filename=str(path))
 print('Python : syntaxe correcte')
 PY
+"$python_bin" -m unittest discover -s tests -p 'test_*.py'
 for source in reader/*.js; do node --check "$source"; done
 npm test
 "$python_bin" scripts/build_web.py
