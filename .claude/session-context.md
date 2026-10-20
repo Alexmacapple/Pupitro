@@ -12,11 +12,11 @@ Le tag `v0.2.0` repère le lecteur autonome avec confirmation utilisateur iPhone
 Lire [AGENTS.md](../AGENTS.md), [todo.md](../todo.md), puis
 [VALIDATION.md](../docs/VALIDATION.md). Examiner Git avant toute reprise.
 
-## Gestionnaire en cours de livraison — 21 octobre 2026
+## Gestionnaire livré — 21 octobre 2026
 
 L’utilisateur a demandé un petit gestionnaire et accepté explicitement la
-sauvegarde/restauration complète. Le clone de travail isolé est
-`/private/tmp/pupitro-library-manager`, base `605d781`.
+sauvegarde/restauration complète. Le travail part de `605d781` ;
+code `164848d`, complément de test `8b617b2` et documentation `9289f76`.
 Ajout multiple, doublons explicites, renommage du catalogue, suppression confirmée,
 base IndexedDB v2 et fichier `.pupitro` des originaux/noms/réglages sont implémentés.
 La restauration n’ajoute que les absentes et garde les noms/réglages des présentes.
@@ -28,7 +28,15 @@ Un défaut WebKit de source restaurée a conduit à matérialiser un Blob indép
 depuis les octets vérifiés, au lieu de persister une File issue d’une tranche
 de sauvegarde. Les tags historiques ne rétrogradent pas la base v2.
 Cette nouvelle fonctionnalité n’est pas encore vérifiée sur les appareils physiques.
-Mettre ce paragraphe à jour après publication ; le workflow reste manuel.
+Le [workflow 39508075359](https://github.com/Alexmacapple/Pupitro/actions/runs/39508075359)
+a déployé `9289f76`, construction `a211530ec3d09aedecdb` (31 ressources,
+58 157 131 octets). Les empreintes publiques et les chemins privés en 404 sont
+contrôlés. Mise à jour du profil Chromium existant : deux partitions et réglages
+conservés, catalogue v2, lecture puis export/vérification de sauvegarde hors ligne.
+Les recettes complètes du gestionnaire et du lecteur passent sur Chromium et WebKit.
+Les tests et profils temporaires restent hors Git ; seul le serveur de recette
+créé sur 8789 a été arrêté. Les anciens aperçus et données locales sont préservés.
+Le workflow reste manuel ; vérifier Git pour la parité locale/distante à la reprise.
 
 ## Référence précédente — 20 octobre 2026
 
@@ -73,7 +81,7 @@ contrôlés, sans essai direct du clic sur note dans cet onglet. D’autres ongl
 peuvent encore garder l’ancienne version. Réimporter le MSCZ après mise à jour
 pour recalculer les pages et bénéficier de la correction du barré.
 
-## Publication réalisée ; fonctionnement iPhone confirmé
+## Publication précédente ; fonctionnement iPhone confirmé
 
 Dernière publication : le
 [workflow 39503298679](https://github.com/Alexmacapple/Pupitro/actions/runs/39503298679)

@@ -11,7 +11,7 @@ sources:
 
 # Installer Pupitro
 
-## État de publication au 20 octobre 2026
+## État de publication au 21 octobre 2026
 
 **Adresse d’installation : [https://alexmacapple.github.io/Pupitro/](https://alexmacapple.github.io/Pupitro/).**
 GitHub Pages est activé avec HTTPS. Le premier déploiement a été explicitement
@@ -19,10 +19,15 @@ autorisé et a réussi ; les ressources, l’import et la réouverture sans rés
 été contrôlés sur Chrome Mac. L’utilisateur confirme que la version autonome
 fonctionne sur iPhone ; la recette détaillée et la vérification iPad restent ouvertes.
 
-Les correctifs ShipGuard sont publiés depuis `114e2e9`, construction
-`baefded0afd663fc5988`. La mise à jour par le bouton a été contrôlée sur Chromium
-avec deux partitions conservées et réouverture hors ligne ; utiliser la procédure
-ci-dessous. La confirmation physique iPhone concerne la première version `v0.2.0`.
+Le gestionnaire et les sauvegardes sont publiés depuis `9289f76`, construction
+`a211530ec3d09aedecdb`, par le
+[workflow 39508075359](https://github.com/Alexmacapple/Pupitro/actions/runs/39508075359).
+Les 31 ressources HTTPS correspondent à la construction testée. La mise à jour
+depuis la version précédente conserve les deux partitions du profil Chromium
+de test ; lecture, réouverture, export et vérification d’une sauvegarde passent
+hors ligne. Utiliser la procédure ci-dessous sur chaque appareil.
+La confirmation physique iPhone concerne la première version `v0.2.0` ;
+ce gestionnaire reste à vérifier physiquement sur iPhone et iPad.
 Les preuves détaillées restent dans [VALIDATION.md](VALIDATION.md).
 
 Installer consiste à ouvrir cette adresse dans Safari et à ajouter Pupitro à

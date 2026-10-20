@@ -7,6 +7,7 @@
 - [x] Traiter explicitement les doublons et la suppression de la partition ouverte.
 - [x] Exporter/restaurer toute la bibliothèque, noms et réglages compris, sans écraser l’existant.
 - [x] Couvrir les annulations, les sauvegardes invalides et les échecs de stockage sans perte.
+- [x] Tester sur Chromium/WebKit, publier et vérifier la mise à jour HTTPS avec bibliothèque existante conservée.
 - [ ] Vérifier ce gestionnaire et son aller-retour de sauvegarde sur iPhone et iPad physiques.
 
 ## Livrer la version autonome

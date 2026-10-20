@@ -15,6 +15,12 @@
 - 38 tests Node et 11 tests HTTP passent. Les recettes Mac et les limites physiques
   sont consignées dans [VALIDATION.md](docs/VALIDATION.md). Tags antérieurs inchangés.
 
+Publié le 21 octobre 2026 par le
+[workflow 39508075359](https://github.com/Alexmacapple/Pupitro/actions/runs/39508075359),
+construction `a211530ec3d09aedecdb`. La mise à jour Chromium conserve deux partitions
+existantes ; export et vérification de sauvegarde hors ligne réussissent.
+La validation physique de ce gestionnaire sur iPhone et iPad reste ouverte.
+
 ## Correctifs après v0.2.0 — 2026-10-20
 
 - Revue ShipGuard : 12 constats corrigés, dont un défaut de journalisation découvert

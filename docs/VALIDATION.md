@@ -62,6 +62,25 @@ boucle et redémarrage hors ligne (`pupitro-browser-PmwDxc` et
 `pupitro-browser-Dal5JZ`). Aucun POST, appel externe ou `pageerror` ; les messages
 de fonctions de fichiers simulées de FluidSynth restent présents.
 
+### Publication et migration sur l’adresse HTTPS
+
+Le [workflow 39508075359](https://github.com/Alexmacapple/Pupitro/actions/runs/39508075359)
+déploie `9289f76` avec construction/tests CI et déploiement réussis.
+Les 31 tailles et empreintes publiques correspondent à `a211530ec3d09aedecdb` ;
+les types MIME JavaScript, WASM et manifeste sont corrects. Les trois chemins
+privés contrôlés (référence, jeton et imports) renvoient 404.
+
+Le profil Chromium isolé contenant deux partitions de 13 pages a reçu la mise
+à jour par le bouton, depuis `baefded0afd663fc5988`. La base passe en version 2,
+avec catalogue. Sources, MIDI, manifestes, titres et réglages sont identiques
+immédiatement après migration. Lecture avec signal, réouverture hors ligne,
+export puis vérification complète de cette sauvegarde hors ligne réussissent.
+L’aperçu annonce zéro ajout et deux entrées conservées ; son annulation n’écrit
+rien. Aucun POST, appel externe ou `pageerror`. Artefact local :
+`pupitro-library-update-9Fs4OH` ; contrôle des empreintes dans
+`/private/tmp/pupitro-library-public-verification.json`. Aucune partition publiée.
+Les commits documentaires suivants ne changent pas les ressources applicatives.
+
 ### Standards
 
 Revue indépendante du diff `605d781...c7193f6` : aucune violation documentaire dure.
