@@ -46,9 +46,8 @@ L’ukulélé et la mandoline utilisent le son de guitare nylon de cette banque.
 
 <!-- [FA] Retour iPhone ; [IC] vérifications décrites dans docs/VALIDATION.md. -->
 Pupitro est un **prototype local**. La lecture et l’import ont été vérifiés sur
-Mac. L’ouverture sur iPhone est confirmée par un essai utilisateur, mais son
-audio reste à confirmer après un ajustement du mode audio iOS. Les essais sur
-iPad et Android restent à réaliser.
+Mac. L’ouverture et le son sur iPhone sont confirmés par un essai utilisateur
+du 20 octobre 2026. Les essais sur iPad et Android restent à réaliser.
 
 Le Mac doit rester allumé. Les fichiers MuseScore 3/4, l’édition de partitions,
 le mode hors ligne et un hébergement public ne sont pas pris en charge.

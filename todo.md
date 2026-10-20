@@ -2,8 +2,8 @@
 
 ## Priorité : terminer la recette réelle
 
-- [ ] Confirmer le son de l’iPhone après le réglage `playback` ; recueillir version
-  système, navigateur et mouvement du compteur si le son manque encore.
+- [x] Confirmer le son de l’iPhone : retour utilisateur du 20 octobre 2026.
+- [ ] Recueillir les versions du système et du navigateur sur iPhone.
 - [ ] Vérifier lecture, curseur, clic, boucle et instruments sur l’iPad M4.
 - [ ] Vérifier Android avant de l’annoncer comme compatible.
 - [ ] Écouter les timbres et confirmer reprise après verrouillage/changement d’onglet.

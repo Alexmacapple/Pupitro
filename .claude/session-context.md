@@ -23,7 +23,7 @@ Wi‑Fi. Aucun démarrage automatique n’a été installé.
 
 ## Limites à conserver dans les comptes rendus
 
-Le lecteur s’ouvre sur l’iPhone selon l’utilisateur. Le son sur cet appareil
-n’est pas confirmé après le correctif de mode audio. L’iPad et Android restent
-à tester. Une largeur de navigateur simulée ne valide pas un appareil physique.
+L’ouverture et le son sur l’iPhone sont confirmés par l’utilisateur le
+20 octobre 2026. La recette complète sur iPhone et les essais sur iPad et Android
+restent à réaliser. Une largeur de navigateur simulée ne valide pas un appareil physique.
 Voir `todo.md` pour la prochaine tranche utile.

@@ -1,6 +1,6 @@
 # Historique
 
-## 2026-10-20 — premier prototype
+## v0.1.0 — 2026-10-20 — premier prototype
 
 - Lecture web de MSCZ compatibles avec MuseScore 2, avec export natif sur Mac.
 - Images issues du PDF, audio MIDI, métronome, décompte et boucle par mesures.
@@ -8,6 +8,6 @@
 - Curseur synchronisé, zoom et suivi de la portée.
 - Import par le bouton du lecteur depuis le réseau local.
 - Commandes escamotables dans un bandeau centré ; espacement mobile corrigé.
-- Réglage du mode audio iOS ajouté ; résultat sur l’iPhone encore à confirmer.
+- Réglage du mode audio iOS ajouté ; son sur iPhone confirmé par l’utilisateur.
 - Adoption du nom Pupitro, installation locale durable et dépôt dédié.
 - Documentation des besoins, choix, architecture, limites et recette physique.

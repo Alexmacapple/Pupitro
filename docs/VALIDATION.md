@@ -37,13 +37,15 @@ Un signal détecté dans le graphe audio ne prouve pas qu’un téléphone émet
 
 | Appareil | État |
 |---|---|
-| iPhone | Ouverture du lecteur confirmée par l’utilisateur ; absence de son suspectée |
-| iPhone après réglage audio `playback` | Résultat non confirmé |
+| iPhone | Ouverture du lecteur et son entendu confirmés par l’utilisateur le 20 octobre 2026 |
 | iPad M4 | Essai physique non confirmé |
 | Android | Non testé ; compatibilité supposée depuis les API utilisées |
 
 Versions iOS, iPadOS et navigateur mobile : inconnues. Ne pas convertir cette
 matrice en promesse de compatibilité tant que l’essai correspondant manque.
+
+Le retour iPhone confirme le son entendu ; il ne valide pas encore l’ensemble
+des commandes, des instruments et des scénarios de reprise ci-dessous.
 
 ## Recette à réaliser sur chaque appareil
 
