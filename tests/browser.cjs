@@ -1,18 +1,50 @@
 // Real static app, real user-selected score; no server-side conversion endpoint.
 const playwright = process.env.PUPITRO_PLAYWRIGHT || 'playwright';
-const browserType = require(playwright)[process.env.PUPITRO_ENGINE || 'chromium'];
-const {expect} = require(playwright + '/test');
+let browserType,expect;
+if(require.main===module){
+  browserType=require(playwright)[process.env.PUPITRO_ENGINE || 'chromium'];
+  ({expect}=require(playwright + '/test'));
+}
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const scoreFile = process.argv[2];
-if (!scoreFile) throw new Error('Usage: node tests/browser.cjs /path/to/example.mscz');
+if (require.main===module&&!scoreFile) throw new Error('Usage: node tests/browser.cjs /path/to/example.mscz');
 const base = process.env.PUPITRO_TEST_URL || 'http://127.0.0.1:8770/';
-const output = fs.mkdtempSync(path.join(os.tmpdir(), 'pupitro-browser-'));
-const profile = path.join(output, 'profile');
+const output = require.main===module?fs.mkdtempSync(path.join(os.tmpdir(), 'pupitro-browser-')):null;
+const profile = output?path.join(output, 'profile'):null;
 const options = {headless:true,viewport:{width:428,height:926},isMobile:true,hasTouch:true};
 let context;
+async function launchObservedContext(browser,profile,options,base,observations){
+  const context=await browser.launchPersistentContext(profile,options);
+  const attached=new WeakSet();
+  const attach=page=>{
+    if(attached.has(page))return;
+    attached.add(page);
+    page.on('pageerror',error=>observations.errors.push(error.message));
+    page.on('console',message=>{
+      if(message.type()!=='error')return;
+      const text=message.text(),counts=observations.consoleCounts;
+      counts.set(text,(counts.get(text)||0)+1);
+      if(counts.size<=3&&counts.get(text)===1)console.error('browser:',text);
+    });
+    page.on('crash',()=>observations.errors.push('PAGE_CRASH'));
+  };
+  context.on('page',attach);
+  for(const page of context.pages())attach(page);
+  // Context requests include requests initiated by workers as well as pages.
+  context.on('request',request=>{
+    const url=request.url();
+    if(request.method()==='POST')observations.posts.push(url);
+    if(/^https?:/.test(url)&&!url.startsWith(base))observations.outside.push(url);
+  });
+  return context;
+}
+function assertObservations({posts,outside,errors}){
+  assert.deepEqual(posts,[]);assert.deepEqual(outside,[]);assert.deepEqual(errors,[]);
+}
+module.exports={launchObservedContext,assertObservations};
 async function pressNote(page,method,offset){
   const target=await page.evaluate(async offset=>{
     const library=await import('./library.js');
@@ -45,22 +77,27 @@ async function pauseOnNote(page,method,offset){
   await expect(page.locator('#seek')).toHaveValue(tick);
   return Number(tick);
 }
-(async()=>{
-  context = await browserType.launchPersistentContext(profile, options);
+if(require.main===module)(async()=>{
+  const observations={errors:[],posts:[],outside:[],consoleCounts:new Map()};
+  const {errors,posts,outside,consoleCounts}=observations;
+  context = await launchObservedContext(browserType,profile,options,base,observations);
   let page = await context.newPage();
-  const errors=[],posts=[],outside=[];
-  page.on('pageerror', error=>errors.push(error.message));
-  const consoleCounts=new Map();
-  page.on('console', message=>{if(message.type()==='error'){const text=message.text();consoleCounts.set(text,(consoleCounts.get(text)||0)+1);if(consoleCounts.size<=3&&consoleCounts.get(text)===1)console.error('browser:',text);}});
-  page.on('crash',()=>console.error('PAGE_CRASH'));
-  page.on('request', request=>{if(request.method()==='POST')posts.push(request.url());if(/^https?:/.test(request.url())&&!request.url().startsWith(base))outside.push(request.url());});
   await page.goto(base);
   const legacy=await require('./legacy.cjs')(page);
   await expect(page.locator('#status')).toContainText('Ouvre un fichier');
+  await expect(page.locator('#goMeasure')).toBeDisabled();
   await expect(page.locator('#offlineStatus')).toContainText('Application prête hors ligne',{timeout:90000});
   console.log('offline assets ready');
   await page.locator('#scoreFile').setInputFiles(scoreFile);
   await expect(page.locator('#status')).toContainText('partition enregistrée',{timeout:90000});
+  await expect(page.locator('#goMeasure')).toBeEnabled();
+  await expect(page.locator('#pdfLink')).toBeVisible();
+  const pdf=await page.locator('#pdfLink').evaluate(async link=>{
+    if(!link.href.startsWith('blob:'))throw new Error('The PDF must come from the local score');
+    const response=await fetch(link.href),blob=await response.blob();
+    return {ok:response.ok,type:blob.type,size:blob.size};
+  });
+  assert.equal(pdf.ok,true);assert.equal(pdf.type,'application/pdf');assert.ok(pdf.size>0);
   console.log('local import ready');
   const pages=await page.locator('.paper').count();
   const partCount=await page.locator('#parts .part').count();
@@ -138,11 +175,11 @@ async function pauseOnNote(page,method,offset){
   await page.locator('#scoreFile').setInputFiles({name:'invalid.mscz',mimeType:'application/octet-stream',buffer:Buffer.from('invalid')});
   await expect(page.locator('#status')).toContainText('valide');
   await expect(page.locator('.paper')).toHaveCount(pages);
-  assert.deepEqual(posts,[]);assert.deepEqual(outside,[]);assert.deepEqual(errors,[]);
+  assertObservations(observations);
   const id=new URL(page.url()).searchParams.get('score');
   await context.close();
   // A browser restart must retain both the app and its IndexedDB library.
-  context=await browserType.launchPersistentContext(profile,options);
+  context=await launchObservedContext(browserType,profile,options,base,observations);
   await context.setOffline(true);page=await context.newPage();
   await page.goto(base);
   await expect(page.locator('.paper')).toHaveCount(pages,{timeout:20000});
@@ -191,5 +228,6 @@ async function pauseOnNote(page,method,offset){
   await page.evaluate(()=>window.restoreStorageTest());
   await page.setViewportSize({width:1440,height:1000});
   await page.screenshot({path:path.join(output,'desktop.png'),fullPage:false});
+  assertObservations(observations);
   console.log(JSON.stringify({pages,parts:partCount,id,posts:posts.length,externalRequests:outside.length,errors,consoleCounts:[...consoleCounts],legacy,noteSelection:{clickedTick,mousePauseTick,resumedTick,touchPauseTick,tappedTick},offlineImport:true,restartOffline:true,concurrentOpen:true,output}));
 })().catch(async error=>{console.error(error);if(context){const page=context.pages().at(-1);if(page){console.error(await page.locator('body').innerText().catch(()=>''));await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});console.error('Artifacts:',output);}}process.exitCode=1;}).finally(async()=>{if(context)await context.close();});

@@ -1,30 +1,86 @@
-// Validate ZIP expansion before handing any untrusted archive to WebAssembly.
+// Own the ZIP interpretation used by both WebAssembly and the legacy extractor.
+// Return a bounded working archive without a comment: fflate otherwise searches
+// for an EOCD signature inside that arbitrary comment instead of the real EOCD.
 export function validateArchive(buffer) {
   const view = new DataView(buffer);
   if (buffer.byteLength < 22 || view.getUint32(0, true) !== 0x04034b50) throw new Error("Choisis un fichier MuseScore .mscz valide.");
-  let end = -1;
+  const failure = new Error("Archive MSCZ invalide, chiffrée ou trop volumineuse.");
+  const invalid = () => { throw failure; };
   for (let pos = buffer.byteLength - 22; pos >= Math.max(0, buffer.byteLength - 65557); pos--) {
-    if (view.getUint32(pos, true) === 0x06054b50 && pos + 22 + view.getUint16(pos + 20, true) === buffer.byteLength) { end = pos; break; }
+    if (view.getUint32(pos, true) === 0x06054b50 && pos + 22 + view.getUint16(pos + 20, true) === buffer.byteLength
+      && view.getUint32(pos + 16, true) + view.getUint32(pos + 12, true) === pos) {
+      try { return validateDirectory(buffer, view, pos, invalid); }
+      catch (error) { if (error !== failure) throw error; }
+    }
   }
-  const invalid = () => { throw new Error("Archive MSCZ invalide, chiffrée ou trop volumineuse."); };
-  if (end < 0 || view.getUint16(end + 4, true) || view.getUint16(end + 6, true)) invalid();
+  invalid();
+}
+
+function validateDirectory(buffer, view, end, invalid) {
+  if (view.getUint16(end + 4, true) || view.getUint16(end + 6, true)) invalid();
   const count = view.getUint16(end + 10, true), directorySize = view.getUint32(end + 12, true);
   let pos = view.getUint32(end + 16, true), total = 0, hasScore = false;
-  if (count === 65535 || count !== view.getUint16(end + 8, true) || pos + directorySize !== end) invalid();
-  const directoryEnd = pos + directorySize;
+  if (!count || count === 65535 || count !== view.getUint16(end + 8, true) || pos + directorySize !== end) invalid();
+  const directoryStart = pos, directoryEnd = pos + directorySize, paths = {children: new Map(), type: null}, ranges = [];
+  const utf8 = new TextDecoder("utf-8", {fatal: true});
   for (let i = 0; i < count; i++) {
     if (pos + 46 > directoryEnd || view.getUint32(pos, true) !== 0x02014b50) invalid();
     const flags = view.getUint16(pos + 8, true), method = view.getUint16(pos + 10, true);
     const nameSize = view.getUint16(pos + 28, true), extraSize = view.getUint16(pos + 30, true), commentSize = view.getUint16(pos + 32, true);
     const next = pos + 46 + nameSize + extraSize + commentSize;
-    if (next > directoryEnd || flags & 1 || ![0, 8].includes(method)) invalid();
-    total += view.getUint32(pos + 24, true);
-    if (total > 200 * 1024 * 1024 || view.getUint32(pos + 42, true) >= directoryEnd) invalid();
-    const name = new TextDecoder().decode(new Uint8Array(buffer, pos + 46, nameSize));
+    if (next > directoryEnd || flags & ~0x080e || ![0, 8].includes(method) || view.getUint16(pos + 34, true)) invalid();
+    const crc = view.getUint32(pos + 16, true), packed = view.getUint32(pos + 20, true), unpacked = view.getUint32(pos + 24, true);
+    // Stored entries are copied using packed bytes by fflate. The two sizes
+    // must therefore agree before trusting unpacked as an allocation bound.
+    total += unpacked;
+    if (total > 200 * 1024 * 1024 || packed === 0xffffffff || unpacked === 0xffffffff || (!method && packed !== unpacked)) invalid();
+    const encodedName = new Uint8Array(buffer, pos + 46, nameSize);
+    let name;
+    try { name = flags & 0x0800 ? utf8.decode(encodedName) : [...encodedName].map(byte => String.fromCharCode(byte)).join(""); }
+    catch { invalid(); }
+    const isDirectory = name.endsWith("/"), path = isDirectory ? name.slice(0, -1) : name, components = path.split("/");
+    if (!path || path === "__proto__" || /[\0\\]/.test(name) || /^[a-z]:/i.test(name)
+      || components.some(part => !part || part === "." || part === "..") || (isDirectory && unpacked)) invalid();
+    // A trie checks parent/file conflicts without retaining every complete
+    // prefix of a deeply nested filename (which would grow quadratically).
+    let node = paths;
+    for (const component of components) {
+      if (node.type === "file") invalid();
+      if (!node.children.has(component)) node.children.set(component, {children: new Map(), type: null});
+      node = node.children.get(component);
+    }
+    if (node.type || (!isDirectory && node.children.size)) invalid();
+    node.type = isDirectory ? "directory" : "file";
+    const local = view.getUint32(pos + 42, true);
+    if (local + 30 > directoryStart || view.getUint32(local, true) !== 0x04034b50
+      || view.getUint16(local + 6, true) !== flags || view.getUint16(local + 8, true) !== method
+      || view.getUint16(local + 26, true) !== nameSize) invalid();
+    const dataStart = local + 30 + nameSize + view.getUint16(local + 28, true);
+    let dataEnd = dataStart + packed;
+    if (dataEnd > directoryStart) invalid();
+    for (let n = 0; n < nameSize; n++) if (view.getUint8(local + 30 + n) !== encodedName[n]) invalid();
+    const localValues = [view.getUint32(local + 14, true), view.getUint32(local + 18, true), view.getUint32(local + 22, true)];
+    const expected = [crc, packed, unpacked];
+    if (flags & 8) {
+      if (localValues.some((value, index) => value && value !== expected[index])) invalid();
+      const candidates = [dataEnd];
+      if (dataEnd + 4 <= directoryStart && view.getUint32(dataEnd, true) === 0x08074b50) candidates.push(dataEnd + 4);
+      const descriptors = candidates.filter(offset => offset + 12 <= directoryStart
+        && expected.every((value, index) => view.getUint32(offset + index * 4, true) === value));
+      if (descriptors.length !== 1) invalid();
+      dataEnd = descriptors[0] + 12;
+    } else if (localValues.some((value, index) => value !== expected[index])) invalid();
+    ranges.push([local, dataEnd]);
     if (/\.mscx$/i.test(name)) hasScore = true;
     pos = next;
   }
   if (pos !== directoryEnd || !hasScore) invalid();
+  ranges.sort((a, b) => a[0] - b[0]);
+  for (let i = 1; i < ranges.length; i++) if (ranges[i][0] < ranges[i - 1][1]) invalid();
+  if (end + 22 === buffer.byteLength) return buffer;
+  const working = buffer.slice(0, end + 22);
+  new DataView(working).setUint16(end + 20, 0, true);
+  return working;
 }
 
 function scoreDocument(xml) {
@@ -37,7 +93,7 @@ function scoreDocument(xml) {
 
 export async function normalizeLegacyArchive(xml, archive) {
   const {unzipSync, zipSync} = await import("./assets/fflate.js");
-  const files = unzipSync(new Uint8Array(archive));
+  const files = unzipSync(new Uint8Array(validateArchive(archive)));
   const container = files["META-INF/container.xml"];
   if (!container) throw new Error("Le fichier MSCZ ne décrit pas sa partition principale.");
   const document = new DOMParser().parseFromString(new TextDecoder().decode(container), "application/xml");
@@ -93,10 +149,10 @@ export function normalizeLegacyScore(xml, originalXml) {
 export async function importScore(file, onProgress, signal) {
   if (!/\.mscz$/i.test(file.name)) throw new Error("Choisis un fichier .mscz.");
   if (file.size > 50 * 1024 * 1024) throw new Error("Le fichier dépasse la capacité de l’import local (50 Mo).");
-  const bytes = await file.arrayBuffer();
-  validateArchive(bytes);
+  const original = await file.arrayBuffer();
+  const bytes = validateArchive(original);
   if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
-  const id = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map(x => x.toString(16).padStart(2, "0")).join("");
+  const id = [...new Uint8Array(await crypto.subtle.digest("SHA-256", original))].map(x => x.toString(16).padStart(2, "0")).join("");
   if (signal?.aborted) throw new DOMException("Import annulé.", "AbortError");
   const result = await new Promise((resolve, reject) => {
     const worker = new Worker(new URL("./import-worker.js", import.meta.url), {type: "module"});
