@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {preparePlayback, preparePositions, positionAtPoint} from "../reader/playback.js";
 import {validateArchive, importScore} from "../reader/import-score.js";
+import {zipSync} from "../reader/assets/fflate.js";
 
 function midi(events) {
   const track = new Uint8Array([...events, 0,255,47,0]);
@@ -76,14 +77,11 @@ test("point selection belongs to a staff, page and nearest repeat occurrence",()
 });
 
 function archive(unpacked=10) {
-  const filename=new TextEncoder().encode("score.mscx");
-  const result=new Uint8Array(30+filename.length+46+filename.length+22);
-  const view=new DataView(result.buffer),central=30+filename.length,end=central+46+filename.length;
-  view.setUint32(0,0x04034b50,true);view.setUint16(26,filename.length,true);result.set(filename,30);
-  view.setUint32(central,0x02014b50,true);view.setUint32(central+24,unpacked,true);
-  view.setUint16(central+28,filename.length,true);result.set(filename,central+46);
-  view.setUint32(end,0x06054b50,true);view.setUint16(end+8,1,true);view.setUint16(end+10,1,true);
-  view.setUint32(end+12,46+filename.length,true);view.setUint32(end+16,central,true);
+  const result=zipSync({"score.mscx":new Uint8Array(10)},{level:0});
+  const view=new DataView(result.buffer),central=view.getUint32(result.byteLength-22+16,true);
+  // Forge declarations only for the oversized-input regression; no large allocation.
+  view.setUint32(18,unpacked,true);view.setUint32(22,unpacked,true);
+  view.setUint32(central+20,unpacked,true);view.setUint32(central+24,unpacked,true);
   return result.buffer;
 }
 test("ZIP expansion and malformed directory fail before starting WebAssembly",()=>{
@@ -92,7 +90,8 @@ test("ZIP expansion and malformed directory fail before starting WebAssembly",()
   assert.throws(()=>validateArchive(new ArrayBuffer(20)));
   const counts=archive();new DataView(counts).setUint16(counts.byteLength-22+8,2,true);
   assert.throws(()=>validateArchive(counts));
-  const encrypted=archive();new DataView(encrypted).setUint16(30+10+8,1,true);
+  const encrypted=archive(),view=new DataView(encrypted);
+  view.setUint16(view.getUint32(encrypted.byteLength-22+16,true)+8,1,true);
   assert.throws(()=>validateArchive(encrypted));
 });
 
