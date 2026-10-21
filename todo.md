@@ -12,7 +12,7 @@
 
 ## Suites des recettes indépendantes — 21 octobre 2026
 
-Correctifs locaux, publication en attente. Preuves et limites par construction
+Correctifs publiés depuis `d538720`. Preuves et limites par construction
 dans [VALIDATION.md](docs/VALIDATION.md).
 
 - [x] Aligner titres et budget de métadonnées à l’import, au stockage et à l’export.
@@ -25,7 +25,7 @@ dans [VALIDATION.md](docs/VALIDATION.md).
 - [x] Corriger retours de focus, messages du dialogue, rôles, étiquettes,
   contraste du champ de nom et commandes dans les fenêtres de faible hauteur.
 - [x] Protéger aussi les fichiers générés lors d’une reconstruction locale.
-- [ ] Terminer les gates finaux puis publier les correctifs et vérifier HTTPS,
+- [x] Terminer les gates finaux puis publier les correctifs et vérifier HTTPS,
   empreintes et mise à jour avec bibliothèque conservée.
 - [ ] Si l’utilisateur veut harmoniser les erreurs, décider explicitement la
   nouvelle politique : aujourd’hui l’ajout continue et la restauration s’arrête

@@ -15,19 +15,39 @@ sources:
 
 # Vérifications — version autonome
 
-État documentaire au 21 octobre 2026. Le correctif courant est local, depuis
-`8bb6a2f` ; les références de chaque campagne sont distinguées ci-dessous.
+État documentaire au 21 octobre 2026. Le correctif courant, issu de `8bb6a2f`,
+est publié depuis `d538720` ; les références de chaque campagne sont distinguées ci-dessous.
 Cette page consigne des preuves passées, sans annoncer une validation générale.
 
 Une partition personnelle MuseScore 2 sert d’exemple. Ni elle ni ses captures
 ne sont publiées dans le dépôt ou l’artefact applicatif.
 
-## Correctifs locaux après recettes — publication en attente
+## Correctifs après recettes — publiés le 21 octobre 2026
 
-Construction locale courante : `7385c59dd8c93f227bbd`, 32 ressources,
-58 164 444 octets. Ce numéro ne prouve ni commit, ni déploiement, ni installation.
-La dernière publication documentée reste `a211530ec3d09aedecdb` ; les correctifs
-ne sont pas encore annoncés comme accessibles à l’adresse HTTPS.
+Construction publiée : `7385c59dd8c93f227bbd`, 32 ressources,
+58 164 444 octets. Le [workflow 39518250725](https://github.com/Alexmacapple/Pupitro/actions/runs/39518250725)
+a construit, testé et déployé `d538720` avec succès. Les 32 tailles et empreintes
+HTTPS correspondent à la construction locale ; les types JavaScript, WASM et
+manifeste sont vérifiés. Les trois chemins privés contrôlés renvoient 404.
+Reçu local : `public-verification.json` dans le dossier de correction ci-dessous.
+
+Un profil Chromium isolé préparé avant publication reçoit la mise à jour depuis
+`a211530ec3d09aedecdb`. L’ancienne version reste active pendant la lecture ;
+la tentative de mise à jour est refusée jusqu’à la pause, puis le clic explicite
+active la nouvelle version. Catalogue, source, PDF, MIDI, pages et réglages sont
+comparés exactement et conservés. Relance complète hors ligne, nouvel import
+de MSCZ synthétique et lecture avec signal mesuré passent ; contextes fermés,
+aucune erreur de page ni requête externe observée. Ce n’est pas une écoute humaine.
+Reçus : `result.json` et `16-offline-audio.json` dans
+`/private/tmp/pupitro-public-update-20261021.2je82876/`.
+
+Les deux défauts initiaux sont aussi rejoués sur le site public : un MSCZ dont
+`workTitle` contient trois espaces affiche « Visible » et produit une sauvegarde
+de 1 249 octets ; nom, SHA-256 et original sont vérifiés indépendamment dans le
+fichier téléchargé. En confirmation de suppression, le champ Nom est invisible,
+sans dimensions ni textbox exposé ; annuler préserve la partition et ses octets.
+Manifeste inchangé, aucune erreur et contexte fermé. Reçu : `public-result.json`
+dans `/private/tmp/pupitro-public-original-defects-20261021.gw5wi3/`.
 
 Titres et budget de sauvegarde sont partagés par l’import, le catalogue et le
 format `.pupitro`. Les réglages conservés sont vérifiés avant commit, y compris
@@ -55,7 +75,7 @@ en attente, pas un changement appliqué implicitement.
 
 Le corpus original comporte 38 entrées actives et huit non vérifiées, pas
 46 bogues reproduits. « Corrigé localement » désigne un changement de code ou de
-test correspondant ; seuls les parcours exécutés constituent une preuve runtime.
+test correspondant, désormais publié ; seuls les parcours exécutés constituent une preuve runtime.
 Les identifiants regroupés ci-dessous couvrent les 46 entrées : 43 traitées dans
 le code ou les tests, deux non retenues comme changement à imposer et une limite
 non vérifiée exhaustivement.
@@ -191,7 +211,7 @@ contient ces trois espaces et **Exporter la bibliothèque** échoue avec
 Contournement vérifié : dans **Bibliothèque**, renommer cette entrée en
 **Titre renseigné**, puis relancer l’export. Un fichier `.pupitro` de 1 264 octets
 est alors téléchargé. Le produit était resté inchangé pendant cette recette ;
-la correction locale est décrite plus haut, sans nouveau déploiement revendiqué.
+la correction est incluse dans la publication `7385c59dd8c93f227bbd` décrite plus haut.
 Preuves locales : `blank-title-result.json` et `check-blank-title.cjs`, dans
 `/private/tmp/pupitro-recette-20261021.buFM9S/`.
 

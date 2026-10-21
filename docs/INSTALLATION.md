@@ -19,23 +19,22 @@ autorisé et a réussi ; les ressources, l’import et la réouverture sans rés
 été contrôlés sur Chrome Mac. L’utilisateur confirme que la version autonome
 fonctionne sur iPhone ; la recette détaillée et la vérification iPad restent ouvertes.
 
-Le gestionnaire et les sauvegardes sont publiés depuis `9289f76`, construction
-`a211530ec3d09aedecdb`, par le
-[workflow 39508075359](https://github.com/Alexmacapple/Pupitro/actions/runs/39508075359).
-Les 31 ressources HTTPS correspondent à la construction testée. La mise à jour
-depuis la version précédente conserve les deux partitions du profil Chromium
-de test ; lecture, réouverture, export et vérification d’une sauvegarde passent
-hors ligne. Utiliser la procédure ci-dessous sur chaque appareil.
+Le gestionnaire et ses correctifs sont publiés depuis `d538720`, construction
+`7385c59dd8c93f227bbd`, par le
+[workflow 39518250725](https://github.com/Alexmacapple/Pupitro/actions/runs/39518250725).
+Les 32 ressources HTTPS correspondent à la construction testée. La mise à jour
+depuis `a211530ec3d09aedecdb` conserve exactement la partition, ses fichiers préparés
+et ses réglages dans un profil Chromium isolé. Réouverture complète, nouvel import
+et lecture avec signal passent hors ligne. Utiliser la procédure ci-dessous sur chaque appareil.
 La confirmation physique iPhone concerne la première version `v0.2.0` ;
 ce gestionnaire reste à vérifier physiquement sur iPhone et iPad.
 Les preuves détaillées restent dans [VALIDATION.md](VALIDATION.md).
 
-Une construction corrective locale est prête : `7385c59dd8c93f227bbd`,
-32 ressources et 58 164 444 octets. À cette rédaction, elle n’est pas encore
-déployée : l’adresse ci-dessus sert toujours la version publiée décrite ici.
-Un commit ou une construction locale ne met pas les appareils à jour. Attendre
-le déploiement manuel puis suivre **Mettre à jour** ; les preuves et réserves
-figurent dans [VALIDATION.md](VALIDATION.md).
+Pour recevoir les correctifs, ouvrir l’app avec Internet puis utiliser
+**Mettre à jour** à l’arrêt. La mise à jour ne s’active pas pendant la lecture.
+L’application contient 58 164 444 octets de ressources ; les partitions restent
+séparées dans le stockage local. Les preuves et réserves figurent dans
+[VALIDATION.md](VALIDATION.md).
 
 Installer consiste à ouvrir cette adresse dans Safari et à ajouter Pupitro à
 l’écran d’accueil. L’application télécharge ses ressources et les conserve localement.
@@ -98,13 +97,9 @@ par partition et la référence de la dernière partition ouverte. Les pages pr�
 ne sont pas incluses : elles seront recréées par le moteur local lors de la restauration.
 Conserver cette sauvegarde en dehors des données du site.
 
-**Limite de la version publiée :** un MSCZ dont le titre ne contient que des espaces
-peut être importé avec un nom invisible, puis bloquer l’export avec
-« La sauvegarde Pupitro est invalide ou incomplète. » Dans **Bibliothèque**, choisir
-**Renommer** sur cette entrée et saisir un nom visible, puis relancer
-**Exporter la bibliothèque**. Ce contournement a été vérifié sur Chromium Mac ;
-le correctif local n’est pas encore annoncé comme déployé. Les détails et la
-portée des preuves sont dans [VALIDATION.md](VALIDATION.md).
+Un titre composé d’espaces reçoit désormais un nom de repli visible, sans modifier
+le MSCZ d’origine. Le nom, le fichier et les réglages sont vérifiés ensemble avant
+une écriture susceptible de dépasser la capacité de métadonnées de sauvegarde.
 
 **Restaurer une sauvegarde** permet de choisir ce fichier, vérifier son contenu
 puis confirmer les ajouts. Les partitions identiques déjà présentes gardent leurs

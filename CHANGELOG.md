@@ -1,6 +1,6 @@
 # Historique
 
-## Correctifs locaux après recettes — 2026-10-21 — publication en attente
+## Correctifs après recettes — 2026-10-21
 
 - Titres blancs remplacés par un nom de repli ; budget de sauvegarde vérifié
   avant renommage, réglages et repréparation, sans changer les MSCZ d’origine.
@@ -15,8 +15,10 @@
   d’empreintes des fichiers générés ; tests de sauvegarde et bibliothèque renforcés.
 
 Les preuves par construction, les limites AY11 et le triage ShipGuard figurent
-dans [VALIDATION.md](docs/VALIDATION.md). Ces correctifs ne sont pas encore
-annoncés comme déployés ; [INSTALLATION.md](docs/INSTALLATION.md) possède cet état.
+dans [VALIDATION.md](docs/VALIDATION.md). Publiés depuis `d538720` par le
+[workflow 39518250725](https://github.com/Alexmacapple/Pupitro/actions/runs/39518250725),
+construction `7385c59dd8c93f227bbd`, avec 32 ressources HTTPS vérifiées.
+[INSTALLATION.md](docs/INSTALLATION.md) possède la procédure de mise à jour.
 
 ## Gestionnaire de bibliothèque — 2026-10-21
 

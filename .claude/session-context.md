@@ -12,12 +12,14 @@ Le tag `v0.2.0` repère le lecteur autonome avec confirmation utilisateur iPhone
 Lire [AGENTS.md](../AGENTS.md), [todo.md](../todo.md), puis
 [VALIDATION.md](../docs/VALIDATION.md). Examiner Git avant toute reprise.
 
-## État courant — correctifs locaux non publiés
+## État courant — correctifs publiés
 
 Chantier isolé dans `/private/tmp/pupitro-corrections-20261021.JvUWTT/repo`,
-depuis `8bb6a2f`. Construction locale `7385c59dd8c93f227bbd` :
-32 ressources, 58 164 444 octets. Aucun nouveau déploiement revendiqué ; la
-dernière version publique documentée reste `a211530ec3d09aedecdb`.
+depuis `8bb6a2f`, puis intégré en avance rapide au dépôt canonique et poussé
+sous `d538720`. Le [workflow 39518250725](https://github.com/Alexmacapple/Pupitro/actions/runs/39518250725)
+a construit, testé et déployé `7385c59dd8c93f227bbd` :
+32 ressources, 58 164 444 octets. Empreintes HTTPS et trois chemins privés en 404
+vérifiés ; les tags historiques restent inchangés.
 
 Titres et budget de sauvegarde ont un propriétaire commun ; les réglages
 conservés sont inclus avant commit. Connexion IndexedDB, bilans d’opération,
@@ -42,7 +44,12 @@ preuve de `f26b29840edc0e48d215`. Le premier essai de récupération WebKit atte
 un doublon dont la fixture ZIP avait changé d’octets ; le rejeu avec le buffer
 initial passe. Aucun défaut produit conclu de cet échec de fixture. Le bouton
 de lecture passe 11 états par moteur, avec pause/reprise au clavier et à la souris,
-signal mesuré. Restent Git, publication et mise à jour.
+signal mesuré. La mise à jour publique depuis `a211530ec3d09aedecdb` attend
+l’action explicite à l’arrêt, préserve exactement bibliothèque/fichiers/réglages,
+puis permet une relance complète, un nouvel import et la lecture hors ligne.
+Preuves : `/private/tmp/pupitro-public-update-20261021.2je82876/` et
+`public-verification.json` dans le dossier de correction. Les contextes de recette
+sont fermés ; notre serveur temporaire sur 8794 est arrêté, les autres aperçus préservés.
 [VALIDATION.md](../docs/VALIDATION.md) possède les reçus et les inconnues.
 
 ## Recettes indépendantes — 21 octobre 2026
