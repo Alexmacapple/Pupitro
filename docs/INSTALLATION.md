@@ -11,7 +11,7 @@ sources:
 
 # Installer Pupitro
 
-## État de publication au 21 octobre 2026
+## État de publication au 24 octobre 2026
 
 **Adresse d’installation : [https://alexmacapple.github.io/Pupitro/](https://alexmacapple.github.io/Pupitro/).**
 GitHub Pages est activé avec HTTPS. Le premier déploiement a été explicitement
@@ -19,20 +19,21 @@ autorisé et a réussi ; les ressources, l’import et la réouverture sans rés
 été contrôlés sur Chrome Mac. L’utilisateur confirme que la version autonome
 fonctionne sur iPhone ; la recette détaillée et la vérification iPad restent ouvertes.
 
-Le gestionnaire et ses correctifs sont publiés depuis `d538720`, construction
-`7385c59dd8c93f227bbd`, par le
-[workflow 39518250725](https://github.com/Alexmacapple/Pupitro/actions/runs/39518250725).
+La version courante inclut le gestionnaire et ses correctifs, puis Espace pour
+lecture/pause. Sources `2ebaefc`, construction `6a6f747015111dd5e017`, publiée par le
+[workflow 40094538213](https://github.com/Alexmacapple/Pupitro/actions/runs/40094538213).
 Les 32 ressources HTTPS correspondent à la construction testée. La mise à jour
-depuis `a211530ec3d09aedecdb` conserve exactement la partition, ses fichiers préparés
-et ses réglages dans un profil Chromium isolé. Réouverture complète, nouvel import
-et lecture avec signal passent hors ligne. Utiliser la procédure ci-dessous sur chaque appareil.
+depuis `7385c59dd8c93f227bbd` conserve les originaux, noms et réglages d’une
+bibliothèque synthétique dans un profil Chromium isolé. Le raccourci produit un
+signal audio sur le site publié ; nouvel import et réouverture passent hors ligne.
+Utiliser la procédure ci-dessous sur chaque appareil.
 La confirmation physique iPhone concerne la première version `v0.2.0` ;
 ce gestionnaire reste à vérifier physiquement sur iPhone et iPad.
 Les preuves détaillées restent dans [VALIDATION.md](VALIDATION.md).
 
 Pour recevoir les correctifs, ouvrir l’app avec Internet puis utiliser
 **Mettre à jour** à l’arrêt. La mise à jour ne s’active pas pendant la lecture.
-L’application contient 58 164 444 octets de ressources ; les partitions restent
+L’application contient 58 165 240 octets de ressources ; les partitions restent
 séparées dans le stockage local. Les preuves et réserves figurent dans
 [VALIDATION.md](VALIDATION.md).
 
@@ -120,7 +121,7 @@ sans déplacer le curseur. Un nouveau clic reprend depuis la note visée.
 Les espaces hors portée restent sans effet. Au démarrage depuis une note située
 hors de la boucle active, cette boucle est désactivée ; une pause seule la conserve.
 
-### Avec un clavier — sources mises à jour, site non déployé
+### Avec un clavier
 
 **Espace** lance, met en pause ou reprend à la position courante. Pendant la
 préparation ou le décompte, cette touche annule le départ. Le raccourci fonctionne

@@ -23,12 +23,12 @@ Cette page consigne des preuves passées, sans annoncer une validation général
 Une partition personnelle MuseScore 2 sert d’exemple. Ni elle ni ses captures
 ne sont publiées dans le dépôt ou l’artefact applicatif.
 
-## Raccourci Espace — sources du 24 octobre 2026, non déployées
+## Raccourci Espace — publié le 24 octobre 2026
 
 Trace : [issue #1](https://github.com/Alexmacapple/Pupitro/issues/1), étude et revue
-préalable dans [l’étude](ETUDE-LECTURE-ESPACE.md). Le déploiement du site reste
-une opération distincte, non réalisée ici.
-Construction locale : `6a6f747015111dd5e017`, servie uniquement sur localhost.
+préalable dans [l’étude](ETUDE-LECTURE-ESPACE.md). Sources `2ebaefc`, construction
+`6a6f747015111dd5e017`. Les recettes locales ci-dessous précèdent la publication ;
+les contrôles HTTPS sont distingués dans la section dédiée.
 
 - `bash scripts/check.sh` : 23 tests Python, 41 tests Node, syntaxe et construction
   réussis. Ressources déjà présentes ; aucune installation de dépendance.
@@ -84,6 +84,44 @@ diff, contrôles HTML et transport inspectés. Le gestionnaire reste dans `app.j
 et appelle `play()` ; aucune nouvelle machine d’état, persistance, abstraction,
 dépendance ou modification de `playback.js`. Verdict structurel : **GO local**.
 La revue Fable précédente portait uniquement sur le cadrage.
+
+### Publication HTTPS du raccourci
+
+Déploiement explicitement demandé après clôture de l’implémentation :
+[workflow 40094538213](https://github.com/Alexmacapple/Pupitro/actions/runs/40094538213),
+source `2ebaefcb485c6a04d5c6f974940d466dfb8c6a52`. Jobs `build` et `deploy` réussis ;
+le workflow exécute également les tests et la construction statique.
+
+- Manifeste public identique au local : `6a6f747015111dd5e017`.
+- 32 ressources, 58 165 240 octets : tailles et SHA-256 HTTPS identiques au manifeste.
+  Types JavaScript et WASM vérifiés ; `sw.js` identique à la construction locale.
+- `.access-token`, `imports/` et `reader/scores/` renvoient 404 sous `/Pupitro/`.
+  `.nojekyll` renvoie aussi 404 : ce fichier de construction ne fait pas partie
+  des ressources nécessaires au lecteur ; son contrôle d’identité a été retiré
+  de la recette HTTP après observation de cette réponse.
+- Profil Chromium isolé préparé sur l’ancienne version `7385c59dd8c93f227bbd` :
+  ajout d’une partition synthétique, vitesse 75 %, puis bouton **Mettre à jour**.
+  L’assertion d’identité de la sauvegarde, originaux et réglages compris, passe.
+  Empreinte avant et après :
+  `858a620e299698bb3055ebe09511cc6691dc2551adbd4d00c0b60d13ca981e06`.
+- Cette recette de migration a ensuite échoué sur une attente de pause avec un
+  morceau de deux secondes. Cause non établie ; ce passage n’est pas déclaré réussi.
+  La vérification a basculé vers les recettes du projet et leur partition longue.
+- `PUPITRO_TEST_URL=https://alexmacapple.github.io/Pupitro/ npm run test:keyboard`
+  réussit sur Chromium : signal audio, pause/reprise et fin réelle (`30720`, puis
+  `121` après actualisation), focus, dialogues, répétitions et états occupés.
+- `test:browser` sur la même URL publique réussit avec la partition synthétique
+  de 16 mesures : clic/toucher, six timbres, boucle, nouvel import hors ligne,
+  redémarrage hors ligne et ouvertures concurrentes. Aucun POST, aucune requête
+  externe ni erreur JavaScript inattendue.
+
+Preuves temporaires : reçu HTTP `/tmp/pupitro-public-http-20261024.json`, profil
+de migration `pupitro-public-update-mnJUtF`, recette clavier
+`pupitro-keyboard-eVoFQ0` et recette publique complète `pupitro-browser-9FL77l`.
+Les profils de navigateur sont fermés et retirés ;
+aucune bibliothèque utilisateur n’a été ouverte ou modifiée.
+Portée : Chromium automatisé sur le site publié. Safari/iPad physique et VoiceOver
+restent non vérifiés directement ; les tests WebKit locaux restent distincts.
 
 ## Correctifs après recettes — publiés le 21 octobre 2026
 

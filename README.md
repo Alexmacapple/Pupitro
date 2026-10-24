@@ -20,8 +20,7 @@ bibliothèque ; il n’y a pas de synchronisation automatique.
 
 - Lecture, pause, vitesse, déplacement et boucle par mesures.
 - Lecture et pause par clic ou toucher sur une note ; reprise depuis la note visée.
-- Avec un clavier : Espace pour lecture/pause, hors contrôles et dialogues
-  (ajout dans les sources, pas encore déployé sur le site).
+- Avec un clavier : Espace pour lecture/pause, hors contrôles et dialogues.
 - Métronome, décompte et curseur qui suit la partition.
 - Volume, coupure et solo par partie.
 - Percussion, guitare, ukulélé, mandoline, flûte et accordéon.
@@ -59,7 +58,8 @@ nécessaires à l’installation. Pas d’édition, d’annotation Pencil ni d�
 
 **Ouvrir Pupitro : [alexmacapple.github.io/Pupitro](https://alexmacapple.github.io/Pupitro/).**
 Le site inclut le gestionnaire de bibliothèque et les sauvegardes publiés le
-21 octobre 2026. Installation depuis Safari, puis import des MSCZ dans l’app :
+21 octobre 2026, puis le raccourci Espace publié le 24 octobre. Installation depuis
+Safari, puis import des MSCZ dans l’app :
 aucun clonage du dépôt n’est requis. Les contrôles sur le site publié ont passé
 sur Chrome Mac. La première version autonome reste repérée par le tag
 [v0.2.0](https://github.com/Alexmacapple/Pupitro/tree/v0.2.0).

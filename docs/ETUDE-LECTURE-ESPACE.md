@@ -2,7 +2,8 @@
 
 Étude initiale du 24 octobre 2026, avant implémentation. Les conclusions ci-dessous
 décrivent ce cadrage historique ; la mise en œuvre locale autorisée ensuite est
-suivie dans `docs/VALIDATION.md`. Le déploiement du site n’est pas inclus.
+suivie dans `docs/VALIDATION.md`. Le déploiement, autorisé séparément ensuite,
+et ses preuves figurent aussi dans ce document.
 
 ## Conclusion
 

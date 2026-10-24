@@ -1,13 +1,15 @@
 # Historique
 
-## Raccourci clavier — 2026-10-24, non déployé
+## Raccourci clavier — publié le 2026-10-24
 
 - Espace commande lecture, pause et reprise ; pendant la préparation ou le
   décompte, annulation du départ. Champs, boutons et dialogues gardent leur usage.
 - Recette clavier Chromium/WebKit : signal audio, répétitions, états occupés,
   commandes masquées et reprise après une fin réelle. Contrats clic/toucher conservés.
 - [Issue #1](https://github.com/Alexmacapple/Pupitro/issues/1) ; preuves et limites
-  dans [VALIDATION.md](docs/VALIDATION.md). Le push des sources ne déploie pas le site.
+  dans [VALIDATION.md](docs/VALIDATION.md). Publication manuelle de `2ebaefc` par le
+  [workflow 40094538213](https://github.com/Alexmacapple/Pupitro/actions/runs/40094538213),
+  construction `6a6f747015111dd5e017` ; 32 ressources HTTPS vérifiées.
 
 ## Correctifs après recettes — 2026-10-21
 
