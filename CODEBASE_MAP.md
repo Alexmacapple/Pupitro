@@ -3,7 +3,7 @@
 | Entrée | Propriétaire et rôle |
 |---|---|
 | `reader/index.html`, `style.css` | Interface mobile et commandes |
-| `reader/app.js` | Transport, bascule lecture/pause au pointeur, présentation, bibliothèque et réglages |
+| `reader/app.js` | Transport, bascule lecture/pause au pointeur et avec Espace, présentation, bibliothèque et réglages |
 | `reader/import-score.js` | Interprétation ZIP commune au moteur et à la migration, bornes avant extraction, annulation et migration v2 |
 | `reader/import-worker.js` | Moteur WASM, gravure et exports |
 | `reader/playback.js` | Parseur MIDI partagé, métriques, décompte, boucle, clic, tempos, positions et sélection au pointeur |
@@ -19,6 +19,7 @@
 | `scripts/check.sh`, `tests/*.test.js` | Syntaxe, tests Node de lecture, transport et archives, tests Python et construction |
 | `serve_reader.py`, `tests/test_legacy_server.py` | Serveur Mac historique : autorité HTTP, échéance d’envoi et erreurs ; tests avec convertisseur simulé |
 | `tests/legacy.cjs`, `tests/browser.cjs` | Migration v2 et recette Chromium/WebKit, dont souris et toucher |
+| `tests/keyboard.cjs` | Espace : lecture/pause, fin réelle, focus, dialogues, répétitions et états occupés |
 | `tests/library.cjs`, `tests/backup.test.js` | Gestionnaire réel IndexedDB, annulations, erreurs de quota, redémarrage hors ligne et aller-retour de sauvegarde |
 | `tests/library-recovery.cjs`, `tests/fixtures.cjs` | MSCZ synthétiques, récupération de connexion, budget de sauvegarde et états de focus |
 | `tests/test_build_web.py` | Propriété de la sortie, empreintes, liens symboliques et reconstruction sans écrasement local |

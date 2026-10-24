@@ -120,6 +120,18 @@ sans déplacer le curseur. Un nouveau clic reprend depuis la note visée.
 Les espaces hors portée restent sans effet. Au démarrage depuis une note située
 hors de la boucle active, cette boucle est désactivée ; une pause seule la conserve.
 
+### Avec un clavier — sources mises à jour, site non déployé
+
+**Espace** lance, met en pause ou reprend à la position courante. Pendant la
+préparation ou le décompte, cette touche annule le départ. Le raccourci fonctionne
+aussi avec les commandes masquées, lorsque le focus est hors d’un contrôle.
+
+Les champs, boutons et dialogues gardent leur fonctionnement habituel : Espace
+sur **Masquer les commandes** active ce bouton, et sur **Écouter** active la lecture
+une seule fois. Aucun raccourci global pendant un import ou une restauration.
+L’utilisateur confirme Espace sur Mac, sans précision de navigateur ni de version.
+L’usage avec clavier physique Safari/iPad et VoiceOver reste à vérifier directement.
+
 ## Vérifier l’autonomie sur les deux appareils
 
 1. Télécharger dans Fichiers une partition connue et un second MSCZ à importer.

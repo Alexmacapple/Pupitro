@@ -20,6 +20,8 @@ bibliothèque ; il n’y a pas de synchronisation automatique.
 
 - Lecture, pause, vitesse, déplacement et boucle par mesures.
 - Lecture et pause par clic ou toucher sur une note ; reprise depuis la note visée.
+- Avec un clavier : Espace pour lecture/pause, hors contrôles et dialogues
+  (ajout dans les sources, pas encore déployé sur le site).
 - Métronome, décompte et curseur qui suit la partition.
 - Volume, coupure et solo par partie.
 - Percussion, guitare, ukulélé, mandoline, flûte et accordéon.

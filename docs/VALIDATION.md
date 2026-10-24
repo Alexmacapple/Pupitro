@@ -4,6 +4,7 @@ title: Vérifications et limites connues
 description: Preuves de la version autonome et essais physiques encore nécessaires.
 sources:
   - resource: ../tests/browser.cjs
+  - resource: ../tests/keyboard.cjs
   - resource: ../tests/library.cjs
   - resource: ../tests/library-recovery.cjs
   - resource: ../tests/test_build_web.py
@@ -15,12 +16,74 @@ sources:
 
 # Vérifications — version autonome
 
-État documentaire au 21 octobre 2026. Le correctif courant, issu de `8bb6a2f`,
+Historique publié au 21 octobre 2026. Le correctif courant, issu de `8bb6a2f`,
 est publié depuis `d538720` ; les références de chaque campagne sont distinguées ci-dessous.
 Cette page consigne des preuves passées, sans annoncer une validation générale.
 
 Une partition personnelle MuseScore 2 sert d’exemple. Ni elle ni ses captures
 ne sont publiées dans le dépôt ou l’artefact applicatif.
+
+## Raccourci Espace — sources du 24 octobre 2026, non déployées
+
+Trace : [issue #1](https://github.com/Alexmacapple/Pupitro/issues/1), étude et revue
+préalable dans [l’étude](ETUDE-LECTURE-ESPACE.md). Le déploiement du site reste
+une opération distincte, non réalisée ici.
+Construction locale : `6a6f747015111dd5e017`, servie uniquement sur localhost.
+
+- `bash scripts/check.sh` : 23 tests Python, 41 tests Node, syntaxe et construction
+  réussis. Ressources déjà présentes ; aucune installation de dépendance.
+- `PUPITRO_TEST_URL=http://127.0.0.1:8796/ npm run test:keyboard` : Chromium réussi.
+- Même commande avec `PUPITRO_ENGINE=webkit` : WebKit réussi.
+- Recette sur MSCZ synthétique de 16 mesures : signal audio réel produit, pause
+  et reprise sans remise à zéro, annulation de préparation et de décompte,
+  répétitions sans défilement, boutons natifs sans double action, champs, cases,
+  sélecteurs, curseurs, lien, six dialogues, composition et modificateurs.
+- Import ralenti et notification IndexedDB de restauration retardée par injection
+  de test : aucun départ par Espace. La restauration est testée avec bouton encore
+  actif, dialogue fermé et focus hors contrôle pour exercer la garde `restoring`.
+- Commandes masquées : lecture possible hors bouton ; activation native si le
+  bouton de masquage possède explicitement le focus. WebKit ne focalise pas
+  nécessairement un bouton lors d’un clic souris, hypothèse corrigée dans la recette.
+- La mesure initiale de défilement Chromium était perturbée par la mise en page
+  après focalisation du réglage ; mesure reprise depuis une position stabilisée.
+
+Recette finale : fin réelle du morceau, bouton **Réécouter**, puis Espace.
+Sur Chromium et WebKit, position finale `30720`, position affichée immédiatement après
+redémarrage encore `30720`, puis `81` à la prochaine actualisation. `play()`
+change le libellé avant que `poll()` actualise le curseur : le dernier échec
+venait d’une lecture immédiate du champ, pas d’un départ audio à la mauvaise
+position. Le test attend désormais la condition observable, sans délai arbitraire.
+La recette vérifie aussi la boucle au clavier et les événements de perte de focus
+et de visibilité simulés pendant un appui.
+
+Preuves temporaires initiales : `pupitro-keyboard-pJYeYM` (Chromium),
+`pupitro-keyboard-vyC9GG` (WebKit) ; recettes finales :
+`pupitro-keyboard-K96afE` (Chromium) et `pupitro-keyboard-pH5VGZ` (WebKit),
+dans le répertoire temporaire système.
+Chaque recette conserve une capture et le MSCZ synthétique ; profils de test fermés
+et retirés par la recette. Les partitions personnelles ne sont pas utilisées.
+
+Retour utilisateur du 24 octobre : « espace fonctionne » sur Mac. Navigateur,
+adresse et version non précisés ; ce retour ne prouve pas la publication de cet
+ajout ni la recette complète de fin de morceau.
+
+Limites : événements clavier automatisés sur moteurs Mac ; clavier physique
+Safari/iPad et VoiceOver non vérifiés directement. Signal mesuré, sans écoute humaine.
+Aucun verrou manuel de touche ajouté ; les répétitions utilisent `event.repeat`.
+La recette clavier bloque le Service Worker pour contrôler le chargement audio ;
+le hors ligne relève de la recette existante `test:browser`, exécutée séparément.
+
+`test:browser` réussi sur Chromium et WebKit avec le même MSCZ synthétique :
+clic et toucher sur les notes, six timbres avec signal, boucle, nouvel import
+hors ligne, redémarrage hors ligne et ouvertures concurrentes. Aucun POST,
+aucune requête externe ni erreur JavaScript inattendue. Dossiers temporaires :
+`pupitro-browser-toxRcn` et `pupitro-browser-1hirfE` respectivement.
+
+Auto-vérification PDG et PDV, pas une revue indépendante de l’implémentation :
+diff, contrôles HTML et transport inspectés. Le gestionnaire reste dans `app.js`
+et appelle `play()` ; aucune nouvelle machine d’état, persistance, abstraction,
+dépendance ou modification de `playback.js`. Verdict structurel : **GO local**.
+La revue Fable précédente portait uniquement sur le cadrage.
 
 ## Correctifs après recettes — publiés le 21 octobre 2026
 
@@ -280,7 +343,7 @@ Le catalogue, les transactions et le snapshot appartiennent à `library.js`, le
 format à `backup.js`, les opérations UI à `app.js`. La frontière d’import possède
 les octets source indépendants ; le format reste compatible. Aucun module
 n’approche 1 000 lignes. Cette revue structurelle est distincte des tests navigateur.
-Les vérifications documentaires passent ; le signal « modifie » est le verbe présent,
+Les vérifications documentaires passent ; le signal `modifie` est le verbe présent,
 pas un accent manquant. Les tags `v0.1.0` et `v0.2.0` restent inchangés.
 
 **Portée physique :** ce nouveau gestionnaire et sa sauvegarde ne sont pas encore

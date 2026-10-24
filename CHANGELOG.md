@@ -1,5 +1,14 @@
 # Historique
 
+## Raccourci clavier — 2026-10-24, non déployé
+
+- Espace commande lecture, pause et reprise ; pendant la préparation ou le
+  décompte, annulation du départ. Champs, boutons et dialogues gardent leur usage.
+- Recette clavier Chromium/WebKit : signal audio, répétitions, états occupés,
+  commandes masquées et reprise après une fin réelle. Contrats clic/toucher conservés.
+- [Issue #1](https://github.com/Alexmacapple/Pupitro/issues/1) ; preuves et limites
+  dans [VALIDATION.md](docs/VALIDATION.md). Le push des sources ne déploie pas le site.
+
 ## Correctifs après recettes — 2026-10-21
 
 - Titres blancs remplacés par un nom de repli ; budget de sauvegarde vérifié

@@ -307,6 +307,15 @@ $("scoreFile").onchange=async()=>{
 $("cancelImport").onclick=()=>importing?.abort();
 $("cancelLibraryOperation").onclick=()=>importing?.abort();
 $("play").onclick=play;$("stop").onclick=()=>stop(true);$("seek").onchange=e=>seek(Number(e.target.value));$("master").oninput=e=>{if(gain)gain.gain.value=Number(e.target.value)/100;};$("speed").onchange=e=>{if(synth)synth.setPlayerTempo(0,Number(e.target.value));};$("goMeasure").onclick=()=>{const bounds=boundary();if(bounds)seek(bounds.start);else status("Vérifie les mesures de la boucle.");};$("metronome").onchange=()=>{if(synth)synth.midiAllSoundsOff(score.clickChannel);};$("follow").onchange=()=>{followedSystem=null;paint();};$("zoom").onchange=e=>{for(const figure of document.querySelectorAll(".paper")){figure.style.width=`${e.target.value}%`;figure.style.maxWidth="none";}followedSystem=null;paint();};$("mixerButton").onclick=()=>$("mixer").showModal();$("closeMixer").onclick=()=>$("mixer").close();
+document.addEventListener("keydown",event=>{
+  if(event.key!==" "||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||event.isComposing||event.defaultPrevented)return;
+  const target=event.target;
+  if(target instanceof Element&&(target.isContentEditable||target.closest("input,textarea,select,button,a[href],label,summary,audio,video,[contenteditable],[role=button],[role=link],[role=checkbox],[role=slider],[role=combobox],[role=textbox]")))return;
+  if(!score||importing||restoring||$("play").disabled||document.querySelector("dialog[open]"))return;
+  // Held keys must neither toggle repeatedly nor scroll the score.
+  event.preventDefault();
+  if(!event.repeat)void play();
+});
 // A suspended page can return from Safari's back/forward cache. Keep its
 // synthesizer reusable; unloading the document releases its audio resources.
 window.addEventListener("pagehide",()=>{if(score)stop();persistPreferences();if(context&&context.state!=="closed")context.suspend();});
